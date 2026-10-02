@@ -1,0 +1,47 @@
+from datetime import datetime
+from pydantic import BaseModel, ConfigDict
+from app.models.profile import UserType
+
+
+class ProfileBase(BaseModel):
+    name: str
+    email: str | None = None
+    user_type: UserType
+    city: str | None = None
+    current_role: str | None = None
+    target_role: str | None = None
+    experience_years: int = 0
+    career_gap_years: float = 0.0
+    current_salary_lpa: float | None = None
+    skills_raw: list[str] = []
+    skills_taxonomy_ids: list[int] = []
+    resume_text: str | None = None
+
+
+class ProfileCreate(ProfileBase):
+    pass
+
+
+class ProfileUpdate(BaseModel):
+    name: str | None = None
+    email: str | None = None
+    user_type: UserType | None = None
+    city: str | None = None
+    current_role: str | None = None
+    target_role: str | None = None
+    experience_years: int | None = None
+    career_gap_years: float | None = None
+    current_salary_lpa: float | None = None
+    skills_raw: list[str] | None = None
+    skills_taxonomy_ids: list[int] | None = None
+    resume_text: str | None = None
+
+
+class ProfileRead(ProfileBase):
+    id: str
+    disruption_score: float | None = None
+    disruption_breakdown: dict | None = None
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
