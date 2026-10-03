@@ -16,7 +16,6 @@ import {
   PlusCircle,
   Users,
   Building2,
-  Zap,
 } from 'lucide-react'
 import HealthBadge from '@/components/common/HealthBadge'
 import ThemeToggle from '@/components/common/ThemeToggle'
@@ -34,14 +33,14 @@ interface NavLinkItem {
 const mainNavLinks: NavLinkItem[] = [
   {
     to: '/company-match',
-    label: 'Company Career Match',
+    label: 'Company Match',
     icon: Building2,
-    badge: 'Step-by-Step',
+    badge: 'Guide',
     isPrimary: true,
   },
   {
     to: '/dashboard',
-    label: 'Dashboard & Tracker',
+    label: 'Dashboard',
     icon: LayoutDashboard,
   },
   {
@@ -51,7 +50,7 @@ const mainNavLinks: NavLinkItem[] = [
   },
   {
     to: '/passport',
-    label: 'Career Passport',
+    label: 'Passport',
     icon: Award,
   },
 ]
@@ -96,8 +95,8 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Center: Clean Main Navigation Links */}
-          <div className="hidden lg:flex items-center justify-center gap-1.5 flex-1 max-w-2xl">
+          {/* Center: Clean Main Navigation Pill Bar (Single-Line, No Wrapping) */}
+          <div className="hidden md:flex items-center gap-1 bg-slate-100/80 dark:bg-slate-800/60 p-1 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 whitespace-nowrap">
             {mainNavLinks.map((item) => {
               const active = location.pathname === item.to
               const Icon = item.icon
@@ -105,20 +104,20 @@ export default function Navbar() {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                     item.isPrimary
                       ? active
-                        ? 'bg-[#0B4F9C] text-white shadow-md'
-                        : 'bg-sky-50 dark:bg-sky-950/80 text-[#0B4F9C] dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:bg-[#0B4F9C] hover:text-white'
+                        ? 'bg-[#0B4F9C] text-white shadow-xs'
+                        : 'bg-white dark:bg-slate-900 text-[#0B4F9C] dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:bg-[#0B4F9C] hover:text-white'
                       : active
-                      ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-[#0B4F9C] dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                      ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-[#0B4F9C] dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800'
                   }`}
                 >
                   <Icon size={14} className={item.isPrimary && !active ? 'text-[#F26B1D]' : ''} />
                   <span>{item.label}</span>
                   {item.badge && !active && (
-                    <span className="text-[9px] font-black px-1.5 py-0.2 rounded-md bg-[#F26B1D] text-white uppercase tracking-wider">
+                    <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-[#F26B1D] text-white uppercase tracking-wider">
                       {item.badge}
                     </span>
                   )}
@@ -128,7 +127,7 @@ export default function Navbar() {
           </div>
 
           {/* Right: Controls & User Actions */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
             {/* Health status */}
             <div className="hidden xl:block">
               <HealthBadge />
@@ -257,18 +256,9 @@ export default function Navbar() {
               </button>
             )}
 
-            {/* Launch Guided Flow CTA Button */}
-            <Link
-              to="/company-match"
-              className="hidden sm:inline-flex items-center justify-center gap-1 px-3.5 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-[#0B4F9C] to-blue-600 text-white hover:from-blue-600 hover:to-[#0B4F9C] shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <Zap size={13} className="text-amber-300" />
-              <span>Match Resume</span>
-            </Link>
-
             {/* Mobile Menu Toggle Button */}
             <button
-              className="lg:hidden p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="md:hidden p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
             >
@@ -284,7 +274,7 @@ export default function Navbar() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden px-4 py-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 space-y-2 overflow-hidden"
+              className="md:hidden px-4 py-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 space-y-2 overflow-hidden"
             >
               <div className="space-y-1">
                 {mainNavLinks.map((link) => {
