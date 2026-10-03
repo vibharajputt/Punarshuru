@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from typing import Any
-from app.models.profile import Profile, UserType
+from app.models.profile import Profile
 from app.schemas.disruption import DisruptionBreakdown, DisruptionResponse
 
 DATA_DIR = Path(__file__).parent.parent / "data"

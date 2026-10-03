@@ -45,3 +45,13 @@ Blue #0B4F9C, orange #F26B1D, sky #E8F3FF, ink #0F172A. Montserrat headings, Int
 - Skeleton/empty/error states everywhere; responsive 375-1440
 - No `any`; components <200 lines; logic in services
 - Output: code only + max 3-line summary. No long explanations.
+
+## Addendum v2
+- LLM: services/llm.py single entry `complete(prompt, json=False)`. Order: Gemini (google-genai SDK, model from env) → Groq (OpenAI-compatible REST via httpx, model from env) → template fallback. 8s timeout each, retry once on 429, cache by prompt hash (SQLite table). All services use only llm.py.
+- Embeddings: fastembed with paraphrase-multilingual-MiniLM-L12-v2 (works for Hindi/Hinglish). Precompute taxonomy vectors to data/skill_vectors.npy at startup if missing. Remove sentence-transformers.
+- Resume: accept PDF/DOCX/TXT upload (pypdf, python-docx), max 5MB.
+- Onboarding agent: conversational, resume-first, max 4 follow-up questions, gap reason optional with Skip, classifies into 5 segments, confirm screen before saving. Form wizard stays as fallback.
+- Voice: Web Speech API (hi-IN/en-IN) mic button in chat; fallback POST /api/voice/transcribe via Groq Whisper.
+- Language: replies in user's language (en / hi / Hinglish).
+- Pathways must be data-driven from jobs_snapshot + gap engine, never hardcoded salaries/roles.
+- Env: GEMINI_API_KEY, GEMINI_MODEL, GROQ_API_KEY, GROQ_MODEL, GROQ_STT_MODEL, ALLOWED_ORIGINS (comma-separated).

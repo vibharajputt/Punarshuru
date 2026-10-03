@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
 from app.core.database import init_db
-from app.routers import health, demo, profile, assess, market, pathway, compensation, passport
+from app.routers import health, demo, profile, assess, market, pathway, compensation, passport, onboarding, voice
 
 settings = get_settings()
 
@@ -42,6 +42,9 @@ app.include_router(market.router, prefix="/api")
 app.include_router(pathway.router, prefix="/api")
 app.include_router(compensation.router, prefix="/api")
 app.include_router(passport.router, prefix="/api")
+app.include_router(onboarding.router, prefix="/api")
+app.include_router(voice.router, prefix="/api")
+
 
 
 @app.get("/", include_in_schema=False)

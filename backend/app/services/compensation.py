@@ -137,7 +137,7 @@ def compare_offers(req: CompareRequest) -> CompareResponse:
     # 5-year projection: cumulative wealth growth (assuming 10% annual hike, 6% expense inflation)
     projection = []
     for year in range(1, 6):
-        year_entry = {"year": f"Year {year}"}
+        year_entry: dict[str, Any] = {"year": f"Year {year}"}
         for item in comparisons:
             name = item.offer_name or item.city
             comp_hike = (1.10 ** (year - 1))

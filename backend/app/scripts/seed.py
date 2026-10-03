@@ -56,7 +56,7 @@ async def validate_data() -> None:
     assert len(courses) >= 120, f"Expected ≥120 courses, got {len(courses)}"
     assert len(personas) == 5, f"Expected 5 personas, got {len(personas)}"
 
-    print(f"✅ Data validation passed:")
+    print("✅ Data validation passed:")
     print(f"   Skills: {len(skills)}, Jobs: {len(jobs)}, Cities: {len(cities)}, Courses: {len(courses)}, Personas: {len(personas)}")
 
 

@@ -1,4 +1,4 @@
-from app.routers import health, demo, profile, assess, market, pathway, compensation, passport
+from app.routers import health, demo, profile, assess, market, pathway, compensation, passport, onboarding, voice
 
 __all__ = [
     "health",
@@ -9,4 +9,7 @@ __all__ = [
     "pathway",
     "compensation",
     "passport",
+    "onboarding",
+    "voice",
 ]
+

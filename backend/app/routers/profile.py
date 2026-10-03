@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
+import io
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.database import get_db
 from app.models.profile import Profile
 from app.schemas.profile import ProfileCreate, ProfileRead, ProfileUpdate
@@ -10,6 +12,8 @@ from app.services.resume_parser import parse_resume_text
 
 router = APIRouter(tags=["Profile"])
 
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB per SPEC Addendum v2
+
 
 @router.post("/profile", response_model=ProfileRead, status_code=status.HTTP_201_CREATED)
 async def create_profile(
@@ -18,7 +22,7 @@ async def create_profile(
 ) -> ProfileRead:
     """Create a new user profile and automatically compute initial disruption score."""
     profile = Profile(**profile_in.model_dump())
-    
+
     # Pre-calculate disruption
     disruption_res = calculate_disruption_score(profile)
     profile.disruption_score = disruption_res.score
@@ -74,3 +78,85 @@ async def update_profile(
 async def parse_resume(req: ResumeParseRequest) -> ResumeParseResponse:
     """Extract profile fields and skills from resume text using AI with regex fallback."""
     return await parse_resume_text(req.resume_text)
+
+
+@router.post("/profile/upload-resume", response_model=ResumeParseResponse)
+async def upload_resume(file: UploadFile = File(...)) -> ResumeParseResponse:
+    """
+    Accept PDF/DOCX/TXT upload (max 5MB), extract text content, and parse resume.
+    """
+    filename = file.filename or ""
+    filename_lower = filename.lower()
+
+    content = await file.read()
+
+    # Check file size (5MB max)
+    if len(content) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail="File size exceeds maximum allowed limit of 5MB.",
+        )
+
+    extracted_text = ""
+
+    if not (
+        filename_lower.endswith(".pdf")
+        or filename_lower.endswith(".docx")
+        or filename_lower.endswith(".txt")
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Unsupported file format. Please upload a PDF, DOCX, or TXT file.",
+        )
+
+    if filename_lower.endswith(".pdf") or file.content_type == "application/pdf":
+        try:
+            from pypdf import PdfReader
+
+            reader = PdfReader(io.BytesIO(content))
+            pages_text = [page.extract_text() or "" for page in reader.pages]
+            extracted_text = "\n".join(pages_text).strip()
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Failed to read PDF document: {str(e)}",
+            )
+
+    elif (
+        filename_lower.endswith(".docx")
+        or file.content_type
+        == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ):
+        try:
+            import docx
+
+            doc = docx.Document(io.BytesIO(content))
+            paragraphs = [p.text for p in doc.paragraphs if p.text.strip()]
+            extracted_text = "\n".join(paragraphs).strip()
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Failed to read DOCX document: {str(e)}",
+            )
+
+    elif filename_lower.endswith(".txt") or file.content_type == "text/plain":
+        try:
+            extracted_text = content.decode("utf-8", errors="ignore").strip()
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Failed to read text file: {str(e)}",
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Unsupported file format. Please upload a PDF, DOCX, or TXT file.",
+        )
+
+    if not extracted_text or len(extracted_text.strip()) < 10:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Could not extract readable text from the uploaded document.",
+        )
+
+    return await parse_resume_text(extracted_text)
