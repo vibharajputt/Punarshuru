@@ -14,6 +14,12 @@ class CategoryRadar(BaseModel):
     pct: float
 
 
+class HiddenStrength(BaseModel):
+    strength: str
+    crossover: str
+    target: str
+
+
 class SkillGapResponse(BaseModel):
     profile_id: str
     target_role: str
@@ -24,3 +30,4 @@ class SkillGapResponse(BaseModel):
     radar: list[CategoryRadar] = Field(default_factory=list)
     role_required_skills: list[str] = Field(default_factory=list)
     recommended_focus_areas: list[str] = Field(default_factory=list)
+    hidden_strengths: list[HiddenStrength] = Field(default_factory=list)
