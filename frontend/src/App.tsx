@@ -7,6 +7,7 @@ import OnboardingPage from '@/pages/OnboardingPage'
 import SkillGapPage from '@/pages/SkillGapPage'
 import MarketPage from '@/pages/MarketPage'
 import PathwaysPage from '@/pages/PathwaysPage'
+import CompanyTargetMatchPage from '@/pages/CompanyTargetMatchPage'
 import CompensationPage from '@/pages/CompensationPage'
 import PassportPage from '@/pages/PassportPage'
 import PublicPassportPage from '@/pages/PublicPassportPage'
@@ -42,6 +43,7 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="/company-match" element={<CompanyTargetMatchPage />} />
             <Route path="/skill-gap" element={<SkillGapPage />} />
             <Route path="/market" element={<MarketPage />} />
             <Route path="/pathways" element={<PathwaysPage />} />

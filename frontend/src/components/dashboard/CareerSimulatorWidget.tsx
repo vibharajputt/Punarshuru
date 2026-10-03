@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { Sliders, Sparkles, TrendingUp, ShieldCheck, Zap, CheckCircle2 } from 'lucide-react'
 import { useProfileStore } from '@/store/profileStore'
 import { profileApi } from '@/lib/api'
@@ -78,7 +77,7 @@ export default function CareerSimulatorWidget() {
       setProfile(updated)
     } catch {
       // Keep state
-    } fontinally: {
+    } finally {
       setSimulating(false)
     }
   }
@@ -98,21 +97,18 @@ export default function CareerSimulatorWidget() {
       <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-orange-600/15 rounded-full blur-3xl pointer-events-none" />
 
       {/* Widget Header */}
-      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
         <div>
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-gradient-to-r from-[#0B4F9C] to-[#F26B1D] text-white shadow-md">
-              <Zap size={18} />
-            </div>
-            <h3 className="text-lg font-black text-white tracking-tight">
-              Interactive AI Career & Salary Simulator
-            </h3>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-500/20 text-orange-400 border border-orange-500/30">
-              Live Interactive Tool
+            <span className="p-2 rounded-xl bg-orange-500/20 text-[#F26B1D] border border-orange-500/30">
+              <Sliders size={18} />
             </span>
+            <h3 className="text-lg sm:text-xl font-black tracking-tight text-white">
+              Interactive Reskilling & CTC Simulator
+            </h3>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Drag sliders and toggle target skills to see your AI Disruption Risk drop and Salary Potential rise in real-time.
+            Adjust target role, skills to learn, and career parameters to see live ROI and risk drop in real time.
           </p>
         </div>
 
@@ -120,50 +116,54 @@ export default function CareerSimulatorWidget() {
           type="button"
           onClick={applySimulationToProfile}
           disabled={simulating}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-[#0B4F9C] to-sky-600 text-white hover:brightness-110 shadow-lg shadow-blue-900/30 transition-all self-start sm:self-auto shrink-0"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#0B4F9C] to-blue-600 hover:from-blue-600 hover:to-[#0B4F9C] text-white text-xs font-bold transition-all shadow-lg shadow-blue-500/20 self-start sm:self-auto active:scale-95"
         >
-          {simulating ? <Sparkles size={14} className="animate-spin" /> : <ShieldCheck size={14} />}
-          <span>Apply Scenario to My Audit</span>
+          <Sparkles size={14} />
+          <span>{simulating ? 'Applying...' : 'Apply Simulation To My Profile'}</span>
         </button>
       </div>
 
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left: Controls & Sliders */}
-        <div className="lg:col-span-7 space-y-5">
-          {/* Target Role Selector */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Sliders size={13} className="text-sky-400" /> Choose Target Role:
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {roles.map((r) => {
-                const active = selectedRole.name === r.name
-                return (
-                  <button
-                    key={r.name}
-                    type="button"
-                    onClick={() => {
-                      setSelectedRole(r)
-                      setSelectedSkills([r.keySkills[0]])
-                    }}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
-                      active
-                        ? 'bg-[#0B4F9C] text-white border-sky-400 shadow-md shadow-blue-900/40'
-                        : 'bg-slate-800/80 border-slate-700 text-slate-300 hover:border-slate-500'
-                    }`}
-                  >
-                    {r.name}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
+      {/* Target Role Selector Pills */}
+      <div className="space-y-2">
+        <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+          <Zap size={14} className="text-[#F26B1D]" /> Choose Target Transition Role:
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+          {roles.map((r) => {
+            const isSelected = selectedRole.name === r.name
+            return (
+              <button
+                key={r.name}
+                type="button"
+                onClick={() => {
+                  setSelectedRole(r)
+                  setSelectedSkills([r.keySkills[0]])
+                }}
+                className={`p-3 rounded-2xl text-left border transition-all flex flex-col justify-between space-y-1 ${
+                  isSelected
+                    ? 'bg-blue-600/30 border-sky-400 text-white shadow-md'
+                    : 'bg-slate-800/60 border-slate-700/80 text-slate-400 hover:border-slate-600 hover:text-slate-200'
+                }`}
+              >
+                <span className="text-xs font-bold leading-tight">{r.name}</span>
+                <span className="text-[10px] text-emerald-400 font-semibold font-mono">
+                  ₹{r.baseSalary}L Base
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
 
-          {/* Experience Years Slider */}
-          <div className="space-y-2 p-4 rounded-2xl bg-slate-800/40 border border-slate-800">
-            <div className="flex justify-between text-xs font-bold">
-              <span className="text-slate-300">Total Prior Experience:</span>
-              <span className="text-sky-400 font-mono font-extrabold">{experienceYears} Years</span>
+      {/* Interactive Controls & Live ROI Display Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Sliders & Skill Checkboxes (7 Cols) */}
+        <div className="lg:col-span-7 space-y-5 p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80">
+          {/* Experience Slider */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="font-semibold text-slate-300">Total Prior Experience:</span>
+              <span className="font-black text-sky-400">{experienceYears} Years</span>
             </div>
             <input
               type="range"
@@ -172,32 +172,38 @@ export default function CareerSimulatorWidget() {
               step={1}
               value={experienceYears}
               onChange={(e) => setExperienceYears(Number(e.target.value))}
-              className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#0B4F9C]"
+              className="w-full accent-[#0B4F9C] cursor-pointer h-2 bg-slate-700 rounded-lg"
             />
           </div>
 
           {/* Career Gap Slider */}
-          <div className="space-y-2 p-4 rounded-2xl bg-slate-800/40 border border-slate-800">
-            <div className="flex justify-between text-xs font-bold">
-              <span className="text-slate-300">Career Gap / Break Duration:</span>
-              <span className="text-orange-400 font-mono font-extrabold">{careerGapYears} Years</span>
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="font-semibold text-slate-300">Career Gap / Unemployment Duration:</span>
+              <span className="font-black text-orange-400">{careerGapYears} Years</span>
             </div>
             <input
               type="range"
               min={0}
-              max={5}
-              step={0.5}
+              max={8}
+              step={1}
               value={careerGapYears}
               onChange={(e) => setCareerGapYears(Number(e.target.value))}
-              className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#F26B1D]"
+              className="w-full accent-[#F26B1D] cursor-pointer h-2 bg-slate-700 rounded-lg"
             />
           </div>
 
-          {/* Target Skills Toggle Badges */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
-              Toggle Target Skills Acquired:
-            </label>
+          {/* Key Skills Checklist */}
+          <div className="space-y-2 pt-2 border-t border-slate-700/80">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-300">
+                Mark Skills You Plan to Master:
+              </span>
+              <span className="text-[10px] font-semibold text-slate-400">
+                {skillCount}/{maxSkills} Selected
+              </span>
+            </div>
+
             <div className="flex flex-wrap gap-2">
               {selectedRole.keySkills.map((sk) => {
                 const checked = selectedSkills.includes(sk)
@@ -206,13 +212,13 @@ export default function CareerSimulatorWidget() {
                     key={sk}
                     type="button"
                     onClick={() => toggleSkill(sk)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border flex items-center gap-1.5 transition-all ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                       checked
-                        ? 'bg-emerald-600/90 text-white border-emerald-400 shadow-sm'
-                        : 'bg-slate-800/60 border-slate-700 text-slate-400 hover:text-white'
+                        ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                        : 'bg-slate-700/60 text-slate-300 hover:bg-slate-700 border border-slate-600/60'
                     }`}
                   >
-                    <CheckCircle2 size={13} className={checked ? 'text-white' : 'text-slate-600'} />
+                    <CheckCircle2 size={13} className={checked ? 'text-slate-950 font-bold' : 'text-slate-500'} />
                     <span>{sk}</span>
                   </button>
                 )
@@ -221,69 +227,52 @@ export default function CareerSimulatorWidget() {
           </div>
         </div>
 
-        {/* Right: Live Simulated Metrics Card */}
-        <div className="lg:col-span-5 p-6 rounded-3xl bg-slate-800/60 border border-slate-700/80 shadow-xl space-y-6 text-center lg:text-left">
-          <div className="flex items-center justify-between border-b border-slate-700 pb-3">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-              Live Projected Outcome
-            </span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">
-              Real-Time AI Output
-            </span>
-          </div>
-
-          {/* Risk Gauge Metric */}
-          <div className="space-y-1">
-            <span className="text-[11px] font-bold text-slate-400 uppercase">
-              Simulated Disruption Risk
-            </span>
-            <div className="flex items-baseline justify-center lg:justify-start gap-2">
-              <motion.span
-                key={projectedRisk}
-                initial={{ scale: 0.85, opacity: 0.5 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="text-4xl font-black tracking-tight text-white"
-              >
-                {projectedRisk}
-              </motion.span>
-              <span className="text-sm font-bold text-slate-400">/ 100</span>
+        {/* Live Simulation Output Cards (5 Cols) */}
+        <div className="lg:col-span-5 space-y-3">
+          {/* Projected Compensation Card */}
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-950/60 to-slate-900 border border-emerald-500/40 space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1">
+                <TrendingUp size={14} /> Projected Post-Reskilling CTC:
+              </span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300">
+                High ROI
+              </span>
             </div>
-
-            <div className="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden my-2">
-              <motion.div
-                animate={{ width: `${projectedRisk}%` }}
-                transition={{ duration: 0.4 }}
-                className={`h-full ${riskStatus.bg} rounded-full`}
-              />
+            <div className="text-3xl font-black text-white font-mono pt-1">
+              ₹{projectedSalary} <span className="text-sm font-semibold text-emerald-400">LPA</span>
             </div>
-            <p className={`text-xs font-extrabold ${riskStatus.text}`}>{riskStatus.label}</p>
-          </div>
-
-          {/* Salary Metric */}
-          <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-700 space-y-1">
-            <span className="text-[11px] font-bold text-slate-400 uppercase flex items-center justify-center lg:justify-start gap-1">
-              <TrendingUp size={13} className="text-emerald-400" /> Projected Market CTC
-            </span>
-            <div className="flex items-baseline justify-center lg:justify-start gap-1.5">
-              <motion.span
-                key={projectedSalary}
-                initial={{ y: -5, opacity: 0.5 }}
-                animate={{ y: 0, opacity: 1 }}
-                className="text-3xl font-black text-emerald-400 font-mono"
-              >
-                ₹{projectedSalary}
-              </motion.span>
-              <span className="text-xs font-bold text-slate-300">LPA</span>
-            </div>
-            <p className="text-[10px] text-slate-400">
-              Estimated for Indian tier-1 tech hubs ({selectedRole.name})
+            <p className="text-[11px] text-slate-400">
+              Assumes mastery of marked skills and portfolio deployment.
             </p>
           </div>
 
-          {/* Upskilling Time */}
-          <div className="flex items-center justify-between text-xs p-3 rounded-xl bg-slate-900/40 border border-slate-800">
-            <span className="text-slate-400 font-medium">Estimated Time to Bridge Gap:</span>
-            <span className="font-bold text-sky-400 font-mono">{estimatedWeeks} Weeks (~{Math.ceil(estimatedWeeks / 4)} Mo)</span>
+          {/* Live Risk Score Output Card */}
+          <div className="p-5 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <ShieldCheck size={14} className="text-sky-400" /> Simulated Risk Score:
+              </span>
+              <span className="text-xs font-bold text-white font-mono">
+                {riskStatus.label}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="text-2xl font-black text-white font-mono">
+                {projectedRisk}<span className="text-xs text-slate-400">/100</span>
+              </div>
+              <div className="flex-1 bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-500 ${riskStatus.bg}`}
+                  style={{ width: `${projectedRisk}%` }}
+                />
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-400">
+              Estimated reskilling duration: <strong className="text-white">{estimatedWeeks} Weeks</strong> of part-time focus.
+            </p>
           </div>
         </div>
       </div>

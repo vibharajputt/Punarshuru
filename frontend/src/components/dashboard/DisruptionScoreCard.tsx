@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { ShieldAlert, CheckCircle2, AlertTriangle, Info } from 'lucide-react'
 import ScoreRing from '@/components/charts/ScoreRing'
 import type { DisruptionResponse } from '@/types'
 
@@ -41,65 +40,25 @@ export default function DisruptionScoreCard({
     { label: 'Market Mismatch', score: breakdown.market_mismatch, max: 20, color: 'bg-blue-500', reason: breakdown.reasons?.market_mismatch },
   ]
 
-  const getRiskExplanation = () => {
-    if (score <= 35) {
-      return {
-        badge: '🟢 Low Risk',
-        bg: 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300',
-        text: 'Your current skills are well-aligned with active hiring trends. Keep up-to-date with emerging tools.',
-        icon: CheckCircle2,
-      }
-    }
-    if (score <= 65) {
-      return {
-        badge: '🟡 Moderate Risk',
-        bg: 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300',
-        text: 'Some of your skills are facing partial automation or market stagnation. Adding 1-2 new skills is recommended.',
-        icon: AlertTriangle,
-      }
-    }
-    return {
-      badge: '🔴 High Disruption Exposure',
-      bg: 'bg-rose-50 text-rose-800 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300',
-      text: 'High automation risk or career gap detected. Upskilling in AI & modern frameworks is strongly recommended.',
-      icon: ShieldAlert,
-    }
-  }
-
-  const riskInfo = getRiskExplanation()
-  const RiskIcon = riskInfo.icon
-
   return (
     <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-4">
         <div>
-          <h2 className="text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <span>Disruption Score Audit</span>
-            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-[#0B4F9C] dark:text-sky-300">
-              AI Skill Audit
-            </span>
+          <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">
+            Disruption Score Audit
           </h2>
           <p className="text-xs text-slate-500">
-            Evaluating career gap, automation vulnerability, and market demand for {userName} ({currentRole})
+            5-factor mathematical analysis for {userName} ({currentRole})
           </p>
         </div>
-      </div>
-
-      {/* Easy-to-Understand Risk Summary Banner */}
-      <div className={`p-4 rounded-2xl border ${riskInfo.bg} flex items-start gap-3 text-xs`}>
-        <RiskIcon size={18} className="shrink-0 mt-0.5" />
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2">
-            <span className="font-extrabold uppercase tracking-wider">{riskInfo.badge}</span>
-            <span className="text-[10px] opacity-80">(Score: {score}/100)</span>
-          </div>
-          <p className="font-medium leading-relaxed">{riskInfo.text}</p>
-        </div>
+        <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-50 text-[#0B4F9C] dark:bg-sky-950 dark:text-sky-300 self-start sm:self-auto">
+          Deterministic AI Model
+        </span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         {/* Left: Score Ring */}
-        <div className="lg:col-span-4 flex flex-col items-center justify-center p-5 rounded-2xl bg-slate-50/60 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 space-y-3">
+        <div className="lg:col-span-4 flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-50/60 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
           <ScoreRing
             score={score}
             size={180}
@@ -108,34 +67,10 @@ export default function DisruptionScoreCard({
             subtitle={`${score}/100 Risk Index`}
             showRiskBadge={true}
           />
-
-          {/* Simple 3-Tier Legend */}
-          <div className="w-full pt-3 border-t border-slate-200/60 dark:border-slate-700/60 text-[10px] space-y-1">
-            <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
-              <span className="flex items-center gap-1 font-bold"><span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"/> 0 - 35</span>
-              <span>Low Risk (Safe)</span>
-            </div>
-            <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
-              <span className="flex items-center gap-1 font-bold"><span className="w-2 h-2 rounded-full bg-amber-500 inline-block"/> 36 - 65</span>
-              <span>Moderate Risk</span>
-            </div>
-            <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
-              <span className="flex items-center gap-1 font-bold"><span className="w-2 h-2 rounded-full bg-rose-500 inline-block"/> 66 - 100</span>
-              <span>High Risk (Upgrade Needed)</span>
-            </div>
-          </div>
         </div>
 
         {/* Right: Breakdown Progress Bars */}
-        <div className="lg:col-span-8 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
-            <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-              <Info size={14} className="text-[#0B4F9C]" />
-              <span>5 Factor Risk Breakdown</span>
-            </span>
-            <span className="text-[11px] text-slate-400">Lower score is better</span>
-          </div>
-
+        <div className="lg:col-span-8 space-y-3.5">
           {factors.map((f, idx) => {
             const pct = Math.min(100, Math.round((f.score / f.max) * 100))
             return (
@@ -146,7 +81,7 @@ export default function DisruptionScoreCard({
                     {f.score} / {f.max} ({pct}%)
                   </span>
                 </div>
-                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${pct}%` }}
@@ -156,7 +91,7 @@ export default function DisruptionScoreCard({
                 </div>
                 {f.reason && (
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 italic">
-                    💡 {f.reason}
+                    {f.reason}
                   </p>
                 )}
               </div>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { Target, Sparkles, ArrowRight, RefreshCw, Layers, Info } from 'lucide-react'
+import { Target, Sparkles, ArrowRight, RefreshCw, Layers } from 'lucide-react'
 import { useProfileStore } from '@/store/profileStore'
 import { assessApi } from '@/lib/api'
 import SkillRadar from '@/components/charts/SkillRadar'
@@ -48,34 +48,6 @@ export default function SkillGapPage() {
 
   return (
     <div className="space-y-8 pb-12">
-      {/* Friendly Explainer Banner */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 border border-indigo-900/50">
-        <div className="flex items-start gap-3">
-          <div className="p-2.5 rounded-xl bg-white/10 text-sky-300 shrink-0 mt-0.5">
-            <Info size={20} />
-          </div>
-          <div className="space-y-1">
-            <h2 className="font-bold text-sm text-white flex items-center gap-2">
-              <span>What is Skill Gap Analysis?</span>
-              <span className="px-2 py-0.5 rounded-md bg-sky-400/20 text-sky-300 text-[10px] uppercase font-extrabold tracking-wider">
-                Live Comparison
-              </span>
-            </h2>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              We compare your current skills against live Indian job postings for <strong>{selectedRole}</strong>. See what you already know, transferable skills, and exact missing focus areas.
-            </p>
-          </div>
-        </div>
-
-        <Link
-          to="/pathways"
-          className="px-4 py-2 rounded-xl bg-[#F26B1D] hover:bg-orange-500 text-white font-bold text-xs transition-all flex items-center gap-1.5 shadow-sm shrink-0 self-end md:self-auto"
-        >
-          <span>Get Learning Roadmap</span>
-          <ArrowRight size={14} />
-        </Link>
-      </div>
-
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 dark:border-slate-800 pb-5">
         <div className="space-y-1">
@@ -91,13 +63,21 @@ export default function SkillGapPage() {
             Exact, partial (≥75% fuzzy) and missing skills audited against 300+ live job descriptions.
           </p>
         </div>
+
+        <Link
+          to="/pathways"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#0B4F9C] text-white hover:bg-[#083b75] shadow-xs self-start md:self-auto transition-all"
+        >
+          <span>Generate Pathway</span>
+          <ArrowRight size={14} />
+        </Link>
       </div>
 
       {/* Role Benchmark Selector */}
       <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-            <Target size={14} className="text-[#0B4F9C]" /> Select Target Benchmark Role:
+            <Target size={14} className="text-[#0B4F9C]" /> Benchmark Target Role:
           </span>
           <button
             onClick={() => refetch()}
@@ -177,13 +157,13 @@ export default function SkillGapPage() {
                 <p className="font-extrabold text-emerald-800 dark:text-emerald-300 text-lg">
                   {haveSkills.length}
                 </p>
-                <p className="text-[11px] text-slate-500 font-semibold">Have Skills</p>
+                <p className="text-[11px] text-slate-500 font-semibold">Have</p>
               </div>
               <div className="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-100 dark:border-amber-900">
                 <p className="font-extrabold text-amber-800 dark:text-amber-300 text-lg">
                   {partialSkills.length}
                 </p>
-                <p className="text-[11px] text-slate-500 font-semibold">Transferable</p>
+                <p className="text-[11px] text-slate-500 font-semibold">Partial</p>
               </div>
               <div className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-100 dark:border-rose-900">
                 <p className="font-extrabold text-rose-800 dark:text-rose-300 text-lg">

@@ -188,10 +188,24 @@ export interface PersonaSummary {
   career_gap_years: number
   current_salary_lpa: number | null
   skills_raw: string[]
-  skills_taxonomy_ids?: number[]
   description: string
   disruption_score: number
   disruption_breakdown?: DisruptionBreakdown
+}
+
+export interface ResumeParseResponse {
+  name?: string | null
+  email?: string | null
+  phone?: string | null
+  city?: string | null
+  current_role?: string | null
+  target_role?: string | null
+  experience_years?: number
+  career_gap_years?: number
+  skills?: string[]
+  education?: string | null
+  summary?: string | null
+  confidence_score?: number
 }
 
 export interface ApiError {

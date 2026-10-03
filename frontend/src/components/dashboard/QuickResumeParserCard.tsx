@@ -36,14 +36,14 @@ export default function QuickResumeParserCard() {
       const created = await profileApi.create({
         name: res.name || profile?.name || 'Parsed Candidate',
         email: res.email || 'resume@demo.punarshuru.in',
-        user_type: (res.user_type || profile?.user_type || 'returner') as UserType,
+        user_type: (profile?.user_type || 'returner') as UserType,
         city: res.city || profile?.city || 'Bengaluru',
         current_role: res.current_role || profile?.current_role || 'Professional',
         target_role: res.target_role || profile?.target_role || 'Software Engineer',
         experience_years: res.experience_years || profile?.experience_years || 0,
         career_gap_years: res.career_gap_years || profile?.career_gap_years || 0,
-        skills_raw: Array.isArray(res.extracted_skills) && res.extracted_skills.length > 0
-          ? res.extracted_skills
+        skills_raw: Array.isArray(res.skills) && res.skills.length > 0
+          ? res.skills
           : ['Java', 'SQL', 'Python'],
         resume_text: contentToParse,
       })
@@ -98,43 +98,47 @@ export default function QuickResumeParserCard() {
               disabled={parsing}
               className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-[#0B4F9C] transition-all flex items-center gap-1.5"
             >
-              <Sparkles size={12} className="text-[#F26B1D]" />
+              <Sparkles size={12} className="text-[#0B4F9C]" />
               <span>{s.title}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Input Textbox */}
+      {/* Resume Input Area */}
       <div className="space-y-2">
         <textarea
-          rows={3}
+          rows={4}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Paste resume text or career history summary here..."
-          className="w-full p-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-xs text-slate-900 dark:text-white focus:outline-[#0B4F9C] resize-none"
+          placeholder="Paste candidate bio, LinkedIn profile summary, or raw resume text here..."
+          className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0B4F9C]/30 focus:border-[#0B4F9C]"
         />
 
         <div className="flex items-center justify-between">
-          {successMsg ? (
-            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-              <CheckCircle2 size={14} /> {successMsg}
-            </span>
-          ) : (
-            <span className="text-[11px] text-slate-400">Deterministic skill taxonomy extraction</span>
-          )}
+          <span className="text-[11px] text-slate-400">
+            Min 15 characters required for AI heuristic extraction
+          </span>
 
           <button
             type="button"
             onClick={() => handleParse(text)}
-            disabled={parsing || text.length < 15}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#0B4F9C] text-white hover:bg-[#083b75] disabled:opacity-40 transition-all"
+            disabled={parsing || text.trim().length < 15}
+            className="px-4 py-2 rounded-xl bg-[#0B4F9C] hover:bg-[#083b75] text-white text-xs font-bold transition-all disabled:opacity-50 flex items-center gap-1.5 shadow-sm"
           >
-            <span>Extract & Update Profile</span>
+            <span>{parsing ? 'Parsing Resume...' : 'Parse & Update Profile'}</span>
             <ArrowRight size={13} />
           </button>
         </div>
       </div>
+
+      {/* Success Notification */}
+      {successMsg && (
+        <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+          <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+          <span>{successMsg}</span>
+        </div>
+      )}
     </div>
   )
 }
