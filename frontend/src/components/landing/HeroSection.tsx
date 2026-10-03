@@ -45,10 +45,10 @@ export default function HeroSection({ onExplorePersonas }: HeroSectionProps) {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
               <Link
-                to="/onboarding"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-[#0B4F9C] text-white font-bold text-sm hover:bg-[#083b75] shadow-lg shadow-blue-900/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                to="/company-match"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-[#0B4F9C] text-white font-extrabold text-sm hover:bg-[#083b75] shadow-lg shadow-blue-900/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
-                <span>Audit My Career (Free)</span>
+                <span>Match Resume with Companies (Free)</span>
                 <ArrowRight size={17} />
               </Link>
               <button

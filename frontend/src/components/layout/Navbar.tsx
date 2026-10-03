@@ -1,13 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard,
-  Target,
   TrendingUp,
-  Map,
-  DollarSign,
   Award,
   Menu,
   X,
@@ -18,99 +15,44 @@ import {
   ChevronDown,
   PlusCircle,
   Users,
-  Compass,
   Building2,
+  Zap,
 } from 'lucide-react'
 import HealthBadge from '@/components/common/HealthBadge'
 import ThemeToggle from '@/components/common/ThemeToggle'
 import AuthModal from '@/components/auth/AuthModal'
 import { useProfileStore } from '@/store/profileStore'
 
-interface SubMenuItem {
-  title: string
+interface NavLinkItem {
   to: string
-  icon: React.ComponentType<{ size?: number; className?: string }>
-  tag?: string
-  description: string
-}
-
-interface NavCategory {
   label: string
   icon: React.ComponentType<{ size?: number; className?: string }>
-  activePaths: string[]
-  items: SubMenuItem[]
+  badge?: string
+  isPrimary?: boolean
 }
 
-const navCategories: NavCategory[] = [
+const mainNavLinks: NavLinkItem[] = [
   {
-    label: 'Market Intelligence',
+    to: '/company-match',
+    label: 'Company Career Match',
+    icon: Building2,
+    badge: 'Step-by-Step',
+    isPrimary: true,
+  },
+  {
+    to: '/dashboard',
+    label: 'Dashboard & Tracker',
+    icon: LayoutDashboard,
+  },
+  {
+    to: '/market',
+    label: 'Market Radar',
     icon: TrendingUp,
-    activePaths: ['/market', '/compensation'],
-    items: [
-      {
-        title: 'Market Trends Radar',
-        to: '/market',
-        icon: TrendingUp,
-        tag: 'Live Velocity',
-        description: 'City-wise tech hiring velocity, emerging tech demand & domain indices across India.',
-      },
-      {
-        title: 'Compensation Benchmark',
-        to: '/compensation',
-        icon: DollarSign,
-        tag: 'Gap Recovery',
-        description: 'Fair wage calculator, career break penalty recovery & 5-year CTC growth models.',
-      },
-    ],
   },
   {
-    label: 'Career Transition',
-    icon: Compass,
-    activePaths: ['/company-match', '/skill-gap', '/pathways'],
-    items: [
-      {
-        title: 'Company Target Match',
-        to: '/company-match',
-        icon: Building2,
-        tag: 'Gamified Unlock',
-        description: 'Test resume against Swiggy, Google, Zomato & unlock adjacent roles with missing skills.',
-      },
-      {
-        title: 'AI Skill Diagnostic',
-        to: '/skill-gap',
-        icon: Target,
-        tag: 'Disruption Risk',
-        description: 'Evaluate your AI disruption score, missing skills & targeted assessment quizzes.',
-      },
-      {
-        title: 'Learning Pathways',
-        to: '/pathways',
-        icon: Map,
-        tag: '3-Step Wizard',
-        description: 'Structured 12-week roadmaps with SWAYAM / NPTEL courses & live milestone tracker.',
-      },
-    ],
-  },
-  {
-    label: 'Proof & Credentials',
+    to: '/passport',
+    label: 'Career Passport',
     icon: Award,
-    activePaths: ['/passport', '/onboarding'],
-    items: [
-      {
-        title: 'Career Transition Passport',
-        to: '/passport',
-        icon: Award,
-        tag: 'Verifiable QR',
-        description: 'Cryptographically signed proof-of-work portfolio for recruiter instant verification.',
-      },
-      {
-        title: 'New Profile Diagnostic',
-        to: '/onboarding',
-        icon: Sparkles,
-        tag: 'Resume Audit',
-        description: 'Run a fresh comprehensive resume breakdown & custom career transition audit.',
-      },
-    ],
   },
 ]
 
@@ -121,30 +63,9 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
-  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const profile = useProfileStore((s) => s.profile)
   const setProfile = useProfileStore((s) => s.setProfile)
-
-  const isLanding = location.pathname === '/'
-
-  // Close dropdown on click outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setActiveDropdown(null)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  // Close dropdown on route change
-  useEffect(() => {
-    setActiveDropdown(null)
-    setMobileOpen(false)
-  }, [location.pathname])
 
   const toggleLang = () => {
     i18n.changeLanguage(i18n.language === 'en' ? 'hi' : 'en')
@@ -169,128 +90,39 @@ export default function Navbar() {
               <span className="font-black text-lg tracking-tight text-[#0B4F9C] dark:text-sky-400">
                 Punar<span className="text-[#F26B1D]">shuru</span>
               </span>
-              {!isLanding && (
-                <span className="hidden md:inline-block px-1.5 py-0.2 rounded-md bg-sky-100/80 dark:bg-sky-950 text-[#0B4F9C] dark:text-sky-300 text-[9px] font-extrabold uppercase tracking-wider">
-                  App
-                </span>
-              )}
+              <span className="hidden sm:inline-block px-1.5 py-0.2 rounded-md bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 text-[9px] font-black uppercase tracking-wider">
+                Bharat 2.0
+              </span>
             </div>
           </Link>
 
-          {/* Center: Desktop Categorized Navigation */}
-          <div ref={dropdownRef} className="hidden lg:flex items-center justify-center gap-1">
-            {/* Direct Link: Dashboard */}
-            {!isLanding && (
-              <Link
-                to="/dashboard"
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                  location.pathname === '/dashboard'
-                    ? 'bg-[#0B4F9C] text-white shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-[#0B4F9C] dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800'
-                }`}
-              >
-                <LayoutDashboard size={14} />
-                <span>Dashboard</span>
-              </Link>
-            )}
-
-            {/* Categorized Dropdowns */}
-            {navCategories.map((category) => {
-              const isActiveCategory = category.activePaths.some((p) => location.pathname === p)
-              const isOpen = activeDropdown === category.label
-              const CategoryIcon = category.icon
-
+          {/* Center: Clean Main Navigation Links */}
+          <div className="hidden lg:flex items-center justify-center gap-1.5 flex-1 max-w-2xl">
+            {mainNavLinks.map((item) => {
+              const active = location.pathname === item.to
+              const Icon = item.icon
               return (
-                <div key={category.label} className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setActiveDropdown(isOpen ? null : category.label)}
-                    onMouseEnter={() => setActiveDropdown(category.label)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                      isActiveCategory
-                        ? 'bg-sky-100/80 dark:bg-sky-950/80 text-[#0B4F9C] dark:text-sky-300'
-                        : isOpen
-                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
-                        : 'text-slate-600 dark:text-slate-300 hover:text-[#0B4F9C] dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800'
-                    }`}
-                  >
-                    <CategoryIcon size={14} />
-                    <span>{category.label}</span>
-                    <ChevronDown
-                      size={12}
-                      className={`transition-transform duration-200 ${isOpen ? 'rotate-180 text-[#0B4F9C]' : 'text-slate-400'}`}
-                    />
-                  </button>
-
-                  {/* Mega Dropdown Popover */}
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                        transition={{ duration: 0.15 }}
-                        onMouseLeave={() => setActiveDropdown(null)}
-                        className="absolute left-1/2 -translate-x-1/2 mt-2 w-80 p-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xl z-50 space-y-1.5"
-                      >
-                        <div className="px-3 py-1.5 border-b border-slate-100 dark:border-slate-800">
-                          <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                            {category.label}
-                          </p>
-                        </div>
-
-                        {category.items.map((sub) => {
-                          const SubIcon = sub.icon
-                          const isSubActive = location.pathname === sub.to
-                          return (
-                            <Link
-                              key={sub.to}
-                              to={sub.to}
-                              onClick={() => setActiveDropdown(null)}
-                              className={`flex items-start gap-3 p-2.5 rounded-xl transition-all group ${
-                                isSubActive
-                                  ? 'bg-sky-50 dark:bg-sky-950/50 border border-sky-200 dark:border-sky-900/60'
-                                  : 'hover:bg-slate-50 dark:hover:bg-slate-800/80'
-                              }`}
-                            >
-                              <div
-                                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                                  isSubActive
-                                    ? 'bg-[#0B4F9C] text-white'
-                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 group-hover:bg-blue-100 dark:group-hover:bg-blue-950 group-hover:text-[#0B4F9C] dark:group-hover:text-sky-300'
-                                }`}
-                              >
-                                <SubIcon size={16} />
-                              </div>
-
-                              <div className="space-y-0.5 flex-1">
-                                <div className="flex items-center justify-between">
-                                  <span
-                                    className={`text-xs font-bold leading-tight ${
-                                      isSubActive
-                                        ? 'text-[#0B4F9C] dark:text-sky-300 font-extrabold'
-                                        : 'text-slate-900 dark:text-white group-hover:text-[#0B4F9C] dark:group-hover:text-sky-400'
-                                    }`}
-                                  >
-                                    {sub.title}
-                                  </span>
-                                  {sub.tag && (
-                                    <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                                      {sub.tag}
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed font-medium">
-                                  {sub.description}
-                                </p>
-                              </div>
-                            </Link>
-                          )
-                        })}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    item.isPrimary
+                      ? active
+                        ? 'bg-[#0B4F9C] text-white shadow-md'
+                        : 'bg-sky-50 dark:bg-sky-950/80 text-[#0B4F9C] dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:bg-[#0B4F9C] hover:text-white'
+                      : active
+                      ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-[#0B4F9C] dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                  }`}
+                >
+                  <Icon size={14} className={item.isPrimary && !active ? 'text-[#F26B1D]' : ''} />
+                  <span>{item.label}</span>
+                  {item.badge && !active && (
+                    <span className="text-[9px] font-black px-1.5 py-0.2 rounded-md bg-[#F26B1D] text-white uppercase tracking-wider">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
               )
             })}
           </div>
@@ -355,6 +187,18 @@ export default function Navbar() {
                         type="button"
                         onClick={() => {
                           setProfileDropdownOpen(false)
+                          navigate('/company-match')
+                        }}
+                        className="w-full px-2.5 py-1.5 text-left text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg flex items-center gap-2"
+                      >
+                        <Building2 size={13} className="text-[#0B4F9C]" />
+                        <span>Company Career Matcher</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setProfileDropdownOpen(false)
                           navigate('/dashboard')
                         }}
                         className="w-full px-2.5 py-1.5 text-left text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg flex items-center gap-2"
@@ -413,15 +257,14 @@ export default function Navbar() {
               </button>
             )}
 
-            {/* Landing-Only Start Free Button */}
-            {isLanding && (
-              <Link
-                to="/onboarding"
-                className="hidden sm:inline-flex items-center justify-center px-3.5 py-1.5 text-xs font-bold rounded-xl bg-[#0B4F9C] text-white hover:bg-[#083b75] shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span>Audit Free</span>
-              </Link>
-            )}
+            {/* Launch Guided Flow CTA Button */}
+            <Link
+              to="/company-match"
+              className="hidden sm:inline-flex items-center justify-center gap-1 px-3.5 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-[#0B4F9C] to-blue-600 text-white hover:from-blue-600 hover:to-[#0B4F9C] shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <Zap size={13} className="text-amber-300" />
+              <span>Match Resume</span>
+            </Link>
 
             {/* Mobile Menu Toggle Button */}
             <button
@@ -434,61 +277,43 @@ export default function Navbar() {
           </div>
         </nav>
 
-        {/* Mobile Dropdown Menu (Clean Categorized View) */}
+        {/* Mobile Dropdown Menu */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden px-4 py-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 space-y-4 max-h-[85vh] overflow-y-auto"
+              className="lg:hidden px-4 py-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 space-y-2 overflow-hidden"
             >
-              {/* Direct Dashboard Link */}
-              <Link
-                to="/dashboard"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2.5 py-2 px-3 rounded-xl text-xs font-bold text-slate-900 dark:text-white bg-slate-100/80 dark:bg-slate-800/80"
-              >
-                <LayoutDashboard size={15} className="text-[#0B4F9C]" />
-                <span>Dashboard Overview</span>
-              </Link>
-
-              {/* Categorized Sections */}
-              {navCategories.map((cat) => (
-                <div key={cat.label} className="space-y-1">
-                  <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-3">
-                    {cat.label}
-                  </p>
-                  <div className="space-y-1">
-                    {cat.items.map((sub) => {
-                      const SubIcon = sub.icon
-                      const isActive = location.pathname === sub.to
-                      return (
-                        <Link
-                          key={sub.to}
-                          to={sub.to}
-                          onClick={() => setMobileOpen(false)}
-                          className={`flex items-center justify-between py-2 px-3 rounded-xl text-xs font-bold transition-all ${
-                            isActive
-                              ? 'bg-sky-50 dark:bg-sky-950 text-[#0B4F9C] dark:text-sky-300'
-                              : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <SubIcon size={14} className="text-[#0B4F9C]" />
-                            <span>{sub.title}</span>
-                          </div>
-                          {sub.tag && (
-                            <span className="text-[9px] font-semibold text-slate-400">
-                              {sub.tag}
-                            </span>
-                          )}
-                        </Link>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
+              <div className="space-y-1">
+                {mainNavLinks.map((link) => {
+                  const Icon = link.icon
+                  const active = location.pathname === link.to
+                  return (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      onClick={() => setMobileOpen(false)}
+                      className={`flex items-center justify-between py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                        active
+                          ? 'bg-[#0B4F9C] text-white'
+                          : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Icon size={15} />
+                        <span>{link.label}</span>
+                      </div>
+                      {link.badge && (
+                        <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-orange-500 text-white">
+                          {link.badge}
+                        </span>
+                      )}
+                    </Link>
+                  )
+                })}
+              </div>
 
               <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <HealthBadge />
