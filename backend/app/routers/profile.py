@@ -120,6 +120,25 @@ async def create_or_upsert_profile(
     return ProfileRead.model_validate(profile)
 
 
+@router.get("/profile/me", response_model=ProfileRead)
+async def get_my_profile(
+    user: User | None = Depends(_resolve_user),
+    db: AsyncSession = Depends(get_db),
+) -> ProfileRead:
+    """Fetch current authenticated user profile."""
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    res = await db.execute(select(Profile).where(Profile.user_id == user.id))
+    profile = res.scalars().first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return ProfileRead.model_validate(profile)
+
+
 @router.get("/profile/{profile_id}", response_model=ProfileRead)
 async def get_profile(
     profile_id: str,

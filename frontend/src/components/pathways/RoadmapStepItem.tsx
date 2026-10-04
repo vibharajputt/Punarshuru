@@ -1,4 +1,5 @@
 import { CheckCircle2, Circle, ExternalLink, Clock } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { PathwayStep } from '@/types'
 
 interface RoadmapStepItemProps {
@@ -14,14 +15,25 @@ export default function RoadmapStepItem({
   isDone,
   onToggle,
 }: RoadmapStepItemProps) {
+  const { i18n } = useTranslation()
+  const isHi = (i18n.resolvedLanguage || i18n.language || 'en').startsWith('hi')
+
   return (
     <div className="relative pl-8 pb-8 last:pb-2 border-l-2 border-slate-200 dark:border-slate-800 last:border-transparent">
       {/* Node circle */}
       <button
         type="button"
         onClick={onToggle}
-        title={isDone ? 'Mark as incomplete' : 'Mark as completed'}
-        className={`absolute -left-[17px] top-0 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
+        title={
+          isDone
+            ? isHi
+              ? 'अपूर्ण चिन्हित करें'
+              : 'Mark as incomplete'
+            : isHi
+            ? 'पूर्ण चिन्हित करें'
+            : 'Mark as completed'
+        }
+        className={`absolute -left-[17px] top-0 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer ${
           isDone
             ? 'bg-emerald-500 border-emerald-600 text-white shadow-md shadow-emerald-500/30'
             : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-400 hover:border-[#0B4F9C]'
@@ -37,19 +49,21 @@ export default function RoadmapStepItem({
             <span className="px-2.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950 text-[#0B4F9C] dark:text-sky-300 font-mono text-[11px] font-bold">
               {step.week_range}
             </span>
-            <span className="text-xs font-bold text-slate-400">Milestone {stepIndex + 1}</span>
+            <span className="text-xs font-bold text-slate-400">
+              {isHi ? `माइलस्टोन ${stepIndex + 1}` : `Milestone ${stepIndex + 1}`}
+            </span>
           </div>
 
           <button
             type="button"
             onClick={onToggle}
-            className={`text-xs font-bold px-3 py-1 rounded-xl transition-all ${
+            className={`text-xs font-bold px-3 py-1 rounded-xl transition-all cursor-pointer ${
               isDone
                 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
           >
-            {isDone ? '✓ Completed' : 'Mark Done'}
+            {isDone ? (isHi ? '✓ पूर्ण' : '✓ Completed') : isHi ? 'पूर्ण चिन्हित करें' : 'Mark Done'}
           </button>
         </div>
 
@@ -86,7 +100,7 @@ export default function RoadmapStepItem({
         {step.courses && step.courses.length > 0 && (
           <div className="space-y-2 pt-1">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-              Curated Free Courses & Verification
+              {isHi ? 'चयनित मुफ्त कोर्सेज और प्रमाणन' : 'Curated Free Courses & Verification'}
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {step.courses.map((course) => (
@@ -95,7 +109,7 @@ export default function RoadmapStepItem({
                   href={course.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 hover:border-[#0B4F9C] hover:bg-sky-50/30 transition-all flex items-start justify-between gap-2 group"
+                  className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 hover:border-[#0B4F9C] hover:bg-sky-50/30 dark:hover:bg-slate-750 transition-all flex items-start justify-between gap-2 group"
                 >
                   <div className="space-y-1 min-w-0">
                     <span className="font-bold text-xs text-slate-800 dark:text-slate-200 group-hover:text-[#0B4F9C] dark:group-hover:text-sky-400 line-clamp-1">

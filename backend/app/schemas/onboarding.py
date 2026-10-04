@@ -24,5 +24,6 @@ class OnboardingSessionResponse(BaseModel):
     profile_draft: dict = Field(default_factory=dict)
     current_slot: str = ""
     segment: str = "detecting"
+    can_confirm: bool = False
     done: bool = False
     history: list[dict] = Field(default_factory=list)

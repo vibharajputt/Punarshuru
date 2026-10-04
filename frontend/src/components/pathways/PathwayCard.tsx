@@ -1,4 +1,5 @@
-import { Shield, Rocket, RefreshCw, Clock, DollarSign, ArrowRight } from 'lucide-react'
+import { Shield, Rocket, RefreshCw, Clock, IndianRupee, ArrowRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { PathwayOption } from '@/types'
 
 interface PathwayCardProps {
@@ -12,6 +13,9 @@ export default function PathwayCard({
   isSelected,
   onSelect,
 }: PathwayCardProps) {
+  const { i18n } = useTranslation()
+  const isHi = (i18n.resolvedLanguage || i18n.language || 'en').startsWith('hi')
+
   const isSafe = pathway.type === 'Safe'
   const isStretch = pathway.type === 'Stretch'
 
@@ -22,6 +26,7 @@ export default function PathwayCard({
         borderColor: 'border-blue-300 dark:border-blue-800 ring-2 ring-[#0B4F9C]/20',
         icon: Shield,
         accentColor: 'text-[#0B4F9C]',
+        label: isHi ? 'सुरक्षित मार्ग (Safe)' : 'Safe Pathway',
       }
     }
     if (isStretch) {
@@ -30,6 +35,7 @@ export default function PathwayCard({
         borderColor: 'border-orange-300 dark:border-orange-800 ring-2 ring-[#F26B1D]/20',
         icon: Rocket,
         accentColor: 'text-[#F26B1D]',
+        label: isHi ? 'उच्च वृद्धि मार्ग (Stretch)' : 'Stretch Pathway',
       }
     }
     return {
@@ -37,10 +43,11 @@ export default function PathwayCard({
       borderColor: 'border-purple-300 dark:border-purple-800 ring-2 ring-purple-600/20',
       icon: RefreshCw,
       accentColor: 'text-purple-600',
+      label: isHi ? 'स्विच मार्ग (Switch)' : 'Switch Pathway',
     }
   }
 
-  const { badgeBg, borderColor, icon: Icon, accentColor } = getStyle()
+  const { badgeBg, borderColor, icon: Icon, accentColor, label } = getStyle()
 
   return (
     <div
@@ -56,10 +63,19 @@ export default function PathwayCard({
         <div className="flex items-center justify-between">
           <span className={`px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1.5 ${badgeBg}`}>
             <Icon size={13} />
-            <span>{pathway.type === 'Pivot' ? 'Switch' : pathway.type} Pathway</span>
+            <span>{label}</span>
           </span>
           <span className="text-xs font-bold text-slate-500">
-            Difficulty: <span className="font-semibold text-slate-800 dark:text-slate-200">{pathway.difficulty}</span>
+            {isHi ? 'कठिनाई:' : 'Difficulty:'}{' '}
+            <span className="font-semibold text-slate-800 dark:text-slate-200">
+              {isHi
+                ? pathway.difficulty === 'Medium'
+                  ? 'मध्यम'
+                  : pathway.difficulty === 'High'
+                  ? 'उच्च'
+                  : 'सरल'
+                : pathway.difficulty}
+            </span>
           </span>
         </div>
 
@@ -69,7 +85,7 @@ export default function PathwayCard({
             {pathway.title}
           </h3>
           <p className="text-xs font-bold text-[#0B4F9C] dark:text-sky-300 mt-0.5">
-            Target: {pathway.target_role}
+            {isHi ? 'लक्ष्य:' : 'Target:'} {pathway.target_role}
           </p>
         </div>
 
@@ -82,14 +98,16 @@ export default function PathwayCard({
           <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-2">
             <Clock size={15} className="text-slate-500" />
             <div>
-              <p className="text-[10px] text-slate-400 font-semibold">Timeline</p>
-              <p className="font-bold text-slate-800 dark:text-slate-200">{pathway.estimated_months} Months</p>
+              <p className="text-[10px] text-slate-400 font-semibold">{isHi ? 'समयावधि' : 'Timeline'}</p>
+              <p className="font-bold text-slate-800 dark:text-slate-200">
+                {pathway.estimated_months} {isHi ? 'महीने' : 'Months'}
+              </p>
             </div>
           </div>
           <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-2">
-            <DollarSign size={15} className="text-emerald-600" />
+            <IndianRupee size={15} className="text-emerald-600" />
             <div>
-              <p className="text-[10px] text-slate-400 font-semibold">Target CTC</p>
+              <p className="text-[10px] text-slate-400 font-semibold">{isHi ? 'लक्षित सीटीसी' : 'Target CTC'}</p>
               <p className="font-bold text-emerald-700 dark:text-emerald-400">₹{pathway.target_salary_lpa} LPA</p>
             </div>
           </div>
@@ -97,7 +115,15 @@ export default function PathwayCard({
       </div>
 
       <div className={`pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold ${accentColor}`}>
-        <span>{isSelected ? 'Viewing Active Roadmap' : 'Select to View Roadmap'}</span>
+        <span>
+          {isSelected
+            ? isHi
+              ? 'सक्रिय रोडमैप देख रहे हैं'
+              : 'Viewing Active Roadmap'
+            : isHi
+            ? 'रोडमैप देखने के लिए चुनें'
+            : 'Select to View Roadmap'}
+        </span>
         <ArrowRight size={14} />
       </div>
     </div>

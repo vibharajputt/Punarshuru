@@ -44,3 +44,12 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 async def init_db() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # SQLite doesn't automatically add columns to existing tables with create_all
+        try:
+            from sqlalchemy import text
+            res = await conn.execute(text("PRAGMA table_info('onboarding_sessions')"))
+            cols = [row[1] for row in res.fetchall()]
+            if cols and "engine_state" not in cols:
+                await conn.execute(text("ALTER TABLE onboarding_sessions ADD COLUMN engine_state JSON"))
+        except Exception:
+            pass

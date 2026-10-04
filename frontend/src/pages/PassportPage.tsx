@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { RefreshCw, Eye, EyeOff } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useProfileStore } from '@/store/profileStore'
 import { passportApi } from '@/lib/api'
 import PassportCard from '@/components/passport/PassportCard'
@@ -9,6 +10,7 @@ import Skeleton from '@/components/common/Skeleton'
 import type { PassportResponse } from '@/types'
 
 export default function PassportPage() {
+  const { t } = useTranslation()
   const profile = useProfileStore((s) => s.profile)
   const [isPublic, setIsPublic] = useState(true)
 
@@ -60,14 +62,14 @@ export default function PassportPage() {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              AI Talent Passport & QR Credential
+              {t('passport.title', 'AI Talent Passport & QR Credential')}
             </h1>
             <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
-              Verifiable Badge
+              {t('passport.verifiable_badge', 'Verifiable Badge')}
             </span>
           </div>
           <p className="text-xs text-slate-500">
-            Shareable proof of competencies, evidence artifacts, and career break resilience for recruiters.
+            {t('passport.subtitle', 'Shareable proof of competencies, evidence artifacts, and career break resilience for recruiters.')}
           </p>
         </div>
 
@@ -76,21 +78,21 @@ export default function PassportPage() {
           <button
             type="button"
             onClick={() => setIsPublic(!isPublic)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
               isPublic
                 ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
             }`}
           >
             {isPublic ? <Eye size={14} /> : <EyeOff size={14} />}
-            <span>{isPublic ? 'Public' : 'Unlisted'}</span>
+            <span>{isPublic ? t('passport.public', 'Public') : t('passport.unlisted', 'Unlisted')}</span>
           </button>
 
           <button
             type="button"
             onClick={() => refetch()}
             disabled={isFetching}
-            className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
             title="Refresh Passport"
           >
             <RefreshCw size={14} className={isFetching ? 'animate-spin' : ''} />

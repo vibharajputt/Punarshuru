@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { onboardingApi } from '@/lib/api'
+import { onboardingApi, profileApi } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
+import { useProfileStore } from '@/store/profileStore'
 import type { Message } from './types'
 import { useSessionRestore } from './useSessionRestore'
 import { useResumeUpload } from './useResumeUpload'
@@ -13,8 +14,6 @@ export function useOnboardingAgent() {
   const [inputMessage, setInputMessage] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [isConfirming, setIsConfirming] = useState(false)
-  // canConfirm comes from the backend response — single source of truth
-  const [canConfirm, setCanConfirm] = useState(false)
 
   const {
     messages,
@@ -25,6 +24,8 @@ export function useOnboardingAgent() {
     setShowConfirmScreen,
     profileDraft,
     setProfileDraft,
+    canConfirm,
+    setCanConfirm,
   } = useSessionRestore({ authUser })
 
   const { isUploading, uploadError, handleFileUpload } = useResumeUpload({
@@ -76,8 +77,36 @@ export function useOnboardingAgent() {
 
       if (res.done) {
         setIsDone(true)
-        // Profile already upserted server-side; just navigate
-        navigate('/home')
+        // Store profile in zustand so HomePage renders cleanly without redirecting back
+        const draft = (res.profile_draft || {}) as Record<string, any>
+        const profileObj = {
+          id: draft.id || authUser?.id || 'profile-' + Date.now(),
+          name: draft.name || authUser?.name || 'Candidate',
+          email: draft.email || authUser?.email,
+          user_type: draft.user_type || 'stagnant',
+          city: draft.city || '',
+          current_role: draft.current_role || '',
+          target_role: draft.target_role || '',
+          experience_years: Number(draft.experience_years || 0),
+          career_gap_years: Number(draft.career_gap_years || 0),
+          skills_raw: draft.skills_raw || [],
+          skills_taxonomy_ids: [],
+          disruption_score: draft.disruption_score ?? 68,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        useProfileStore.getState().setProfile(profileObj as any)
+
+        // Also attempt to sync with backend /api/profile/me in background
+        try {
+          const fresh = await profileApi.getMyProfile()
+          if (fresh) useProfileStore.getState().setProfile(fresh)
+        } catch {
+          // initial profileObj already in store
+        }
+
+        navigate('/home', { replace: true })
+        return
       }
     } catch {
       setMessages((prev) => [

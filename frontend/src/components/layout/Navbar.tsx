@@ -14,7 +14,6 @@ import {
   LogOut,
   ChevronDown,
   PlusCircle,
-  Users,
   Building2,
 } from 'lucide-react'
 import HealthBadge from '@/components/common/HealthBadge'
@@ -30,36 +29,36 @@ interface NavLinkItem {
   isPrimary?: boolean
 }
 
-const mainNavLinks: NavLinkItem[] = [
+const getMainNavLinks = (t: (key: string, fallback: string) => string): NavLinkItem[] => [
   {
     to: '/home',
-    label: 'Home',
+    label: t('nav.dashboard', 'Home'),
     icon: LayoutDashboard,
   },
   {
     to: '/skills',
-    label: 'My Skills',
+    label: t('nav.skill_gap', 'My Skills'),
     icon: Sparkles,
   },
   {
     to: '/path',
-    label: 'My Path',
+    label: t('nav.pathways', 'My Path'),
     icon: TrendingUp,
   },
   {
     to: '/jobs',
-    label: 'Jobs & Salary',
+    label: t('nav.market', 'Jobs & Salary'),
     icon: Building2,
   },
   {
     to: '/passport',
-    label: 'Skill Passport',
+    label: t('nav.passport', 'Skill Passport'),
     icon: Award,
   },
 ]
 
 export default function Navbar() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const location = useLocation()
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -69,8 +68,13 @@ export default function Navbar() {
   const profile = useProfileStore((s) => s.profile)
   const setProfile = useProfileStore((s) => s.setProfile)
 
+  const mainNavLinks = getMainNavLinks(t)
+
   const toggleLang = () => {
-    i18n.changeLanguage(i18n.language === 'en' ? 'hi' : 'en')
+    const current = i18n.resolvedLanguage || i18n.language || 'en'
+    const next = current.startsWith('hi') ? 'en' : 'hi'
+    i18n.changeLanguage(next)
+    localStorage.setItem('i18nextLng', next)
   }
 
   const handleLogout = () => {
@@ -139,11 +143,11 @@ export default function Navbar() {
             {/* Language Switcher */}
             <button
               onClick={toggleLang}
-              className="text-[11px] font-bold px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-[#0B4F9C] hover:text-[#0B4F9C] dark:hover:text-sky-400 transition-all shadow-2xs"
+              className="text-[11px] font-bold px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-[#0B4F9C] hover:text-[#0B4F9C] dark:hover:text-sky-400 transition-all shadow-2xs cursor-pointer"
               aria-label="Toggle language"
               title="Switch English / हिन्दी"
             >
-              {i18n.language === 'en' ? 'हिन्दी' : 'EN'}
+              {(i18n.resolvedLanguage || i18n.language || 'en').startsWith('hi') ? 'English' : 'हिन्दी'}
             </button>
 
             {/* Theme Toggle */}
@@ -156,7 +160,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center gap-1.5 pl-1.5 pr-2 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#0B4F9C] transition-all shadow-2xs"
+                  className="flex items-center gap-1.5 pl-1.5 pr-2 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#0B4F9C] transition-all shadow-2xs cursor-pointer"
                 >
                   <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-[#0B4F9C] to-[#F26B1D] text-white flex items-center justify-center font-bold text-[9px]">
                     {profile.name ? profile.name.slice(0, 2).toUpperCase() : <User size={11} />}
@@ -191,7 +195,7 @@ export default function Navbar() {
                           setProfileDropdownOpen(false)
                           navigate('/company-match')
                         }}
-                        className="w-full px-2.5 py-1.5 text-left text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg flex items-center gap-2"
+                        className="w-full px-2.5 py-1.5 text-left text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg flex items-center gap-2 cursor-pointer"
                       >
                         <Building2 size={13} className="text-[#0B4F9C]" />
                         <span>Company Career Matcher</span>
@@ -201,46 +205,22 @@ export default function Navbar() {
                         type="button"
                         onClick={() => {
                           setProfileDropdownOpen(false)
-                          navigate('/dashboard')
-                        }}
-                        className="w-full px-2.5 py-1.5 text-left text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg flex items-center gap-2"
-                      >
-                        <LayoutDashboard size={13} className="text-[#0B4F9C]" />
-                        <span>Go to Dashboard</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileDropdownOpen(false)
-                          setAuthOpen(true)
-                        }}
-                        className="w-full px-2.5 py-1.5 text-left text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg flex items-center gap-2"
-                      >
-                        <Users size={13} className="text-[#F26B1D]" />
-                        <span>Switch Persona / Login</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileDropdownOpen(false)
                           navigate('/onboarding')
                         }}
-                        className="w-full px-2.5 py-1.5 text-left text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg flex items-center gap-2"
+                        className="w-full px-2.5 py-1.5 text-left text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg flex items-center gap-2 cursor-pointer"
                       >
                         <PlusCircle size={13} className="text-emerald-500" />
-                        <span>New Profile Audit</span>
+                        <span>{t('dashboard.audit_new', 'New Profile Audit')}</span>
                       </button>
 
                       <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
                         <button
                           type="button"
                           onClick={handleLogout}
-                          className="w-full px-2.5 py-1.5 text-left text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg flex items-center gap-2"
+                          className="w-full px-2.5 py-1.5 text-left text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg flex items-center gap-2 cursor-pointer"
                         >
                           <LogOut size={13} />
-                          <span>Sign Out</span>
+                          <span>{t('common.logout', 'Sign Out')}</span>
                         </button>
                       </div>
                     </motion.div>

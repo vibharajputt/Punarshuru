@@ -25,6 +25,14 @@ export default function LiveProfileCard({
   const skillsRaw = (profileDraft.skills_raw as string[]) || []
   const skillsCount = skillsRaw.length
 
+  const isFilled = Boolean(
+    profileDraft.current_role &&
+    profileDraft.target_role &&
+    profileDraft.city &&
+    skillsCount >= 3
+  )
+  const isConfirmEnabled = canConfirm || isFilled
+
   return (
     <div className="lg:col-span-5 flex flex-col h-full rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs p-5 overflow-hidden justify-between">
       <div className="space-y-4 overflow-y-auto pr-1 flex-1">
@@ -104,9 +112,9 @@ export default function LiveProfileCard({
           type="button"
           id="confirm-profile-btn"
           onClick={onConfirm}
-          disabled={!canConfirm || isConfirming}
+          disabled={!isConfirmEnabled || isConfirming}
           className={`w-full py-3.5 px-4 rounded-2xl font-extrabold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 ${
-            canConfirm && !isConfirming
+            isConfirmEnabled && !isConfirming
               ? 'bg-[#0B4F9C] text-white hover:bg-[#083b75] hover:scale-[1.01] active:scale-[0.99] cursor-pointer'
               : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60'
           }`}
@@ -125,7 +133,7 @@ export default function LiveProfileCard({
           )}
         </button>
         <p className="text-[10px] text-slate-400 text-center">
-          {canConfirm
+          {isConfirmEnabled
             ? 'Ready to generate your Career Risk Score.'
             : 'Fill required slots: Role, Target, City & ≥3 Skills to confirm.'}
         </p>

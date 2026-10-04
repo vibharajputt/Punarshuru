@@ -87,7 +87,7 @@ async def _save_state(user: User, db: AsyncSession, state: dict) -> None:
     await db.commit()
 
 
-async def _upsert_profile(user: User, db: AsyncSession, draft: dict) -> None:
+async def _upsert_profile(user: User, db: AsyncSession, draft: dict) -> Profile:
     """Create or update the Profile row from confirmed draft data."""
     result = await db.execute(select(Profile).where(Profile.user_id == user.id))
     profile = result.scalar_one_or_none()
@@ -122,7 +122,14 @@ async def _upsert_profile(user: User, db: AsyncSession, draft: dict) -> None:
         profile.career_gap_years = float(draft.get("career_gap_years") or profile.career_gap_years)
         profile.skills_raw = draft.get("skills_raw") or profile.skills_raw
 
+    from app.services.disruption import calculate_disruption_score
+    disruption_res = calculate_disruption_score(profile)
+    profile.disruption_score = disruption_res.score
+    profile.disruption_breakdown = disruption_res.breakdown.model_dump()
+
     await db.commit()
+    await db.refresh(profile)
+    return profile
 
 
 # ── GET /session ──────────────────────────────────────────────────────────────
@@ -140,6 +147,7 @@ async def get_session(
         profile_draft=out["profile_draft"],
         current_slot=state.get("pending_slot") or "",
         segment=out["segment"],
+        can_confirm=out["can_confirm"],
         done=out["done"],
         history=[],
     )
@@ -178,6 +186,7 @@ async def chat_onboarding(
 
     state = await _load_state(current_user, db)
 
+    saved_profile: Profile | None = None
     if req.resume_text:
         parsed = await parse_resume_text(req.resume_text)
         state = apply_resume(state, parsed.model_dump())
@@ -186,13 +195,16 @@ async def chat_onboarding(
         state = engine_confirm(state)
         if is_complete(state):
             out = build_response(state)
-            await _upsert_profile(current_user, db, out["profile_draft"])
+            saved_profile = await _upsert_profile(current_user, db, out["profile_draft"])
 
     else:
         state = handle_message(state, req.message or "")
 
     await _save_state(current_user, db, state)
     out = build_response(state)
+    if saved_profile is not None:
+        out["profile_draft"]["id"] = saved_profile.id
+        out["profile_draft"]["disruption_score"] = saved_profile.disruption_score
 
     return OnboardingChatResponse(
         reply=out["reply"],
