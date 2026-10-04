@@ -32,25 +32,28 @@ interface NavLinkItem {
 
 const mainNavLinks: NavLinkItem[] = [
   {
-    to: '/company-match',
-    label: 'Company Match',
-    icon: Building2,
-    badge: 'Guide',
-    isPrimary: true,
-  },
-  {
-    to: '/dashboard',
-    label: 'Dashboard',
+    to: '/home',
+    label: 'Home',
     icon: LayoutDashboard,
   },
   {
-    to: '/market',
-    label: 'Market Radar',
+    to: '/skills',
+    label: 'My Skills',
+    icon: Sparkles,
+  },
+  {
+    to: '/path',
+    label: 'My Path',
     icon: TrendingUp,
   },
   {
+    to: '/jobs',
+    label: 'Jobs & Salary',
+    icon: Building2,
+  },
+  {
     to: '/passport',
-    label: 'Passport',
+    label: 'Skill Passport',
     icon: Award,
   },
 ]
@@ -246,14 +249,14 @@ export default function Navbar() {
               </div>
             ) : (
               /* Sign In Button */
-              <button
-                type="button"
-                onClick={() => setAuthOpen(true)}
+              <Link
+                to="/login"
+                id="navbar-signin-btn"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-[#0B4F9C] hover:text-[#0B4F9C] dark:hover:text-sky-400 text-xs font-bold transition-all shadow-2xs"
               >
                 <LogIn size={13} className="text-[#0B4F9C]" />
                 <span>Sign In</span>
-              </button>
+              </Link>
             )}
 
             {/* Mobile Menu Toggle Button */}

@@ -1,18 +1,28 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import AppLayout from '@/components/layout/AppLayout'
-import LandingPage from '@/pages/LandingPage'
-import DashboardPage from '@/pages/DashboardPage'
-import OnboardingPage from '@/pages/OnboardingPage'
-import SkillGapPage from '@/pages/SkillGapPage'
-import MarketPage from '@/pages/MarketPage'
-import PathwaysPage from '@/pages/PathwaysPage'
-import CompanyTargetMatchPage from '@/pages/CompanyTargetMatchPage'
-import CompensationPage from '@/pages/CompensationPage'
-import PassportPage from '@/pages/PassportPage'
-import PublicPassportPage from '@/pages/PublicPassportPage'
-import FloatingDemoSwitcher from '@/components/common/FloatingDemoSwitcher'
 import '@/i18n'
+
+// Layout
+import AppLayout from '@/components/layout/AppLayout'
+
+// Auth guard
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
+
+// Public pages
+import LandingPage from '@/pages/LandingPage'
+import LoginPage from '@/pages/LoginPage'
+import SignupPage from '@/pages/SignupPage'
+
+// App pages (ux.md nav — 5 items)
+import HomePage from '@/pages/HomePage'          // /home
+import SkillsPage from '@/pages/SkillsPage'      // /skills
+import PathPage from '@/pages/PathPage'          // /path
+import JobsPage from '@/pages/JobsPage'          // /jobs
+import PassportPage from '@/pages/PassportPage'  // /passport
+
+// Other app pages
+import OnboardingPage from '@/pages/OnboardingPage'
+import PublicPassportPage from '@/pages/PublicPassportPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,29 +38,39 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          {/* Landing has no persistent nav */}
-          <Route
-            path="/"
-            element={
-              <>
-                <LandingPage />
-                <FloatingDemoSwitcher />
-              </>
-            }
-          />
+          {/* ── Public routes ──────────────────────────────────────── */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
 
-          {/* App routes share layout */}
-          <Route element={<AppLayout />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/company-match" element={<CompanyTargetMatchPage />} />
-            <Route path="/skill-gap" element={<SkillGapPage />} />
-            <Route path="/market" element={<MarketPage />} />
-            <Route path="/pathways" element={<PathwaysPage />} />
-            <Route path="/compensation" element={<CompensationPage />} />
-            <Route path="/passport" element={<PassportPage />} />
-            <Route path="/p/:slug" element={<PublicPassportPage />} />
+          {/* ── Public passport share link ─────────────────────────── */}
+          <Route path="/p/:slug" element={<PublicPassportPage />} />
+
+          {/* ── Protected app routes (require login) ───────────────── */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+              {/* Primary nav routes (ux.md) */}
+              <Route path="/home"     element={<HomePage />} />
+              <Route path="/skills"   element={<SkillsPage />} />
+              <Route path="/path"     element={<PathPage />} />
+              <Route path="/jobs"     element={<JobsPage />} />
+              <Route path="/passport" element={<PassportPage />} />
+
+              {/* Supporting routes */}
+              <Route path="/onboarding" element={<OnboardingPage />} />
+            </Route>
           </Route>
+
+          {/* ── Legacy route redirects ─────────────────────────────── */}
+          <Route path="/dashboard"    element={<Navigate to="/home"    replace />} />
+          <Route path="/skill-gap"    element={<Navigate to="/skills"  replace />} />
+          <Route path="/pathways"     element={<Navigate to="/path"    replace />} />
+          <Route path="/market"       element={<Navigate to="/jobs"    replace />} />
+          <Route path="/compensation" element={<Navigate to="/jobs"    replace />} />
+          <Route path="/company-match" element={<Navigate to="/jobs"   replace />} />
+
+          {/* ── Catch-all ──────────────────────────────────────────── */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

@@ -50,10 +50,10 @@ export default function SkillCategorizationCards({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 font-extrabold text-sm text-amber-800 dark:text-amber-300">
             <HelpCircle size={18} className="text-amber-600" />
-            <span>Partial / Adjacent</span>
+            <span>Learning Needed</span>
           </div>
           <span className="px-2.5 py-0.5 text-xs font-bold rounded-full bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-300">
-            {partialSkills.length} Bridges
+            {partialSkills.length} Needed
           </span>
         </div>
 

@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import {
   Send,
-  Upload,
   Mic,
   MicOff,
   Sparkles,
@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   ArrowRight,
   RefreshCw,
-  Sliders,
   FileText,
   AlertCircle,
   Volume2,
@@ -20,6 +19,7 @@ import {
 } from 'lucide-react'
 import { onboardingApi, profileApi, voiceApi } from '@/lib/api'
 import { useProfileStore } from '@/store/profileStore'
+import { useAuthStore } from '@/store/authStore'
 import { useTranslation } from 'react-i18next'
 import type { UserType, Profile } from '@/types'
 
@@ -36,24 +36,32 @@ interface ConversationalOnboardingProps {
 }
 
 export default function ConversationalOnboarding({ onSwitchToForm }: ConversationalOnboardingProps) {
-  const { t, i18n } = useTranslation()
+  const { i18n } = useTranslation()
   const navigate = useNavigate()
+  const authUser = useAuthStore((s) => s.user)
   const setProfile = useProfileStore((s) => s.setProfile)
+  const clearProfile = useProfileStore((s) => s.clearProfile)
+
+  // Ensure store starts empty for new onboarding per ux.md
+  useEffect(() => {
+    clearProfile()
+  }, [clearProfile])
 
   const [sessionId] = useState<string>(() => `sess-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`)
   const [voiceLang, setVoiceLang] = useState<'hi-IN' | 'en-IN'>('en-IN')
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null)
 
+  // Initial messages
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'init-1',
       sender: 'assistant',
-      text: 'Namaste! I am your AI Career Intelligence Agent. You can upload a resume for instant calibration, or tell me about your background and target role.',
+      text: 'Namaste! I am your AI Career Intelligence Agent. Let’s build your profile from scratch. Upload your resume for automatic calibration, or tell me about your background and target role.',
       quickReplies: [
-        'Ex-Java Developer (4yr Gap)',
-        'Swiggy Delivery Partner',
-        'Manual QA (Laid Off)',
-        'Customer Support (3yr Stagnant)',
+        'Ex-Java Developer (Career Break)',
+        'Swiggy / Zomato Delivery Partner',
+        'Manual QA Tester (Laid Off)',
+        'Customer Support (Seeking Growth)',
         'Final Year BTech Student',
       ],
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -69,16 +77,19 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [isDone, setIsDone] = useState(false)
   const [isFinalizing, setIsFinalizing] = useState(false)
+  const [showConfirmScreen, setShowConfirmScreen] = useState(false)
 
+  // Starts completely EMPTY per ux.md Onboarding spec
   const [profileDraft, setProfileDraft] = useState<Partial<Profile>>({
-    name: '',
-    email: '',
+    name: authUser?.name || '',
+    email: authUser?.email || '',
     user_type: 'returner',
-    city: 'Bengaluru',
+    city: '',
     current_role: '',
-    target_role: 'GenAI Engineer',
+    target_role: '',
     experience_years: 0,
     career_gap_years: 0,
+    current_salary_lpa: null,
     skills_raw: [],
   })
 
@@ -133,8 +144,7 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
         setInputMessage(currentTranscript.trim())
       }
 
-      recognition.onerror = (err: any) => {
-        console.warn('Web Speech API error, switching to audio recorder fallback:', err)
+      recognition.onerror = () => {
         setIsListening(false)
       }
 
@@ -163,59 +173,49 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
 
       recorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
-        stream.getTracks().forEach((t) => t.stop())
-        setIsRecordingFallback(false)
-        if (audioBlob.size > 0) {
-          setIsTranscribing(true)
-          try {
-            const langCode = voiceLang.split('-')[0]
-            const res = await voiceApi.transcribe(audioBlob, langCode)
-            if (res.text) {
-              setInputMessage((prev) => (prev ? `${prev} ${res.text}` : res.text))
-            }
-          } catch (e) {
-            console.error('Groq Whisper transcription failed:', e)
-          } finally {
-            setIsTranscribing(false)
+        setIsTranscribing(true)
+        try {
+          const resp = await voiceApi.transcribe(audioBlob, voiceLang === 'hi-IN' ? 'hi' : 'en')
+          if (resp.text) {
+            setInputMessage((prev) => (prev ? `${prev} ${resp.text}` : resp.text))
           }
+        } catch (err) {
+          console.warn('Fallback Whisper error:', err)
+        } finally {
+          setIsTranscribing(false)
+          setIsRecordingFallback(false)
         }
       }
 
-      mediaRecorderRef.current = recorder
       recorder.start()
+      mediaRecorderRef.current = recorder
       setIsRecordingFallback(true)
-    } catch (err) {
-      console.error('Microphone access denied:', err)
-      alert('Microphone access denied or not available. Please type your message.')
+    } catch {
+      setIsRecordingFallback(false)
     }
   }
 
   const stopFallbackRecording = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop()
+      mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop())
     }
   }
 
   const toggleVoice = () => {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-
-    if (SpeechRecognition && recognitionRef.current) {
+    if (recognitionRef.current) {
       if (isListening) {
         recognitionRef.current.stop()
         setIsListening(false)
       } else {
         try {
-          recognitionRef.current.lang = voiceLang
           recognitionRef.current.start()
           setIsListening(true)
         } catch {
-          // If start fails, fallback to MediaRecorder
           startFallbackRecording()
         }
       }
     } else {
-      // Fallback path
       if (isRecordingFallback) {
         stopFallbackRecording()
       } else {
@@ -224,12 +224,9 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
     }
   }
 
-  // Text-to-Speech using window.speechSynthesis
+  // Text-To-Speech
   const handleToggleSpeak = (msgId: string, text: string) => {
-    if (!('speechSynthesis' in window)) {
-      alert('Speech synthesis is not supported in this browser.')
-      return
-    }
+    if (!('speechSynthesis' in window)) return
 
     if (speakingMsgId === msgId) {
       window.speechSynthesis.cancel()
@@ -238,13 +235,11 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
     }
 
     window.speechSynthesis.cancel()
-    const cleanText = text.replace(/[*_#`]/g, '')
+    const cleanText = text.replace(/[*_#`~]/g, '')
     const utterance = new SpeechSynthesisUtterance(cleanText)
-
     const isHindiText = /[\u0900-\u097F]/.test(text)
     utterance.lang = isHindiText ? 'hi-IN' : voiceLang
 
-    // Select voice if available
     const voices = window.speechSynthesis.getVoices()
     const matchVoice = voices.find((v) =>
       isHindiText ? v.lang.startsWith('hi') : v.lang.startsWith(voiceLang.substring(0, 2))
@@ -264,7 +259,6 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
     const trimmed = textToSend.trim()
     if (!trimmed || isTyping) return
 
-    // Stop listening if active
     if (isListening && recognitionRef.current) {
       recognitionRef.current.stop()
       setIsListening(false)
@@ -315,8 +309,8 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
       const botFallback: Message = {
         id: `bot-fallback-${Date.now()}`,
         sender: 'assistant',
-        text: "Got it! Let's record these details. You can review your profile summary on the right.",
-        quickReplies: ['Confirm & Save Profile', 'Edit Target Role'],
+        text: "Got it! Your answers are recorded in your live profile card on the right. When ready, click 'Confirm Profile' to review and finish.",
+        quickReplies: ['Confirm Profile', 'Add More Skills'],
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       }
       setMessages((prev) => [...prev, botFallback])
@@ -341,17 +335,16 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
 
       setProfileDraft((prev) => ({
         ...prev,
-        name: parsed.name || prev.name || 'Candidate',
-        email: parsed.email || prev.email,
-        city: parsed.city || prev.city || 'Bengaluru',
-        current_role: parsed.current_role || prev.current_role || 'Professional',
-        target_role: parsed.target_role || prev.target_role || 'GenAI Engineer',
-        experience_years: parsed.experience_years || prev.experience_years || 0,
-        career_gap_years: parsed.career_gap_years || prev.career_gap_years || 0,
+        name: parsed.name || prev.name || '',
+        email: parsed.email || prev.email || authUser?.email || '',
+        city: parsed.city || prev.city || '',
+        current_role: parsed.current_role || prev.current_role || '',
+        target_role: parsed.target_role || prev.target_role || '',
+        experience_years: parsed.experience_years ?? prev.experience_years ?? 0,
+        career_gap_years: parsed.career_gap_years ?? prev.career_gap_years ?? 0,
         skills_raw: parsed.skills && parsed.skills.length > 0 ? parsed.skills : prev.skills_raw,
       }))
 
-      // Send to onboarding chat
       const res = await onboardingApi.chat({
         session_id: sessionId,
         message: `Uploaded resume file: ${file.name}`,
@@ -371,7 +364,7 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
         {
           id: `user-up-${Date.now()}`,
           sender: 'user',
-          text: `📄 Uploaded ${file.name} (Auto-parsed)`,
+          text: `📄 Uploaded ${file.name} (Auto-calibrated)`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
         botMsg,
@@ -388,32 +381,40 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
     }
   }
 
-  const handleFinalizeProfile = async () => {
+  // Confirm screen & save to /home
+  const handleConfirmAndFinish = async () => {
     try {
       setIsFinalizing(true)
+      const candidateName = profileDraft.name?.trim() || authUser?.name || 'Candidate'
+      const candidateEmail =
+        profileDraft.email?.trim() ||
+        authUser?.email ||
+        `${candidateName.toLowerCase().replace(/\s+/g, '')}@user.punarshuru.in`
+
       const created = await profileApi.create({
-        name: profileDraft.name || 'Candidate',
-        email: profileDraft.email || `${(profileDraft.name || 'user').toLowerCase().replace(/\s+/g, '')}@demo.punarshuru.in`,
+        name: candidateName,
+        email: candidateEmail,
         user_type: (profileDraft.user_type || 'returner') as UserType,
-        city: profileDraft.city || 'Bengaluru',
-        current_role: profileDraft.current_role || 'Professional',
-        target_role: profileDraft.target_role || 'Software Engineer',
+        city: profileDraft.city?.trim() || 'Bengaluru',
+        current_role: profileDraft.current_role?.trim() || 'Professional',
+        target_role: profileDraft.target_role?.trim() || 'Software Engineer',
         experience_years: Number(profileDraft.experience_years || 0),
         career_gap_years: Number(profileDraft.career_gap_years || 0),
         current_salary_lpa: profileDraft.current_salary_lpa ? Number(profileDraft.current_salary_lpa) : null,
-        skills_raw: profileDraft.skills_raw && profileDraft.skills_raw.length > 0
-          ? profileDraft.skills_raw
-          : ['Python', 'SQL', 'Git'],
+        skills_raw:
+          profileDraft.skills_raw && profileDraft.skills_raw.length > 0
+            ? profileDraft.skills_raw
+            : ['Problem Solving', 'Communication'],
         skills_taxonomy_ids: [],
       })
 
       setProfile(created)
-      navigate('/dashboard')
+      navigate('/home')
     } catch {
-      // Local fallback
+      // Local fallback in case backend is slow
       const fallback: Profile = {
         id: `user-${Date.now()}`,
-        name: profileDraft.name || 'Candidate',
+        name: profileDraft.name || authUser?.name || 'Candidate',
         user_type: (profileDraft.user_type || 'returner') as UserType,
         city: profileDraft.city || 'Bengaluru',
         current_role: profileDraft.current_role || 'Professional',
@@ -421,14 +422,14 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
         experience_years: Number(profileDraft.experience_years || 0),
         career_gap_years: Number(profileDraft.career_gap_years || 0),
         current_salary_lpa: profileDraft.current_salary_lpa || null,
-        skills_raw: profileDraft.skills_raw || ['Java', 'SQL'],
+        skills_raw: profileDraft.skills_raw || ['Problem Solving', 'Communication'],
         skills_taxonomy_ids: [],
-        disruption_score: 72,
+        disruption_score: 65,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }
       setProfile(fallback)
-      navigate('/dashboard')
+      navigate('/home')
     } finally {
       setIsFinalizing(false)
     }
@@ -444,26 +445,153 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
 
   const isMicActive = isListening || isRecordingFallback
 
+  // ── CONFIRM SCREEN (ux.md: Ends with confirm screen → /home) ──────────────
+  if (showConfirmScreen) {
+    return (
+      <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xl p-6 sm:p-8 space-y-6"
+        >
+          {/* Header */}
+          <div className="text-center space-y-3">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-md">
+              <CheckCircle2 size={30} />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+              Your Profile is Ready!
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto">
+              We've calibrated your background and mapped your skills. Ready to see your Career Risk Score and next move?
+            </p>
+          </div>
+
+          {/* Profile Summary Card */}
+          <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-200/60 dark:border-slate-800 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-3">
+              <div>
+                <span className="text-sm font-bold text-slate-900 dark:text-white block">
+                  {profileDraft.name || 'Candidate'}
+                </span>
+                <span className="text-xs text-slate-400">
+                  {profileDraft.city || 'India'}
+                </span>
+              </div>
+              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${archetypeBadge}`}>
+                {profileDraft.user_type?.toUpperCase()}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div>
+                <span className="text-[10px] font-medium text-slate-400 block">Current Role</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">
+                  {profileDraft.current_role || 'Not specified'}
+                </span>
+              </div>
+              <div>
+                <span className="text-[10px] font-medium text-slate-400 block">Target Role</span>
+                <span className="font-bold text-[#0B4F9C] dark:text-sky-400">
+                  {profileDraft.target_role || 'Software Engineer'}
+                </span>
+              </div>
+              <div>
+                <span className="text-[10px] font-medium text-slate-400 block">Experience</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">
+                  {profileDraft.experience_years || 0} years
+                </span>
+              </div>
+              <div>
+                <span className="text-[10px] font-medium text-slate-400 block">Career Gap</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-300">
+                  {profileDraft.career_gap_years ? `${profileDraft.career_gap_years} years` : 'None'}
+                </span>
+              </div>
+            </div>
+
+            {/* Calibrated Skills */}
+            <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 space-y-1.5">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                Calibrated Skills ({profileDraft.skills_raw?.length || 0})
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {profileDraft.skills_raw && profileDraft.skills_raw.length > 0 ? (
+                  profileDraft.skills_raw.map((s, i) => (
+                    <span
+                      key={i}
+                      className="px-2 py-0.5 rounded-lg bg-sky-100/70 dark:bg-slate-700 text-[#0B4F9C] dark:text-sky-300 font-bold text-[11px]"
+                    >
+                      {s}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-xs text-slate-400 italic">Core skills calibrated</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Primary Action Button (ux.md: One primary button per screen) */}
+          <div className="space-y-3 pt-2">
+            <button
+              type="button"
+              id="confirm-go-home-btn"
+              onClick={handleConfirmAndFinish}
+              disabled={isFinalizing}
+              className="w-full py-4 px-6 rounded-2xl bg-[#0B4F9C] text-white font-extrabold text-sm hover:bg-[#083b75] transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99]"
+            >
+              {isFinalizing ? (
+                <>
+                  <RefreshCw size={16} className="animate-spin" />
+                  <span>Finalizing Profile...</span>
+                </>
+              ) : (
+                <>
+                  <span>Go to Home</span>
+                  <ArrowRight size={17} />
+                </>
+              )}
+            </button>
+
+            {/* Small text link to go back to chat */}
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => setShowConfirmScreen(false)}
+                className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 underline transition-colors"
+              >
+                ← Back to chat to make changes
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    )
+  }
+
+  // ── FULL-SCREEN CHAT + LIVE PROFILE CARD ──────────────────────────────────
   return (
-    <div className="space-y-6">
-      {/* Top Banner Switcher & Language Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-2xl bg-gradient-to-br from-[#0B4F9C] to-indigo-600 text-white shadow-sm">
-            <Bot size={18} />
+    <div className="h-[calc(100vh-6.5rem)] min-h-[600px] flex flex-col space-y-3">
+      {/* Top Header Row (Minimal, uncluttered) */}
+      <div className="flex items-center justify-between px-2 shrink-0">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-[#0B4F9C] to-indigo-600 text-white flex items-center justify-center shadow-xs">
+            <Bot size={15} />
           </div>
           <div>
             <span className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider block">
-              {t('onboarding.chat_agent_title')}
+              AI Career Intelligence Agent
             </span>
-            <span className="text-[11px] text-slate-500">
-              {t('onboarding.chat_agent_subtitle')}
+            <span className="text-[10px] text-slate-400">
+              Conversational onboarding & calibration
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Language Toggle Button */}
+        <div className="flex items-center gap-3">
+          {/* Language Toggle */}
           <button
             type="button"
             onClick={() => {
@@ -471,66 +599,42 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
               setVoiceLang(nextLang)
               i18n.changeLanguage(nextLang === 'hi-IN' ? 'hi' : 'en')
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-sky-200 dark:border-slate-700 bg-sky-50 dark:bg-slate-800 text-xs font-bold text-[#0B4F9C] dark:text-sky-300 hover:bg-sky-100 transition-all shadow-2xs"
-            title="Switch Speech Recognition & Synthesis Language"
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 hover:border-[#0B4F9C] transition-all"
+            title="Switch Language"
           >
-            <Languages size={13} />
-            <span>{voiceLang === 'hi-IN' ? '🇮🇳 हिन्दी (hi-IN)' : '🇬🇧 English (en-IN)'}</span>
+            <Languages size={12} />
+            <span>{voiceLang === 'hi-IN' ? 'हिन्दी' : 'EN'}</span>
           </button>
 
+          {/* Small text link replacing clutter (ux.md) */}
           <button
             type="button"
             onClick={onSwitchToForm}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 hover:border-[#0B4F9C] hover:text-[#0B4F9C] transition-all shadow-2xs"
+            className="text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 underline transition-colors"
           >
-            <Sliders size={13} />
-            <span>{t('onboarding.use_form_instead')}</span>
+            Use form instead
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {/* Main Grid: Full-screen chat (7 cols) + Live Profile Card (5 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 min-h-0">
         {/* Chat Thread Container (Left 7 Cols) */}
-        <div className="lg:col-span-7 flex flex-col h-[650px] rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
-          {/* Header */}
-          <div className="px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-850/50">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-              </span>
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                Punarshuru AI Talent Assistant
-              </span>
-            </div>
+        <div className="lg:col-span-7 flex flex-col h-full rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
+          {/* Header & Quick Resume Drop Zone (Sole place for resume upload in app) */}
+          <div className="p-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/50 shrink-0">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  handleFileUpload(e.target.files[0])
+                }
+              }}
+              accept=".pdf,.docx,.txt"
+              className="hidden"
+            />
 
-            <div className="flex items-center gap-2">
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={(e) => {
-                  if (e.target.files && e.target.files.length > 0) {
-                    handleFileUpload(e.target.files[0])
-                  }
-                }}
-                accept=".pdf,.docx,.txt"
-                className="hidden"
-              />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-                className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold rounded-lg bg-sky-50 dark:bg-slate-800 text-[#0B4F9C] dark:text-sky-400 hover:bg-sky-100 transition-all border border-sky-100 dark:border-slate-700"
-              >
-                {isUploading ? <RefreshCw size={11} className="animate-spin" /> : <Upload size={11} />}
-                <span>{isUploading ? t('onboarding.parsing', 'Parsing...') : t('onboarding.upload_resume')}</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Messages Scroll Area */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
-            {/* Quick Resume Drop Zone Banner */}
             <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
@@ -540,31 +644,34 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                 }
               }}
               onClick={() => fileInputRef.current?.click()}
-              className="p-3.5 rounded-2xl border-2 border-dashed border-sky-200 dark:border-slate-700 bg-sky-50/40 dark:bg-slate-800/40 hover:bg-sky-50 dark:hover:bg-slate-800/70 transition-all cursor-pointer flex items-center justify-between text-xs"
+              className="p-3 rounded-2xl border-2 border-dashed border-sky-200 dark:border-slate-700 bg-sky-50/40 dark:bg-slate-800/40 hover:bg-sky-50 dark:hover:bg-slate-800/70 transition-all cursor-pointer flex items-center justify-between text-xs"
             >
               <div className="flex items-center gap-2.5">
                 <FileText size={16} className="text-[#0B4F9C] shrink-0" />
                 <div>
                   <span className="font-bold text-slate-800 dark:text-slate-200 block">
-                    {t('onboarding.drag_drop')}
+                    Upload Resume for Instant Calibration
                   </span>
                   <span className="text-[10px] text-slate-400">
-                    {t('onboarding.drag_drop_sub')}
+                    PDF, DOCX, or TXT (Max 5MB)
                   </span>
                 </div>
               </div>
-              <span className="text-[11px] font-bold text-[#0B4F9C] dark:text-sky-400 underline">
-                {t('onboarding.upload_resume')}
+              <span className="text-[11px] font-bold text-[#0B4F9C] dark:text-sky-400 underline shrink-0">
+                {isUploading ? 'Parsing...' : 'Upload File'}
               </span>
             </div>
 
             {uploadError && (
-              <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 text-xs text-rose-700 dark:text-rose-300 flex items-center gap-2">
-                <AlertCircle size={14} className="shrink-0" />
+              <div className="mt-2 p-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 text-xs text-rose-700 dark:text-rose-300 flex items-center gap-1.5">
+                <AlertCircle size={13} className="shrink-0" />
                 <span>{uploadError}</span>
               </div>
             )}
+          </div>
 
+          {/* Messages Scroll Area */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -576,7 +683,7 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                   </div>
                 )}
 
-                <div className={`max-w-[82%] space-y-2`}>
+                <div className="max-w-[85%] space-y-2">
                   <div
                     className={`p-3.5 rounded-2xl text-xs leading-relaxed relative group ${
                       msg.sender === 'user'
@@ -594,16 +701,15 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                         {msg.timestamp}
                       </span>
 
-                      {/* Speaker Read-Aloud Button for Assistant Messages */}
                       {msg.sender === 'assistant' && (
                         <button
                           type="button"
                           onClick={() => handleToggleSpeak(msg.id, msg.text)}
-                          title={speakingMsgId === msg.id ? 'Stop reading' : 'Read aloud (SpeechSynthesis)'}
+                          title={speakingMsgId === msg.id ? 'Stop reading' : 'Read aloud'}
                           className={`p-1 rounded-md transition-all ${
                             speakingMsgId === msg.id
                               ? 'text-[#F26B1D] bg-orange-100 dark:bg-orange-950/50 animate-pulse'
-                              : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-700'
+                              : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                           }`}
                         >
                           {speakingMsgId === msg.id ? <VolumeX size={13} /> : <Volume2 size={13} />}
@@ -612,14 +718,20 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                     </div>
                   </div>
 
-                  {/* Quick-reply chips */}
+                  {/* Quick replies */}
                   {msg.quickReplies && msg.quickReplies.length > 0 && !isDone && (
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       {msg.quickReplies.map((qr, idx) => (
                         <button
                           key={idx}
                           type="button"
-                          onClick={() => handleSendMessage(qr)}
+                          onClick={() => {
+                            if (qr === 'Confirm Profile' || qr === 'Confirm & Save Profile') {
+                              setShowConfirmScreen(true)
+                            } else {
+                              handleSendMessage(qr)
+                            }
+                          }}
                           disabled={isTyping}
                           className="px-2.5 py-1 text-[11px] font-bold rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-[#0B4F9C] hover:text-[#0B4F9C] dark:hover:text-sky-400 hover:bg-sky-50/50 transition-all shadow-2xs text-left"
                         >
@@ -638,7 +750,6 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
               </div>
             ))}
 
-            {/* Typing Indicator */}
             {isTyping && (
               <div className="flex gap-2.5 items-center text-slate-400 text-xs pl-9">
                 <div className="flex gap-1 items-center bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-xl">
@@ -646,16 +757,15 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                   <span className="w-1.5 h-1.5 bg-[#0B4F9C] rounded-full animate-bounce [animation-delay:0.2s]" />
                   <span className="w-1.5 h-1.5 bg-[#0B4F9C] rounded-full animate-bounce [animation-delay:0.4s]" />
                 </div>
-                <span className="text-[11px]">AI is analyzing & typing...</span>
+                <span className="text-[11px]">AI is calibrating...</span>
               </div>
             )}
 
-            {/* Transcribing Whisper Indicator */}
             {isTranscribing && (
               <div className="flex gap-2.5 items-center text-indigo-600 dark:text-indigo-400 text-xs pl-9">
                 <RefreshCw size={13} className="animate-spin" />
                 <span className="text-[11px] font-semibold">
-                  Transcribing voice with Groq Whisper ({voiceLang})...
+                  Transcribing voice with Whisper...
                 </span>
               </div>
             )}
@@ -663,15 +773,15 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Chat Input Bar with Web Speech & Groq Whisper Voice */}
-          <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+          {/* Chat Input Bar */}
+          <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
             {isMicActive && (
               <div className="mb-2 px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 text-xs text-rose-700 dark:text-rose-300 flex items-center justify-between animate-pulse">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
                   <span className="font-bold">
                     {isRecordingFallback
-                      ? 'Recording audio (Groq Whisper fallback)... Click mic to finish'
+                      ? 'Recording audio... Click mic to finish'
                       : `Listening live (${voiceLang})... Speak now`}
                   </span>
                 </div>
@@ -709,18 +819,14 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder={
-                  isMicActive
-                    ? 'Listening... speaking live into transcript'
-                    : 'Type or speak in English, हिन्दी, or Hinglish...'
-                }
-                disabled={isTyping || isDone}
+                placeholder="Type or speak in English, हिन्दी, or Hinglish..."
+                disabled={isTyping}
                 className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0B4F9C]/30 focus:border-[#0B4F9C]"
               />
 
               <button
                 type="submit"
-                disabled={!inputMessage.trim() || isTyping || isDone}
+                disabled={!inputMessage.trim() || isTyping}
                 className="p-2.5 rounded-xl bg-[#0B4F9C] hover:bg-[#083b75] text-white disabled:opacity-40 transition-all shadow-sm shrink-0"
               >
                 <Send size={16} />
@@ -729,14 +835,15 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
           </div>
         </div>
 
-        {/* Live Profile Card & Final Confirmation (Right 5 Cols) */}
-        <div className="lg:col-span-5 space-y-4">
-          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-5">
+        {/* Live Profile Card (Right 5 Cols) */}
+        <div className="lg:col-span-5 flex flex-col h-full rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs p-5 overflow-hidden justify-between">
+          <div className="space-y-4 overflow-y-auto pr-1 flex-1">
+            {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <Sparkles size={16} className="text-[#F26B1D]" />
                 <h3 className="text-sm font-black text-slate-900 dark:text-white">
-                  {t('onboarding.live_card_title')}
+                  Live Profile Card
                 </h3>
               </div>
               <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${archetypeBadge}`}>
@@ -744,11 +851,11 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
               </span>
             </div>
 
-            {/* Profile Fields Preview / Edit */}
+            {/* Editable Fields Preview */}
             <div className="space-y-3 text-xs">
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+              <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                  {t('onboarding.candidate_name')}
+                  Candidate Name
                 </span>
                 <input
                   type="text"
@@ -760,9 +867,9 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
               </div>
 
               <div className="grid grid-cols-2 gap-2">
-                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+                <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    {t('onboarding.current_role')}
+                    Current Role
                   </span>
                   <input
                     type="text"
@@ -773,9 +880,9 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                   />
                 </div>
 
-                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+                <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    {t('onboarding.target_role')}
+                    Target Role
                   </span>
                   <input
                     type="text"
@@ -788,22 +895,22 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
               </div>
 
               <div className="grid grid-cols-3 gap-2">
-                <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+                <div className="p-2 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-0.5">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    {t('onboarding.city')}
+                    City
                   </span>
                   <input
                     type="text"
                     value={profileDraft.city || ''}
                     onChange={(e) => setProfileDraft({ ...profileDraft, city: e.target.value })}
-                    placeholder="City"
+                    placeholder="e.g. Pune"
                     className="w-full font-bold text-slate-800 dark:text-slate-200 bg-transparent border-none p-0 focus:outline-none text-xs"
                   />
                 </div>
 
-                <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+                <div className="p-2 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-0.5">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    {t('onboarding.experience')}
+                    Exp (yrs)
                   </span>
                   <input
                     type="number"
@@ -813,9 +920,9 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                   />
                 </div>
 
-                <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
+                <div className="p-2 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-0.5">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                    {t('onboarding.career_gap')}
+                    Gap (yrs)
                   </span>
                   <input
                     type="number"
@@ -828,11 +935,11 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
               </div>
 
               {/* Skills Tags */}
-              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-2">
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1.5">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                  {t('onboarding.calibrated_skills')} ({profileDraft.skills_raw?.length || 0})
+                  Calibrated Skills ({profileDraft.skills_raw?.length || 0})
                 </span>
-                <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
+                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
                   {profileDraft.skills_raw && profileDraft.skills_raw.length > 0 ? (
                     profileDraft.skills_raw.map((s, i) => (
                       <span
@@ -844,39 +951,29 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                     ))
                   ) : (
                     <span className="text-[11px] text-slate-400 italic">
-                      {t('onboarding.skills_placeholder')}
+                      Skills will appear here as you chat or upload a resume...
                     </span>
                   )}
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Action Button */}
-            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
-              <button
-                type="button"
-                onClick={handleFinalizeProfile}
-                disabled={isFinalizing || !profileDraft.name}
-                className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-[#0B4F9C] to-[#F26B1D] text-white font-black text-xs sm:text-sm hover:opacity-95 transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                {isFinalizing ? (
-                  <>
-                    <RefreshCw size={15} className="animate-spin" />
-                    <span>{t('onboarding.analyzing_btn')}</span>
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 size={16} />
-                    <span>{t('onboarding.generate_audit_btn')}</span>
-                    <ArrowRight size={14} />
-                  </>
-                )}
-              </button>
-
-              <p className="text-[10px] text-slate-400 text-center">
-                {t('onboarding.audit_note')}
-              </p>
-            </div>
+          {/* Confirm Button leading to Confirm Screen */}
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 shrink-0 space-y-2">
+            <button
+              type="button"
+              id="confirm-profile-btn"
+              onClick={() => setShowConfirmScreen(true)}
+              className="w-full py-3.5 px-4 rounded-2xl bg-[#0B4F9C] text-white font-extrabold text-xs sm:text-sm hover:bg-[#083b75] transition-all shadow-md flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99]"
+            >
+              <CheckCircle2 size={16} />
+              <span>Confirm & Review Profile</span>
+              <ArrowRight size={14} />
+            </button>
+            <p className="text-[10px] text-slate-400 text-center">
+              All details can be updated anytime from your settings.
+            </p>
           </div>
         </div>
       </div>

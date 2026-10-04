@@ -56,7 +56,7 @@ export default function PathwayCard({
         <div className="flex items-center justify-between">
           <span className={`px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1.5 ${badgeBg}`}>
             <Icon size={13} />
-            <span>{pathway.type} Pathway</span>
+            <span>{pathway.type === 'Pivot' ? 'Switch' : pathway.type} Pathway</span>
           </span>
           <span className="text-xs font-bold text-slate-500">
             Difficulty: <span className="font-semibold text-slate-800 dark:text-slate-200">{pathway.difficulty}</span>
