@@ -8,11 +8,11 @@ const INIT_MSG: Message = {
   sender: 'assistant',
   text: 'Namaste! I am your AI Career Intelligence Agent. Let’s build your profile from scratch. Upload your resume or tell me about your background and target role.',
   quickReplies: [
-    'Ex-Java Developer (Career Break)',
-    'Swiggy / Zomato Delivery Partner',
-    'Manual QA Tester (Laid Off)',
-    'Customer Support (Seeking Growth)',
-    'Final Year BTech Student',
+    'Software Engineer',
+    'Operations Executive',
+    'Manual QA Tester',
+    'Customer Support',
+    'Final Year Student',
   ],
   timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
 }
@@ -29,7 +29,7 @@ export function useSessionRestore({ authUser }: UseSessionRestoreProps) {
   const [profileDraft, setProfileDraft] = useState<Partial<Profile>>({
     name: authUser?.name || '',
     email: authUser?.email || '',
-    user_type: 'returner',
+    user_type: undefined,
     city: '',
     current_role: '',
     target_role: '',

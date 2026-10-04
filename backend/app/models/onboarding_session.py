@@ -17,8 +17,8 @@ class OnboardingSession(Base):
     # Which slot the state machine is currently waiting on
     current_slot: Mapped[str] = mapped_column(String(64), default="current_role")
 
-    # Detected segment
-    segment: Mapped[str] = mapped_column(String(32), default="returner")
+    # Detected segment (no default "returner" - detecting until classified)
+    segment: Mapped[str] = mapped_column(String(32), default="detecting")
 
     # Whether the confirm action has been received
     done: Mapped[bool] = mapped_column(default=False)

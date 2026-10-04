@@ -18,8 +18,12 @@ export default function LiveProfileCard({
   isConfirming,
 }: LiveProfileCardProps) {
   const canConfirm = hasRequiredSlots(profileDraft)
-  const badgeClass =
-    ARCHETYPE_BADGES[profileDraft.user_type || 'returner'] || ARCHETYPE_BADGES.returner
+  const isClassified = !!profileDraft.user_type && profileDraft.user_type !== 'detecting'
+  const badgeClass = isClassified
+    ? (ARCHETYPE_BADGES[profileDraft.user_type!] || 'bg-slate-100 text-slate-700 border-slate-200')
+    : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800'
+
+  const skillsCount = profileDraft.skills_raw?.length || 0
 
   return (
     <div className="lg:col-span-5 flex flex-col h-full rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs p-5 overflow-hidden justify-between">
@@ -31,7 +35,7 @@ export default function LiveProfileCard({
             <h3 className="text-sm font-black text-slate-900 dark:text-white">Live Profile Card</h3>
           </div>
           <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${badgeClass}`}>
-            {profileDraft.user_type?.toUpperCase() || 'RETURNER'}
+            {isClassified ? profileDraft.user_type!.toUpperCase() : 'Detecting…'}
           </span>
         </div>
 
@@ -45,9 +49,12 @@ export default function LiveProfileCard({
         <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-100 dark:border-slate-800 space-y-1.5">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-              Calibrated Skills ({profileDraft.skills_raw?.length || 0}/3 min)
+              {skillsCount} {skillsCount === 1 ? 'skill' : 'skills'}
+              {skillsCount < 3 && (
+                <span className="ml-1 text-amber-500 font-normal normal-case">(add at least 3)</span>
+              )}
             </span>
-            {(profileDraft.skills_raw?.length || 0) >= 3 && (
+            {skillsCount >= 3 && (
               <span className="text-[10px] font-bold text-emerald-600">✓ Ready</span>
             )}
           </div>

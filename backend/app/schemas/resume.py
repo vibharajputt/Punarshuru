@@ -17,4 +17,5 @@ class ResumeParseResponse(BaseModel):
     skills: list[str] = Field(default_factory=list)
     education: str | None = None
     summary: str | None = None
+    resume_text: str | None = None
     confidence_score: float = Field(default=0.85)

@@ -43,8 +43,15 @@ export function useResumeUpload({
       const res = await onboardingApi.chat({
         session_id: sessionId,
         message: `Uploaded resume: ${file.name}`,
-        resume_text: parsed.summary || file.name,
+        resume_text: parsed.resume_text || parsed.summary || file.name,
       })
+      setProfileDraft((prev) => ({
+        ...prev,
+        ...res.profile_draft,
+        skills_raw: res.profile_draft.skills_raw?.length
+          ? res.profile_draft.skills_raw
+          : (parsed.skills?.length ? parsed.skills : prev.skills_raw),
+      }))
       setMessages((prev) => [
         ...prev,
         {

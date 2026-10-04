@@ -121,11 +121,11 @@ def _classify_segment(text: str, current_role: str, gap_years: float) -> str:
         return "gig"
     if re.search(r"\b(laid.?off|downsized|fired|retrench|let.?go)\b", t):
         return "laid_off"
-    if gap_years > 0.5 or re.search(r"\b(maternity|career.?gap|career.?break|sabbatical|return)\b", t):
+    if gap_years >= 0.5 or re.search(r"\b(maternity|career.?gap|career.?break|sabbatical)\b", t):
         return "returner"
     if re.search(r"\b(stagnant|support|customer.?care|bpo|no.?growth|call.?centre)\b", t):
         return "stagnant"
-    return "returner"
+    return "detecting"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -402,7 +402,7 @@ async def _load_session(db: AsyncSession, user_id: str) -> OnboardingSession:
             user_id=user_id,
             profile_draft={},
             current_slot="current_role",
-            segment="returner",
+            segment="detecting",
             done=False,
             history=[],
         )
@@ -651,7 +651,16 @@ async def handle_onboarding_chat(
     # ── 1. Confirm action (only code sets done) ───────────────────────────────
     if action == "confirm":
         if _all_required_filled(draft):
-            draft["user_type"] = row.segment
+            final_segment = row.segment
+            if final_segment in ("detecting", "", None):
+                if draft.get("career_gap_years", 0.0) >= 0.5:
+                    final_segment = "returner"
+                elif draft.get("experience_years", 0) <= 1:
+                    final_segment = "student"
+                else:
+                    final_segment = "stagnant"
+            draft["user_type"] = final_segment
+            row.segment = final_segment
             row.profile_draft = draft
             row.done = True
             row.current_slot = "done"
@@ -667,7 +676,7 @@ async def handle_onboarding_chat(
                 quick_replies=["Go to Home"],
                 profile_draft=draft,
                 missing_fields=[],
-                segment=row.segment,
+                segment=final_segment,
                 done=True,
             )
         else:
@@ -714,10 +723,12 @@ async def handle_onboarding_chat(
         if date_gap and not draft.get("career_gap_years"):
             draft["career_gap_years"] = date_gap
 
-        row.segment = _classify_segment(
+        new_segment = _classify_segment(
             resume_text, draft.get("current_role", ""), draft.get("career_gap_years", 0.0)
         )
-        draft["user_type"] = row.segment
+        if new_segment != "detecting" or row.segment in ("detecting", "", None):
+            row.segment = new_segment
+            draft["user_type"] = new_segment
 
         missing = _draft_missing(draft)
         next_slot = _next_required_slot(draft) or "career_gap"
@@ -730,7 +741,7 @@ async def handle_onboarding_chat(
             f"I've analysed your resume. Found {len(skill_names)} skills including {skill_preview}. "
         )
         if missing:
-            reply_text += f"Could you tell me your **{missing[0].replace('_', ' ')}**?"
+            reply_text += _slot_question(next_slot, "en")
         else:
             reply_text += "Everything looks good — check your profile card and confirm when ready."
 
@@ -771,12 +782,14 @@ async def handle_onboarding_chat(
     _apply_to_draft(draft, llm_ext, rule_ext)
 
     # Re-classify segment
-    row.segment = _classify_segment(
+    new_seg = _classify_segment(
         f"{message} {draft.get('current_role', '')}",
         draft.get("current_role", ""),
         draft.get("career_gap_years", 0.0),
     )
-    draft["user_type"] = row.segment
+    if new_seg != "detecting" or row.segment in ("detecting", "", None):
+        row.segment = new_seg
+        draft["user_type"] = new_seg
 
     # Determine next slot
     row.current_slot = _advance_slot(draft, row.current_slot, is_skip)

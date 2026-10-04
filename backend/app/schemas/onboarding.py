@@ -14,7 +14,7 @@ class OnboardingChatResponse(BaseModel):
     quick_replies: list[str] = Field(default_factory=list)
     profile_draft: dict = Field(default_factory=dict)
     missing_fields: list[str] = Field(default_factory=list)
-    segment: str = "returner"
+    segment: str = "detecting"
     done: bool = False
 
 
@@ -22,6 +22,6 @@ class OnboardingSessionResponse(BaseModel):
     user_id: str
     profile_draft: dict = Field(default_factory=dict)
     current_slot: str = "current_role"
-    segment: str = "returner"
+    segment: str = "detecting"
     done: bool = False
     history: list[dict] = Field(default_factory=list)

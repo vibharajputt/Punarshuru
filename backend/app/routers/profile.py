@@ -184,10 +184,21 @@ async def parse_resume(req: ResumeParseRequest) -> ResumeParseResponse:
 
 
 @router.post("/profile/upload-resume", response_model=ResumeParseResponse)
-async def upload_resume(file: UploadFile = File(...)) -> ResumeParseResponse:
+async def upload_resume(
+    file: UploadFile = File(...),
+    user: User | None = Depends(_resolve_user),
+) -> ResumeParseResponse:
     """
     Accept PDF/DOCX/TXT upload (max 5MB), extract text content, and parse resume.
+    Requires authentication.
     """
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required to upload resume",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     filename = file.filename or ""
     filename_lower = filename.lower()
 
@@ -262,4 +273,7 @@ async def upload_resume(file: UploadFile = File(...)) -> ResumeParseResponse:
             detail="Could not extract readable text from the uploaded document.",
         )
 
-    return await parse_resume_text(extracted_text)
+    parsed = await parse_resume_text(extracted_text)
+    parsed.resume_text = extracted_text
+    return parsed
+

@@ -1,4 +1,4 @@
-export type UserType = 'returner' | 'gig' | 'laid_off' | 'stagnant' | 'student'
+export type UserType = 'returner' | 'gig' | 'laid_off' | 'stagnant' | 'student' | 'detecting'
 
 export interface Profile {
   id: string
@@ -205,6 +205,7 @@ export interface ResumeParseResponse {
   skills?: string[]
   education?: string | null
   summary?: string | null
+  resume_text?: string | null
   confidence_score?: number
 }
 
