@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Sparkles, MapPin } from 'lucide-react'
 import { Navigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useProfileStore } from '@/store/profileStore'
 import { assessApi } from '@/lib/api'
 import CareerRiskCard from '@/components/home/CareerRiskCard'
@@ -9,6 +10,7 @@ import NextStepCard from '@/components/home/NextStepCard'
 import HomeShortcutCards from '@/components/home/HomeShortcutCards'
 
 export default function HomePage() {
+  const { t } = useTranslation()
   const profile = useProfileStore((s) => s.profile)
 
   // No profile in store → send to onboarding
@@ -36,6 +38,8 @@ export default function HomePage() {
   const missingSkills = gapData?.missing_skills || ['Python & Vector Embeddings', 'LangChain', 'RAG']
   const topMissing = missingSkills[0] || 'Python & Vector Embeddings'
 
+  const firstName = profile?.name ? profile.name.split(' ')[0] : 'Candidate'
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -47,10 +51,10 @@ export default function HomePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200/80 dark:border-slate-800">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-            Welcome, {profile?.name ? profile.name.split(' ')[0] : 'Candidate'} 👋
+            {t('dashboard.greeting', `Welcome, ${firstName} 👋`, { name: firstName })}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            Here is your AI career intelligence summary and priority next move.
+            {t('dashboard.summary_sub', 'Here is your AI career intelligence summary and priority next move.')}
           </p>
         </div>
 

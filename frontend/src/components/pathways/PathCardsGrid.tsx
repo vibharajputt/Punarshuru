@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import PathwayCard from '@/components/pathways/PathwayCard'
 import type { PathwayOption } from '@/types'
 
@@ -12,14 +13,16 @@ export default function PathCardsGrid({
   selectedIndex,
   onSelectIndex,
 }: PathCardsGridProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-          Choose Your Transition Strategy
+          {t('pathways.choose_strategy', 'Choose Your Transition Strategy')}
         </h2>
         <span className="text-xs text-slate-400">
-          Click any path to load its step-by-step roadmap
+          {t('pathways.click_path_desc', 'Click any path to load its step-by-step roadmap')}
         </span>
       </div>
 

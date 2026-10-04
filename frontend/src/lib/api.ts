@@ -142,6 +142,7 @@ export const profileApi = {
       body: JSON.stringify(data),
     }),
   get: (id: string) => request<Profile>(`/api/profile/${id}`),
+  getMyProfile: () => request<Profile>('/api/profile/me'),
   update: (id: string, data: Partial<Profile>) =>
     request<Profile>(`/api/profile/${id}`, {
       method: 'PUT',
@@ -224,6 +225,7 @@ export interface OnboardingSessionResponse {
   profile_draft: Partial<Profile>
   current_slot: string
   segment: UserType
+  can_confirm: boolean
   done: boolean
   history: Array<{ role: string; content: string }>
 }

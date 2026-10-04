@@ -36,31 +36,22 @@ interface NavItem {
   icon: React.ComponentType<{ size?: number; className?: string }>
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { to: '/home',    label: 'Home',          icon: Home },
-  { to: '/skills',  label: 'My Skills',     icon: Zap },
-  { to: '/path',    label: 'My Path',       icon: Map },
-  { to: '/jobs',    label: 'Jobs & Salary', icon: Briefcase },
-  { to: '/passport',label: 'Skill Passport',icon: Award },
+const getNavItems = (t: (key: string, fallback: string) => string): NavItem[] => [
+  { to: '/home',     label: t('nav.dashboard', 'Home'),          icon: Home },
+  { to: '/skills',   label: t('nav.skill_gap', 'My Skills'),     icon: Zap },
+  { to: '/path',     label: t('nav.pathways', 'My Path'),        icon: Map },
+  { to: '/jobs',     label: t('nav.market', 'Jobs & Salary'),    icon: Briefcase },
+  { to: '/passport', label: t('nav.passport', 'Skill Passport'), icon: Award },
 ]
 
-/* ── Page titles derived from pathname ────────────────────────────────────── */
-const PAGE_TITLES: Record<string, string> = {
-  '/home':     'Home',
-  '/skills':   'My Skills',
-  '/path':     'My Path',
-  '/jobs':     'Jobs & Salary',
-  '/passport': 'Skill Passport',
-  '/onboarding': 'Onboarding',
-}
-
-function pageTitle(pathname: string) {
-  const exact = PAGE_TITLES[pathname]
-  if (exact) return exact
-  for (const [k, v] of Object.entries(PAGE_TITLES)) {
-    if (pathname.startsWith(k)) return v
-  }
-  return 'Punarshuru'
+function getPageTitle(pathname: string, t: (key: string, fallback: string) => string): string {
+  if (pathname === '/home') return t('nav.dashboard', 'Home')
+  if (pathname === '/skills') return t('nav.skill_gap', 'My Skills')
+  if (pathname === '/path') return t('nav.pathways', 'My Path')
+  if (pathname === '/jobs') return t('nav.market', 'Jobs & Salary')
+  if (pathname === '/passport') return t('nav.passport', 'Skill Passport')
+  if (pathname === '/onboarding') return t('onboarding.title', 'Onboarding')
+  return t('app_name', 'Punarshuru')
 }
 
 /* ── Theme hook ───────────────────────────────────────────────────────────── */
@@ -216,28 +207,39 @@ function AvatarMenu() {
 /* ── Language toggle ──────────────────────────────────────────────────────── */
 function LangToggle() {
   const { i18n } = useTranslation()
-  const isHi = i18n.language === 'hi'
+  const currentLang = i18n.resolvedLanguage || i18n.language || 'en'
+  const isHi = currentLang.startsWith('hi')
+
+  const handleToggle = () => {
+    const next = isHi ? 'en' : 'hi'
+    i18n.changeLanguage(next)
+    localStorage.setItem('i18nextLng', next)
+  }
+
   return (
     <button
       id="lang-toggle-btn"
-      onClick={() => i18n.changeLanguage(isHi ? 'en' : 'hi')}
-      className="px-2.5 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-[#0F172A] dark:text-white hover:border-[#0B4F9C]/40 transition"
-      title="Switch language"
+      type="button"
+      onClick={handleToggle}
+      className="px-2.5 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-[#0F172A] dark:text-white hover:border-[#0B4F9C]/40 transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+      title={isHi ? 'Switch to English' : 'हिंदी में बदलें'}
       aria-label="Switch language"
     >
-      <Globe size={13} className="inline mr-1 opacity-60" />
-      {isHi ? 'EN' : 'हिं'}
+      <Globe size={13} className="text-[#0B4F9C] dark:text-sky-400" />
+      <span>{isHi ? 'English' : 'हिन्दी'}</span>
     </button>
   )
 }
 
 /* ── Main layout ──────────────────────────────────────────────────────────── */
 export default function AppLayout() {
+  const { t } = useTranslation()
   const { theme, toggle } = useTheme()
   const location = useLocation()
-  const title = pageTitle(location.pathname)
+  const title = getPageTitle(location.pathname, t)
   const isDemo = useDemoStore((s) => s.isDemo)
   const [demoModalOpen, setDemoModalOpen] = useState(false)
+  const navItems = getNavItems(t)
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC] dark:bg-[#080F1A] text-[#0F172A] dark:text-white">
@@ -257,7 +259,7 @@ export default function AppLayout() {
 
         {/* Nav links */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto" aria-label="Main navigation">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <SideNavLink key={item.to} item={item} />
           ))}
         </nav>
@@ -315,7 +317,7 @@ export default function AppLayout() {
         aria-label="Mobile navigation"
         className="lg:hidden fixed bottom-0 inset-x-0 z-40 flex items-stretch border-t border-[#E2E8F0] dark:border-slate-800 bg-white/95 dark:bg-[#0D1526]/95 backdrop-blur-md safe-bottom"
       >
-        {NAV_ITEMS.map((item) => (
+        {navItems.map((item) => (
           <BottomNavLink key={item.to} item={item} />
         ))}
       </nav>

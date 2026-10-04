@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpen, Sparkles, RotateCcw, Trophy, ArrowDown } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { PathwayOption } from '@/types'
 import { useProfileStore } from '@/store/profileStore'
 import RoadmapStepItem from '@/components/pathways/RoadmapStepItem'
@@ -10,6 +11,9 @@ interface RoadmapTimelineProps {
 }
 
 export default function RoadmapTimeline({ pathway }: RoadmapTimelineProps) {
+  const { t, i18n } = useTranslation()
+  const isHi = (i18n.resolvedLanguage || i18n.language || 'en').startsWith('hi')
+
   const profile = useProfileStore((s) => s.profile)
   const completedMilestones = useProfileStore((s) => s.completedMilestones)
   const baselineScore = useProfileStore((s) => s.baselineDisruptionScore) ?? profile?.disruption_score ?? 72
@@ -33,7 +37,11 @@ export default function RoadmapTimeline({ pathway }: RoadmapTimelineProps) {
     toggleMilestone(key, skills)
 
     if (isNowDone) {
-      setToastMessage(`Milestone "${stepTitle}" completed! Career Risk Score reduced by -8 points.`)
+      setToastMessage(
+        isHi
+          ? `माइलस्टोन "${stepTitle}" पूरा हुआ! करियर रिस्क स्कोर में -8 अंकों की कमी हुई।`
+          : `Milestone "${stepTitle}" completed! Career Risk Score reduced by -8 points.`
+      )
       setTimeout(() => setToastMessage(null), 3500)
     }
   }
@@ -53,7 +61,7 @@ export default function RoadmapTimeline({ pathway }: RoadmapTimelineProps) {
               <Sparkles size={16} />
               <span>{toastMessage}</span>
             </div>
-            <button onClick={() => setToastMessage(null)} className="text-white/80 hover:text-white text-xs px-2">
+            <button onClick={() => setToastMessage(null)} className="text-white/80 hover:text-white text-xs px-2 cursor-pointer">
               ✕
             </button>
           </motion.div>
@@ -68,20 +76,20 @@ export default function RoadmapTimeline({ pathway }: RoadmapTimelineProps) {
             <div>
               <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
                 <BookOpen size={18} className="text-[#0B4F9C]" />
-                <span>Execution Roadmap & Free Courses</span>
+                <span>{t('pathways.execution_roadmap_title', 'Execution Roadmap & Free Courses')}</span>
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Complete milestones to dynamically lower your Career Risk Score.
+                {t('pathways.execution_roadmap_sub', 'Complete milestones to dynamically lower your Career Risk Score.')}
               </p>
             </div>
 
             {completedStepCount > 0 && (
               <button
                 onClick={resetMilestones}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 transition-all"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 transition-all cursor-pointer"
               >
                 <RotateCcw size={12} />
-                <span>Reset</span>
+                <span>{t('pathways.reset', 'Reset')}</span>
               </button>
             )}
           </div>
@@ -92,7 +100,12 @@ export default function RoadmapTimeline({ pathway }: RoadmapTimelineProps) {
               <div className="flex items-center justify-between text-xs">
                 <span className="font-extrabold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
                   <Trophy size={14} className="text-amber-500" />
-                  <span>Pathway Progress: {completedStepCount} of {totalSteps} Milestones</span>
+                  <span>
+                    {t('pathways.progress_text', `Pathway Progress: ${completedStepCount} of ${totalSteps} Milestones`, {
+                      completed: completedStepCount,
+                      total: totalSteps,
+                    })}
+                  </span>
                 </span>
                 <span className="font-mono font-bold text-[#0B4F9C] dark:text-sky-400">{progressPct}%</span>
               </div>
@@ -106,7 +119,9 @@ export default function RoadmapTimeline({ pathway }: RoadmapTimelineProps) {
 
             <div className="flex items-center gap-3 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-700 md:pl-5">
               <div className="text-right">
-                <p className="text-[10px] uppercase font-bold text-slate-400">Career Risk Score</p>
+                <p className="text-[10px] uppercase font-bold text-slate-400">
+                  {t('dashboard.disruption_score', 'Career Risk Score')}
+                </p>
                 <span className="text-xl font-black font-mono text-[#0B4F9C] dark:text-sky-400">
                   {currentScore}/100
                 </span>

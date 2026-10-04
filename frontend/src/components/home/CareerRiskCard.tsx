@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, AlertTriangle, ShieldCheck, Info } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import ScoreRing from '@/components/charts/ScoreRing'
 import type { DisruptionBreakdown } from '@/types'
 
@@ -10,21 +11,29 @@ interface CareerRiskCardProps {
 }
 
 export default function CareerRiskCard({ score, breakdown }: CareerRiskCardProps) {
+  const { t } = useTranslation()
   const [expanded, setExpanded] = useState(false)
 
   const meaning =
     score >= 70
-      ? 'High risk: Your target role requires GenAI and modern skills that are not yet reflected in your profile.'
+      ? t('dashboard.risk_high', 'High risk: Your target role requires GenAI and modern skills that are not yet reflected in your profile.')
       : score >= 40
-      ? 'Moderate risk: You have solid core foundations, but automation and emerging tech create skill gaps.'
-      : 'Low risk: Your skills and profile align well with current market demand.'
+      ? t('dashboard.risk_mod', 'Moderate risk: You have solid core foundations, but automation and emerging tech create skill gaps.')
+      : t('dashboard.risk_low', 'Low risk: Your skills and profile align well with current market demand.')
+
+  const badgeText =
+    score >= 70
+      ? t('dashboard.risk_high_badge', 'High Risk')
+      : score >= 40
+      ? t('dashboard.risk_mod_badge', 'Moderate Risk')
+      : t('dashboard.risk_low_badge', 'Low Risk')
 
   const factors = [
-    { label: 'Outdated skills', score: breakdown?.skill_decay ?? 26, max: 35 },
-    { label: 'Automation risk', score: breakdown?.automation_risk ?? 22, max: 30 },
-    { label: 'Career break', score: breakdown?.career_gap ?? 14, max: 20 },
-    { label: 'Role stagnation', score: breakdown?.stagnation ?? 8, max: 15 },
-    { label: 'Market demand shift', score: breakdown?.market_mismatch ?? 6, max: 15 },
+    { label: t('dashboard.factors.skill_decay', 'Outdated skills'), score: breakdown?.skill_decay ?? 26, max: 35 },
+    { label: t('dashboard.factors.automation', 'Automation risk'), score: breakdown?.automation_risk ?? 22, max: 30 },
+    { label: t('dashboard.factors.career_gap', 'Career break'), score: breakdown?.career_gap ?? 14, max: 20 },
+    { label: t('dashboard.factors.stagnation', 'Role stagnation'), score: breakdown?.stagnation ?? 8, max: 15 },
+    { label: t('dashboard.factors.market_shift', 'Market demand shift'), score: breakdown?.market_mismatch ?? 6, max: 15 },
   ]
 
   return (
@@ -32,7 +41,7 @@ export default function CareerRiskCard({ score, breakdown }: CareerRiskCardProps
       <div>
         <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
           <span className="text-xs font-black uppercase tracking-wider text-slate-500">
-            Career Risk Score
+            {t('dashboard.disruption_score', 'Career Risk Score')}
           </span>
           <span
             className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${
@@ -44,7 +53,7 @@ export default function CareerRiskCard({ score, breakdown }: CareerRiskCardProps
             }`}
           >
             {score >= 70 ? <AlertTriangle size={12} /> : <ShieldCheck size={12} />}
-            {score >= 70 ? 'High Risk' : score >= 40 ? 'Moderate Risk' : 'Low Risk'}
+            {badgeText}
           </span>
         </div>
 
@@ -55,7 +64,7 @@ export default function CareerRiskCard({ score, breakdown }: CareerRiskCardProps
               {meaning}
             </p>
             <p className="text-[11px] text-slate-400">
-              Score calculated from your verified skills, experience, and market trends.
+              {t('dashboard.risk_calc_note', 'Score calculated from your verified skills, experience, and market trends.')}
             </p>
           </div>
         </div>
@@ -65,11 +74,11 @@ export default function CareerRiskCard({ score, breakdown }: CareerRiskCardProps
         <button
           type="button"
           onClick={() => setExpanded(!expanded)}
-          className="w-full flex items-center justify-between text-xs font-bold text-[#0B4F9C] dark:text-sky-400 hover:text-[#083b75] transition-colors py-1"
+          className="w-full flex items-center justify-between text-xs font-bold text-[#0B4F9C] dark:text-sky-400 hover:text-[#083b75] transition-colors py-1 cursor-pointer"
         >
           <span className="flex items-center gap-1.5">
             <Info size={13} />
-            <span>{expanded ? 'Hide 5-factor breakdown' : 'See why (5 factors)'}</span>
+            <span>{expanded ? t('dashboard.hide_factors', 'Hide 5-factor breakdown') : t('dashboard.see_factors', 'See why (5 factors)')}</span>
           </span>
           <ChevronDown
             size={15}

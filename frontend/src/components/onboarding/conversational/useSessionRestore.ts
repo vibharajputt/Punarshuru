@@ -29,6 +29,8 @@ export function useSessionRestore({ authUser }: UseSessionRestoreProps) {
     email: authUser?.email || '',
   })
 
+  const [canConfirm, setCanConfirm] = useState(false)
+
   useEffect(() => {
     let isMounted = true
     async function restoreSession() {
@@ -37,6 +39,9 @@ export function useSessionRestore({ authUser }: UseSessionRestoreProps) {
         if (!isMounted || !sess) return
         if (sess.profile_draft && Object.keys(sess.profile_draft).length > 0) {
           setProfileDraft(sess.profile_draft as Record<string, unknown>)
+        }
+        if (typeof sess.can_confirm === 'boolean') {
+          setCanConfirm(sess.can_confirm)
         }
         if (sess.history && sess.history.length > 0) {
           const restored: Message[] = sess.history.map((h, i) => ({
@@ -68,5 +73,7 @@ export function useSessionRestore({ authUser }: UseSessionRestoreProps) {
     setShowConfirmScreen,
     profileDraft,
     setProfileDraft,
+    canConfirm,
+    setCanConfirm,
   }
 }

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Zap, Map, IndianRupee } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface HomeShortcutCardsProps {
   matchPct?: number
@@ -22,36 +23,49 @@ export default function HomeShortcutCards({
   estimatedSalaryLPA = 12.5,
   city = 'Bengaluru',
 }: HomeShortcutCardsProps) {
+  const { t, i18n } = useTranslation()
+  const isHi = (i18n.resolvedLanguage || i18n.language || 'en').startsWith('hi')
+
+  const localizedPathName = isHi
+    ? pathName.includes('Safe')
+      ? 'सुरक्षित मार्ग (Safe)'
+      : pathName.includes('Stretch')
+      ? 'उच्च वृद्धि मार्ग (Stretch)'
+      : 'स्विच मार्ग (Switch)'
+    : pathName
+
   const cards = [
     {
-      title: 'Skills Match %',
-      value: `${matchPct}% Match`,
-      subtitle: `Target: ${targetRole}`,
-      desc: `${haveCount} core skills ready · ${missingCount} skills to learn`,
+      title: t('dashboard.shortcuts.skills_match_title', 'Skills Match %'),
+      value: isHi ? `${matchPct}% मिलान` : `${matchPct}% Match`,
+      subtitle: t('dashboard.shortcuts.target_role', `Target: ${targetRole}`, { role: targetRole }),
+      desc: isHi
+        ? `${haveCount} मुख्य कौशल तैयार · ${missingCount} कौशल सीखने बाकी`
+        : `${haveCount} core skills ready · ${missingCount} skills to learn`,
       link: '/skills',
       icon: Zap,
       iconColor: 'text-amber-500 bg-amber-50 dark:bg-amber-950/60',
-      actionText: 'View skills',
+      actionText: t('dashboard.shortcuts.view_skills', 'View skills'),
     },
     {
-      title: 'Best Path',
-      value: pathName,
-      subtitle: `${pathWeeks} Weeks to Readiness`,
-      desc: 'Free Govt & NPTEL verified roadmap',
+      title: t('dashboard.shortcuts.best_path_title', 'Best Path'),
+      value: localizedPathName,
+      subtitle: isHi ? `तैयारी के लिए ${pathWeeks} सप्ताह` : `${pathWeeks} Weeks to Readiness`,
+      desc: t('dashboard.shortcuts.path_desc', 'Free Govt & NPTEL verified roadmap'),
       link: '/path',
       icon: Map,
       iconColor: 'text-[#0B4F9C] bg-blue-50 dark:bg-blue-950/60 dark:text-sky-300',
-      actionText: 'View roadmap',
+      actionText: t('dashboard.shortcuts.view_roadmap', 'View roadmap'),
     },
     {
-      title: 'Real Salary',
+      title: t('dashboard.shortcuts.real_salary_title', 'Real Salary'),
       value: `₹${estimatedSalaryLPA} LPA`,
-      subtitle: `After rent & travel in ${city}`,
-      desc: 'Calculated using local cost-of-living indices',
+      subtitle: isHi ? `${city} में किराया व यात्रा खर्च के बाद` : `After rent & travel in ${city}`,
+      desc: t('dashboard.shortcuts.salary_desc', 'Calculated using local cost-of-living indices'),
       link: '/jobs',
       icon: IndianRupee,
       iconColor: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-400',
-      actionText: 'Compare salaries',
+      actionText: t('dashboard.shortcuts.compare_salaries', 'Compare salaries'),
     },
   ]
 
@@ -63,7 +77,7 @@ export default function HomeShortcutCards({
           <Link
             key={c.title}
             to={c.link}
-            className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:border-[#0B4F9C]/50 hover:shadow-md transition-all group flex flex-col justify-between"
+            className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs hover:border-[#0B4F9C]/50 hover:shadow-md transition-all group flex flex-col justify-between cursor-pointer"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
