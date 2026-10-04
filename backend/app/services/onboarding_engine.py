@@ -74,7 +74,7 @@ def match_skill(text: str, threshold: int = 85) -> str | None:
         return idx[t]
     if len(t) < 3:  # avoid "c" -> "css" style false matches
         return None
-    hit = process.extractOne(t, list(idx.keys()), scorer=fuzz.ratio, score_cutoff=threshold)
+    hit = process.extractOne(t, list(idx.keys()), scorer=fuzz.ratio, score_cutoff=threshold)  # type: ignore
     return idx[hit[0]] if hit else None
 
 

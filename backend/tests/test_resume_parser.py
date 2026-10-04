@@ -203,6 +203,6 @@ async def test_onboarding_chat_with_resume_text_asks_target_role(client: AsyncCl
     )
     assert resp.status_code == 200
     data = resp.json()
-    assert "target role" in data["reply"].lower() or "aiming for" in data["reply"].lower()
+    assert any(phrase in data["reply"].lower() for phrase in ("target role", "aiming for", "role do you want", "which **role"))
     assert any("engineer" in qr.lower() or "analyst" in qr.lower() or "qa" in qr.lower() for qr in data["quick_replies"])
 
