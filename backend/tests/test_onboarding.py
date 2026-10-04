@@ -220,7 +220,7 @@ class TestDraftHelpers:
     def test_complete_draft(self):
         draft = {
             "current_role": "Engineer",
-            "skills_raw": ["Python", "SQL"],
+            "skills_raw": ["Python", "SQL", "Pandas"],
             "target_role": "ML Engineer",
             "city": "Pune",
         }
@@ -425,7 +425,7 @@ class TestConfirmAction:
         row.profile_draft = {
             "name": "Confirm User",
             "current_role": "QA Tester",
-            "skills_raw": ["Selenium", "JIRA"],
+            "skills_raw": ["Selenium", "JIRA", "Python"],
             "target_role": "Automation QA",
             "city": "Bengaluru",
         }
@@ -519,7 +519,7 @@ class TestOnboardingEndpoint:
             row.profile_draft = {
                 "name": user.name,
                 "current_role": "Java Developer",
-                "skills_raw": ["Java", "Spring Boot"],
+                "skills_raw": ["Java", "Spring Boot", "MySQL"],
                 "target_role": "GenAI Engineer",
                 "city": "Pune",
             }
@@ -580,4 +580,144 @@ class TestOnboardingEndpoint:
         assert data["profile_draft"]["current_role"] == "React Developer"
         assert data["profile_draft"]["name"] == user.name
         assert len(data["history"]) == 2
+
+
+class TestAgentV2Bugfixes:
+    """
+    Tests for ux.md Agent v2 resume upload and slot filling bug fixes:
+    1. Resume upload -> agent asks first missing slot.
+    2. Answering 'Final Year Student' sets current_role and asks next slot.
+    3. Filename never appears in skills.
+    4. Greeting prefix has no duplicate 'Welcome! Welcome!'.
+    5. Loop guard: never asks same slot twice in a row; second attempt accepts raw answer.
+    6. Confirm enabled only when current_role, target_role, city and >= 3 taxonomy skills are set.
+    """
+
+    @pytest.mark.asyncio
+    async def test_resume_upload_asks_first_missing_slot(self, db_session):
+        """Resume with name, role, city, and 4 skills -> missing target_role -> agent asks target_role."""
+        user = User(id=str(uuid.uuid4()), name="Priya Sharma", email="priya_test@x.com", hashed_password="x")
+        db_session.add(user)
+        await db_session.commit()
+
+        resume_content = (
+            "Priya Sharma\n"
+            "Email: priya@example.com\n"
+            "Bengaluru, Karnataka\n"
+            "3 years experience as Software Engineer.\n"
+            "Skills: Python, FastAPI, Docker, PostgreSQL.\n"
+        )
+        res = await handle_onboarding_chat(
+            user=user, db=db_session, message="", resume_text=resume_content
+        )
+        assert res.profile_draft.get("current_role") == "Software Engineer"
+        assert res.profile_draft.get("city") == "Bengaluru"
+        assert len(res.profile_draft.get("skills_raw", [])) >= 4
+        # First missing slot should be target_role!
+        assert "target_role" in res.missing_fields
+        assert "target role" in res.reply.lower() or "direction" in res.reply.lower()
+
+    @pytest.mark.asyncio
+    async def test_answering_final_year_student_sets_current_role_and_asks_next_slot(self, db_session):
+        """When asking for current_role, replying 'Final Year Student' fills current_role and asks skills."""
+        user = User(id=str(uuid.uuid4()), name="Student User", email="student_test@x.com", hashed_password="x")
+        db_session.add(user)
+        await db_session.commit()
+
+        # Initial turn (slot is current_role by default)
+        res = await handle_onboarding_chat(
+            user=user, db=db_session, message="Final Year Student"
+        )
+        assert res.profile_draft.get("current_role") == "Final Year Student"
+        # Next required slot is skills
+        assert "skills" in res.missing_fields
+        assert "skill" in res.reply.lower()
+
+    @pytest.mark.asyncio
+    async def test_filename_never_appears_in_skills(self, db_session):
+        """Sending filename in message or upload must NEVER add filename tokens to skills_raw."""
+        user = User(id=str(uuid.uuid4()), name="File User", email="file_test@x.com", hashed_password="x")
+        db_session.add(user)
+        await db_session.commit()
+
+        # Turn 1: user accidentally sends "Uploaded resume: vibha_resume_2024.pdf"
+        res1 = await handle_onboarding_chat(
+            user=user, db=db_session, message="Uploaded resume: vibha_resume_2024.pdf"
+        )
+        skills1 = res1.profile_draft.get("skills_raw", [])
+        for forbidden in ["vibha", "resume", "pdf", "uploaded", "2024"]:
+            assert not any(forbidden in s.lower() for s in skills1), f"'{forbidden}' leaked into skills!"
+
+        # Turn 2: agent is asking skills, user sends "Python, Java, vibha_resume.pdf, SQL"
+        res2 = await handle_onboarding_chat(
+            user=user, db=db_session, message="Python, Java, vibha_resume.pdf, SQL"
+        )
+        skills2 = res2.profile_draft.get("skills_raw", [])
+        assert "Python" in skills2
+        assert "Java" in skills2
+        assert "SQL" in skills2
+        for s in skills2:
+            assert "resume" not in s.lower() and "pdf" not in s.lower()
+
+    @pytest.mark.asyncio
+    async def test_no_duplicate_welcome_greeting(self, db_session):
+        """Agent's prompt for current_role must NOT start with 'Welcome! Welcome!'."""
+        user = User(id=str(uuid.uuid4()), name="Greeting User", email="greeting_test@x.com", hashed_password="x")
+        db_session.add(user)
+        await db_session.commit()
+
+        # Load session at current_role
+        from app.services.onboarding_agent import _rule_reply
+        reply, _ = _rule_reply("current_role", {}, "en")
+        assert "Welcome! Welcome!" not in reply
+        assert reply.startswith("Welcome! To build your AI career")
+
+    @pytest.mark.asyncio
+    async def test_loop_guard_accepts_raw_answer_on_second_attempt(self, db_session):
+        """If user answers an unconventional role twice, second attempt accepts raw answer and advances."""
+        user = User(id=str(uuid.uuid4()), name="Loop User", email="loop_test@x.com", hashed_password="x")
+        db_session.add(user)
+        await db_session.commit()
+
+        # Attempt 1 with unconventional phrase
+        res1 = await handle_onboarding_chat(
+            user=user, db=db_session, message="Self Employed Freelance Consultant"
+        )
+        # Should either extract it or advance; if it asked again, attempt 2 must accept it
+        if not res1.profile_draft.get("current_role"):
+            res2 = await handle_onboarding_chat(
+                user=user, db=db_session, message="Freelance Consultant"
+            )
+            assert res2.profile_draft.get("current_role") != ""
+            assert "current_role" not in res2.missing_fields
+
+    @pytest.mark.asyncio
+    async def test_confirm_requires_at_least_3_skills(self, db_session):
+        """Confirm with only 2 skills must fail; adding 3rd skill allows confirm."""
+        user = User(id=str(uuid.uuid4()), name="ThreeSkills User", email="threeskills_test@x.com", hashed_password="x")
+        db_session.add(user)
+        await db_session.commit()
+
+        from app.services.onboarding_agent import _load_session
+        row = await _load_session(db_session, user.id)
+        row.profile_draft = {
+            "name": "ThreeSkills User",
+            "current_role": "Software Engineer",
+            "skills_raw": ["Python", "FastAPI"],  # Only 2 skills!
+            "target_role": "GenAI Engineer",
+            "city": "Bengaluru",
+        }
+        await db_session.commit()
+
+        res1 = await handle_onboarding_chat(user=user, db=db_session, action="confirm")
+        assert res1.done is False
+        assert "skills" in res1.missing_fields
+
+        # Add 3rd skill
+        row.profile_draft["skills_raw"].append("Docker")
+        await db_session.commit()
+
+        res2 = await handle_onboarding_chat(user=user, db=db_session, action="confirm")
+        assert res2.done is True
+
 
