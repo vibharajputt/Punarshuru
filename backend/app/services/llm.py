@@ -47,6 +47,8 @@ def _get_cache(prompt_hash: str) -> str | None:
 
 
 def _set_cache(prompt_hash: str, response_text: str) -> None:
+    if not response_text or not response_text.strip():
+        return
     try:
         conn = sqlite3.connect(str(CACHE_DB_PATH))
         with conn:
@@ -94,7 +96,7 @@ def get_active_provider() -> str:
 
 
 async def _call_gemini(prompt: str, is_json: bool) -> str:
-    """Calls Gemini using google-genai SDK with 8s timeout and 1 retry on 429."""
+    """Calls Gemini using google-genai SDK with 5s timeout and 1 retry on 429."""
     current_settings = get_settings()
     api_key = current_settings.GEMINI_API_KEY
     if not api_key or api_key == "your_gemini_api_key_here":
@@ -122,9 +124,13 @@ async def _call_gemini(prompt: str, is_json: bool) -> str:
 
     for attempt in range(2):
         try:
-            return await asyncio.wait_for(_invoke(), timeout=8.0)
+            res = await asyncio.wait_for(_invoke(), timeout=5.0)
+            res = (res or "").strip()
+            if not res:
+                raise ValueError("Gemini returned empty response")
+            return res
         except asyncio.TimeoutError:
-            raise TimeoutError("Gemini call timed out after 8s")
+            raise TimeoutError("Gemini call timed out after 5s")
         except Exception as e:
             err_str = str(e).lower()
             if attempt == 0 and ("429" in err_str or "resource_exhausted" in err_str or "quota" in err_str):
@@ -136,7 +142,7 @@ async def _call_gemini(prompt: str, is_json: bool) -> str:
 
 
 async def _call_groq(prompt: str, is_json: bool) -> str:
-    """Calls Groq using OpenAI-compatible REST API via httpx with 8s timeout and 1 retry on 429."""
+    """Calls Groq using OpenAI-compatible REST API via httpx with 5s timeout and 1 retry on 429."""
     current_settings = get_settings()
     api_key = current_settings.GROQ_API_KEY
     if not api_key or api_key == "your_groq_api_key_here":
@@ -158,16 +164,19 @@ async def _call_groq(prompt: str, is_json: bool) -> str:
 
     for attempt in range(2):
         try:
-            async with httpx.AsyncClient(timeout=8.0) as client:
+            async with httpx.AsyncClient(timeout=5.0) as client:
                 resp = await client.post(url, headers=headers, json=payload)
                 if resp.status_code == 429 and attempt == 0:
                     await asyncio.sleep(1.0)
                     continue
                 resp.raise_for_status()
                 data = resp.json()
-                return data["choices"][0]["message"]["content"].strip()
+                content = (data.get("choices", [{}])[0].get("message", {}).get("content") or "").strip()
+                if not content:
+                    raise ValueError("Groq returned empty response")
+                return content
         except httpx.TimeoutException:
-            raise TimeoutError("Groq call timed out after 8s")
+            raise TimeoutError("Groq call timed out after 5s")
         except Exception as e:
             if attempt == 0 and "429" in str(e):
                 await asyncio.sleep(1.0)
@@ -191,8 +200,10 @@ def _template_fallback(prompt: str, is_json: bool) -> str:
 
 async def complete(prompt: str, json: bool = False) -> Any:
     """
-    Single unified entrypoint for all LLM calls per Addendum v2.
-    Cascade order: Cache -> Gemini -> Groq -> Template Fallback.
+    Single unified entrypoint for all LLM calls per Addendum v2 & ux.md Agent v2.
+    Cascade order: Cache -> Gemini (5s) -> Groq (5s) -> Template Fallback.
+    Treats empty response as failure; logs failures at WARNING.
+    Does not cache empty or invalid JSON responses.
     Returns parsed dict/list if json=True, or str if json=False.
     """
     prompt_hash = _hash_prompt(prompt, json)
@@ -202,32 +213,64 @@ async def complete(prompt: str, json: bool = False) -> Any:
     if cached is not None:
         if json:
             try:
-                return _json.loads(_clean_json_markdown(cached))
+                parsed = _json.loads(_clean_json_markdown(cached))
+                if parsed:  # Ignore empty or falsy JSON from cache
+                    return parsed
             except Exception:
                 pass
         else:
-            return cached
+            if cached.strip():
+                return cached
 
     result_text: str | None = None
+    from_provider = False
 
     # 2. Try Gemini
     try:
-        result_text = await _call_gemini(prompt, is_json=json)
+        res = await _call_gemini(prompt, is_json=json)
+        if not res or not res.strip():
+            raise ValueError("Gemini returned empty response")
+        if json:
+            parsed_test = _json.loads(_clean_json_markdown(res))
+            if not parsed_test:
+                raise ValueError("Gemini returned empty JSON response")
+        result_text = res.strip()
+        from_provider = True
     except Exception as e:
-        logger.debug(f"Gemini provider failed: {e}")
+        logger.warning(f"Gemini provider failed: {e}")
 
     # 3. Try Groq if Gemini failed
     if result_text is None:
         try:
-            result_text = await _call_groq(prompt, is_json=json)
+            res = await _call_groq(prompt, is_json=json)
+            if not res or not res.strip():
+                raise ValueError("Groq returned empty response")
+            if json:
+                parsed_test = _json.loads(_clean_json_markdown(res))
+                if not parsed_test:
+                    raise ValueError("Groq returned empty JSON response")
+            result_text = res.strip()
+            from_provider = True
         except Exception as e:
-            logger.debug(f"Groq provider failed: {e}")
+            logger.warning(f"Groq provider failed: {e}")
 
-    # 4. Fallback to Template
+    # 4. Fallback to Template if all providers failed
     if result_text is None:
         result_text = _template_fallback(prompt, is_json=json)
-    else:
-        _set_cache(prompt_hash, result_text)
+        from_provider = False
+    elif from_provider:
+        # Don't cache empty or invalid JSON
+        if json:
+            try:
+                cleaned = _clean_json_markdown(result_text)
+                parsed = _json.loads(cleaned)
+                if parsed:
+                    _set_cache(prompt_hash, result_text)
+            except Exception:
+                pass
+        else:
+            if result_text.strip():
+                _set_cache(prompt_hash, result_text)
 
     if json:
         cleaned = _clean_json_markdown(result_text)

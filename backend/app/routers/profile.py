@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.core.security import decode_access_token
 from app.models.profile import Profile
+from app.models.user import User
 from app.schemas.profile import ProfileCreate, ProfileRead, ProfileUpdate
 from app.schemas.resume import ResumeParseRequest, ResumeParseResponse
 from app.services.disruption import calculate_disruption_score
@@ -19,18 +20,46 @@ MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB per SPEC Addendum v2
 _bearer = HTTPBearer(auto_error=False)
 
 
-# ── Optional auth: resolve user_id from Bearer token when present ─────────────
+def _is_demo_profile(email: str | None = None, profile_id: str | None = None) -> bool:
+    """Check if the profile belongs to a demo persona."""
+    if email and (email.endswith("@demo.punarshuru.in") or email.startswith("demo-")):
+        return True
+    if profile_id and (profile_id.startswith("demo-") or profile_id in {"priya", "ramesh", "arjun", "sneha", "rohit"}):
+        return True
+    return False
 
-async def _optional_user_id(
+
+async def _resolve_user(
     credentials: HTTPAuthorizationCredentials | None = Depends(_bearer),
-) -> str | None:
+    db: AsyncSession = Depends(get_db),
+) -> User | None:
+    """Resolve authenticated User from Bearer token if provided."""
     if credentials is None:
         return None
     try:
         payload = decode_access_token(credentials.credentials)
-        return payload.get("sub")
+        user_id: str | None = payload.get("sub")
+        if not user_id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or expired token",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
     except JWTError:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalars().first()
+    if user is None or not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
 
 
 def _apply_disruption(profile: Profile) -> None:
@@ -39,43 +68,50 @@ def _apply_disruption(profile: Profile) -> None:
     profile.disruption_breakdown = disruption_res.breakdown.model_dump()
 
 
-# ── POST /profile — upsert by user_id (auth) or email (anon) ─────────────────
+# ── POST /profile — require auth (except demo personas via /api/demo) ─────────
 
 @router.post("/profile", response_model=ProfileRead, status_code=status.HTTP_201_CREATED)
 async def create_or_upsert_profile(
     profile_in: ProfileCreate,
     db: AsyncSession = Depends(get_db),
-    user_id: str | None = Depends(_optional_user_id),
+    user: User | None = Depends(_resolve_user),
 ) -> ProfileRead:
     """
-    Create a new user profile (or upsert if one already exists for this user/email).
-    Avoids 500 on duplicate-email constraint by merging into the existing row.
+    Create a new user profile or update the user's existing profile.
+    Requires authentication (except demo personas).
+    Upsert is strictly keyed by user_id — email-based linking is removed.
     """
+    is_demo = _is_demo_profile(email=profile_in.email)
+    if not is_demo and user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required to create a profile",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     existing: Profile | None = None
 
-    # 1. Try to find existing profile by user_id (authenticated)
-    if user_id:
-        res = await db.execute(select(Profile).where(Profile.user_id == user_id))
+    # Upsert strictly by authenticated user.id (no email linking)
+    if user:
+        res = await db.execute(select(Profile).where(Profile.user_id == user.id))
         existing = res.scalars().first()
-
-    # 2. Fall back to email lookup (anonymous / demo flow)
-    if existing is None and profile_in.email:
+    elif is_demo:
+        # Demo personas: allow upsert by demo email so reloading demo persona updates it
         res = await db.execute(select(Profile).where(Profile.email == profile_in.email))
         existing = res.scalars().first()
 
     if existing:
-        # Upsert: update all provided fields on the existing record
         update_data = profile_in.model_dump()
         for field, value in update_data.items():
             setattr(existing, field, value)
-        if user_id and not existing.user_id:
-            existing.user_id = user_id
+        if user and not existing.user_id:
+            existing.user_id = user.id
         _apply_disruption(existing)
         await db.commit()
         await db.refresh(existing)
         return ProfileRead.model_validate(existing)
 
-    # New profile
+    user_id = user.id if user else None
     profile = Profile(**profile_in.model_dump(), user_id=user_id)
     _apply_disruption(profile)
     db.add(profile)
@@ -88,13 +124,23 @@ async def create_or_upsert_profile(
 async def get_profile(
     profile_id: str,
     db: AsyncSession = Depends(get_db),
+    user: User | None = Depends(_resolve_user),
 ) -> ProfileRead:
-    """Fetch user profile by ID."""
+    """Fetch user profile by ID. Requires authentication (except demo personas)."""
     stmt = select(Profile).where(Profile.id == profile_id)
     res = await db.execute(stmt)
     profile = res.scalars().first()
     if not profile:
         raise HTTPException(status_code=404, detail=f"Profile '{profile_id}' not found")
+
+    is_demo = _is_demo_profile(email=profile.email, profile_id=profile_id)
+    if not is_demo and user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     return ProfileRead.model_validate(profile)
 
 
@@ -103,13 +149,22 @@ async def update_profile(
     profile_id: str,
     profile_update: ProfileUpdate,
     db: AsyncSession = Depends(get_db),
+    user: User | None = Depends(_resolve_user),
 ) -> ProfileRead:
-    """Update profile details and re-calculate disruption score."""
+    """Update profile details. Requires authentication (except demo personas)."""
     stmt = select(Profile).where(Profile.id == profile_id)
     res = await db.execute(stmt)
     profile = res.scalars().first()
     if not profile:
         raise HTTPException(status_code=404, detail=f"Profile '{profile_id}' not found")
+
+    is_demo = _is_demo_profile(email=profile.email, profile_id=profile_id)
+    if not is_demo and user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     update_data = profile_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():

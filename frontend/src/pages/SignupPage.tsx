@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Loader2, UserPlus, AlertCircle } from 'lucide-react'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 
 export default function SignupPage() {
   const navigate = useNavigate()
-  const location = useLocation()
   const setAuth = useAuthStore((s) => s.setAuth)
 
   const [name, setName] = useState('')
@@ -16,7 +15,7 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/home'
+
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -30,7 +29,7 @@ export default function SignupPage() {
       const { access_token } = await authApi.signup({ name: name.trim(), email: email.trim(), password })
       const me = await authApi.me(access_token)
       setAuth(access_token, me)
-      navigate(from, { replace: true })
+      navigate('/onboarding', { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed. Please try again.')
     } finally {

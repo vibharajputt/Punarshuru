@@ -1,43 +1,20 @@
-import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { Sparkles, MapPin } from 'lucide-react'
+import { Navigate } from 'react-router-dom'
 import { useProfileStore } from '@/store/profileStore'
-import { assessApi, demoApi, profileApi } from '@/lib/api'
+import { assessApi } from '@/lib/api'
 import CareerRiskCard from '@/components/home/CareerRiskCard'
 import NextStepCard from '@/components/home/NextStepCard'
 import HomeShortcutCards from '@/components/home/HomeShortcutCards'
-import type { UserType } from '@/types'
 
 export default function HomePage() {
   const profile = useProfileStore((s) => s.profile)
-  const setProfile = useProfileStore((s) => s.setProfile)
 
-  // Default to Priya demo profile if none active so preview is never blank
-  useEffect(() => {
-    if (!profile) {
-      demoApi.loadPersona('priya').then(async (data) => {
-        try {
-          const created = await profileApi.create({
-            name: String(data.name || 'Priya Sharma'),
-            email: 'priya@demo.punarshuru.in',
-            user_type: data.user_type as UserType,
-            city: String(data.city || 'Pune'),
-            current_role: String(data.current_role || 'Java Developer'),
-            target_role: String(data.target_role || 'GenAI Engineer'),
-            experience_years: Number(data.experience_years || 5),
-            career_gap_years: Number(data.career_gap_years || 4),
-            current_salary_lpa: 8.5,
-            skills_raw: ['Java', 'Spring Boot', 'MySQL', 'REST APIs'],
-            skills_taxonomy_ids: [1, 2, 3],
-          })
-          setProfile(created)
-        } catch {
-          // ignore
-        }
-      })
-    }
-  }, [profile, setProfile])
+  // No profile in store → send to onboarding
+  if (!profile) {
+    return <Navigate to="/onboarding" replace />
+  }
 
   const profileId = profile?.id || 'demo-priya'
 
