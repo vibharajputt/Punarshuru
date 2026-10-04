@@ -42,11 +42,12 @@ export interface TrendsResponse {
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
-async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
+async function request<T>(endpoint: string, options?: RequestInit, token?: string): Promise<T> {
   const url = `${BASE_URL}${endpoint}`
   const isFormData = options?.body instanceof FormData
   const headers: Record<string, string> = {
     ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options?.headers as Record<string, string>),
   }
   const res = await fetch(url, {
@@ -69,6 +70,26 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
 
   return res.json() as Promise<T>
 }
+
+export interface TokenResponse {
+  access_token: string
+  token_type: string
+}
+
+export interface MeResponse {
+  id: string
+  name: string
+  email: string
+}
+
+export const authApi = {
+  signup: (data: { name: string; email: string; password: string }) =>
+    request<TokenResponse>('/api/auth/signup', { method: 'POST', body: JSON.stringify(data) }),
+  login: (data: { email: string; password: string }) =>
+    request<TokenResponse>('/api/auth/login', { method: 'POST', body: JSON.stringify(data) }),
+  me: (token: string) => request<MeResponse>('/api/auth/me', {}, token),
+}
+
 
 export const healthApi = {
   check: () => request<HealthResponse>('/api/health'),

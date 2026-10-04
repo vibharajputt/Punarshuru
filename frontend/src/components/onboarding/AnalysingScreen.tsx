@@ -8,10 +8,10 @@ interface AnalysingScreenProps {
 
 const analysisSteps = [
   { label: 'Parsing profile vectors & career background...', icon: Activity },
-  { label: 'Auditing 5-factor Disruption Index (Decay, Auto-Risk, Gap, Stagnation)...', icon: ShieldCheck },
+  { label: 'Auditing 5-factor Career Risk Score (Decay, Automation Risk, Gap, Stagnation)...', icon: ShieldCheck },
   { label: 'Matching against 250+ taxonomy skills & 300+ Indian job snapshots...', icon: Target },
-  { label: 'Curating Safe, Stretch & Pivot paths with free NPTEL/SWAYAM courses...', icon: Compass },
-  { label: 'Synthesizing AI Talent Passport & Real Purchasing Power Index...', icon: Sparkles },
+  { label: 'Curating Safe, Stretch & Switch paths with free NPTEL/SWAYAM courses...', icon: Compass },
+  { label: 'Synthesizing Skill Passport & Real salary (after rent & travel)...', icon: Sparkles },
 ]
 
 export default function AnalysingScreen({ onComplete }: AnalysingScreenProps) {
@@ -68,7 +68,7 @@ export default function AnalysingScreen({ onComplete }: AnalysingScreenProps) {
           Analysing Your Career Intelligence Profile
         </h2>
         <p className="text-xs text-slate-500 max-w-sm mx-auto">
-          Running our deterministic mathematical models and AI market correlation engines for Bharat 2.0.
+          Calculating career risk factors and market alignment for your profile.
         </p>
       </div>
 

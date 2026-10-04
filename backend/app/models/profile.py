@@ -1,7 +1,7 @@
 from datetime import datetime
 import uuid
-from sqlalchemy import String, Text, Integer, Float, JSON, DateTime, Enum
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String, Text, Integer, Float, JSON, DateTime, Enum, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.database import Base
 import enum
 
@@ -21,6 +21,14 @@ class Profile(Base):
     name: Mapped[str] = mapped_column(String(120))
     email: Mapped[str | None] = mapped_column(String(254), nullable=True, unique=True)
     user_type: Mapped[UserType] = mapped_column(Enum(UserType))
+
+    # Link to authenticated user (nullable so demo/onboarding profiles still work)
+    user_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    user: Mapped["User"] = relationship(  # type: ignore[name-defined]  # noqa: F821
+        "User", back_populates="profile"
+    )
 
     city: Mapped[str | None] = mapped_column(String(60), nullable=True)
     current_role: Mapped[str | None] = mapped_column(String(120), nullable=True)

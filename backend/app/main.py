@@ -4,7 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
 from app.core.database import init_db
-from app.routers import health, demo, profile, assess, market, pathway, compensation, passport, onboarding, voice
+import app.models  # noqa: F401 — ensure all models are registered before create_all
+from app.routers import health, demo, profile, assess, market, pathway, compensation, passport, onboarding, voice, auth
 
 settings = get_settings()
 
@@ -34,6 +35,7 @@ app.add_middleware(
 )
 
 # Mount all routers under /api prefix per SPEC
+app.include_router(auth.router, prefix="/api")
 app.include_router(health.router, prefix="/api")
 app.include_router(demo.router, prefix="/api")
 app.include_router(profile.router, prefix="/api")

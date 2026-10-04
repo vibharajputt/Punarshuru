@@ -44,7 +44,7 @@ export default function Step4Goals({ data, onChange }: Step4GoalsProps) {
           Define Your Target Move & Milestones
         </h2>
         <p className="text-xs text-slate-500">
-          We use this to tailor your 3 learning paths (Safe, Stretch, Pivot) and compute real compensation arbitrage.
+          We use this to tailor your 3 learning paths (Safe, Stretch, Switch) and compute real salary (after rent & travel).
         </p>
       </div>
 

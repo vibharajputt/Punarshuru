@@ -1,16 +1,13 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import { ArrowRight, ShieldCheck, Sparkles, TrendingUp, Zap } from 'lucide-react'
 import ScoreRing from '@/components/charts/ScoreRing'
 
 interface HeroSectionProps {
-  onExplorePersonas: () => void
+  onOpenDemo: () => void
 }
 
-export default function HeroSection({ onExplorePersonas }: HeroSectionProps) {
-  const { t } = useTranslation()
-
+export default function HeroSection({ onOpenDemo }: HeroSectionProps) {
   return (
     <section className="relative overflow-hidden pt-12 pb-20 lg:pt-16 lg:pb-28 gradient-mesh">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,40 +20,43 @@ export default function HeroSection({ onExplorePersonas }: HeroSectionProps) {
             className="lg:col-span-7 space-y-6 text-center lg:text-left"
           >
             {/* Pill */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-100/90 dark:bg-sky-950/80 border border-sky-200 dark:border-sky-800 text-xs font-bold text-[#0B4F9C] dark:text-sky-300 shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-100/90 dark:bg-sky-950/80 border border-sky-200 dark:border-sky-800 text-xs font-bold text-[#0B4F9C] dark:text-sky-300 shadow-xs">
               <Sparkles size={14} className="text-[#F26B1D]" />
               <span>Intelligent Talent & Workforce Ecosystem • Bharat 2.0</span>
             </div>
 
             {/* Main Heading */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
-              Detect the <span className="text-[#0B4F9C] dark:text-sky-400">Disruption</span>.
+              Detect the <span className="text-[#0B4F9C] dark:text-sky-400">Career Risk</span>.
               <br />
               Understand the <span className="text-[#F26B1D]">Gap</span>.
               <br />
               Find the Next Move.
             </h1>
 
-            {/* Subtitle */}
+            {/* Subtitle - 1 Line per ux.md */}
             <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed mx-auto lg:mx-0">
-              AI-powered career intelligence for career-break returners, gig workers, laid-off professionals, stagnant employees, and graduating students in India.
+              AI-powered career intelligence for career-break returners, gig workers, laid-off professionals, stagnant employees, and students in India.
             </p>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons: Get started free + Try a demo per ux.md */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
               <Link
-                to="/company-match"
+                to="/signup"
+                id="hero-get-started-btn"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-[#0B4F9C] text-white font-extrabold text-sm hover:bg-[#083b75] shadow-lg shadow-blue-900/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
-                <span>Match Resume with Companies (Free)</span>
+                <span>Get started free</span>
                 <ArrowRight size={17} />
               </Link>
               <button
-                onClick={onExplorePersonas}
+                type="button"
+                id="hero-try-demo-btn"
+                onClick={onOpenDemo}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl glass dark:glass-dark border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white font-bold text-sm hover:border-[#0B4F9C] transition-all hover:scale-[1.02]"
               >
                 <Zap size={16} className="text-[#F26B1D]" />
-                <span>{t('landing.cta_demo')} (5 Personas)</span>
+                <span>Try a demo</span>
               </button>
             </div>
 
@@ -109,8 +109,8 @@ export default function HeroSection({ onExplorePersonas }: HeroSectionProps) {
                   score={72}
                   size={130}
                   strokeWidth={11}
-                  label="Disruption Index"
-                  subtitle="72/100 High Risk"
+                  label="Career Risk Score"
+                  subtitle="72/100 · High Risk"
                   showRiskBadge={false}
                 />
 
@@ -130,7 +130,7 @@ export default function HeroSection({ onExplorePersonas }: HeroSectionProps) {
               <div className="p-3 rounded-2xl bg-sky-50/80 dark:bg-sky-950/40 border border-sky-100 dark:border-sky-900/60 flex items-center justify-between text-xs">
                 <div>
                   <p className="font-bold text-slate-800 dark:text-slate-200">Recommended Next Move</p>
-                  <p className="text-slate-500 dark:text-slate-400">Stretch Path: Python + LangChain RAG</p>
+                  <p className="text-slate-500 dark:text-slate-400">Switch Path: Python + LangChain RAG</p>
                 </div>
                 <span className="font-bold text-[#0B4F9C] dark:text-sky-300">16 Weeks</span>
               </div>

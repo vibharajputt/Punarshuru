@@ -38,28 +38,28 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/skill-gap" className="hover:text-white transition-colors">
-                  Skill Gap & Radar
+                <Link to="/skills" className="hover:text-white transition-colors">
+                  My Skills
                 </Link>
               </li>
               <li>
-                <Link to="/market" className="hover:text-white transition-colors">
-                  Market Benchmarks
+                <Link to="/jobs" className="hover:text-white transition-colors">
+                  Jobs & Salary
                 </Link>
               </li>
               <li>
-                <Link to="/pathways" className="hover:text-white transition-colors">
-                  Safe / Stretch / Pivot
+                <Link to="/path" className="hover:text-white transition-colors">
+                  Safe / Stretch / Switch Paths
                 </Link>
               </li>
               <li>
-                <Link to="/compensation" className="hover:text-white transition-colors">
-                  Real CTC Arbitrage
+                <Link to="/jobs" className="hover:text-white transition-colors">
+                  Real Salary (After Rent & Travel)
                 </Link>
               </li>
               <li>
                 <Link to="/passport" className="hover:text-white transition-colors">
-                  AI Talent Passport
+                  Skill Passport
                 </Link>
               </li>
             </ul>

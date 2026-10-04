@@ -50,7 +50,7 @@ export default function SkillsDemandTrends({
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
           <div className="flex items-center gap-2 font-extrabold text-sm text-rose-700 dark:text-rose-400">
             <TrendingDown size={18} />
-            <span>Declining / High Automation Exposure</span>
+            <span>Declining / Automation risk</span>
           </div>
           <span className="text-xs font-bold text-slate-400">Decline Rate ↓</span>
         </div>

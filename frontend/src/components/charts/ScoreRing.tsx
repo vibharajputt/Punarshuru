@@ -14,7 +14,7 @@ export default function ScoreRing({
   score = 0,
   size = 180,
   strokeWidth = 14,
-  label = 'Disruption Index',
+  label = 'Career Risk Score',
   subtitle,
   showRiskBadge = true,
   className = '',

@@ -39,6 +39,7 @@ class ProfileUpdate(BaseModel):
 
 class ProfileRead(ProfileBase):
     id: str
+    user_id: str | None = None
     disruption_score: float | None = None
     disruption_breakdown: dict | None = None
     created_at: datetime
