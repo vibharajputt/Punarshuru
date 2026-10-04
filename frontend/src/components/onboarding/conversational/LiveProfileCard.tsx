@@ -1,4 +1,3 @@
-import React from 'react'
 import { Sparkles, CheckCircle2, ArrowRight, RefreshCw } from 'lucide-react'
 import type { Profile } from '@/types'
 import { ARCHETYPE_BADGES, hasRequiredSlots } from './types'
@@ -6,14 +5,12 @@ import ProfileFieldsGrid from './ProfileFieldsGrid'
 
 interface LiveProfileCardProps {
   profileDraft: Partial<Profile>
-  setProfileDraft: React.Dispatch<React.SetStateAction<Partial<Profile>>>
   onConfirm: () => void
   isConfirming: boolean
 }
 
 export default function LiveProfileCard({
   profileDraft,
-  setProfileDraft,
   onConfirm,
   isConfirming,
 }: LiveProfileCardProps) {
@@ -40,10 +37,7 @@ export default function LiveProfileCard({
         </div>
 
         {/* Form Fields */}
-        <ProfileFieldsGrid
-          profileDraft={profileDraft}
-          setProfileDraft={setProfileDraft}
-        />
+        <ProfileFieldsGrid profileDraft={profileDraft} />
 
         {/* Calibrated Skills */}
         <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-100 dark:border-slate-800 space-y-1.5">

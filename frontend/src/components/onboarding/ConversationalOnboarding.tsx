@@ -31,7 +31,6 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
     showConfirmScreen,
     setShowConfirmScreen,
     profileDraft,
-    setProfileDraft,
     handleSendMessage,
     handleFileUpload,
     handleConfirmAndFinish,
@@ -133,7 +132,6 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
 
         <LiveProfileCard
           profileDraft={profileDraft}
-          setProfileDraft={setProfileDraft}
           onConfirm={() => handleSendMessage('', 'confirm')}
           isConfirming={isConfirming}
         />

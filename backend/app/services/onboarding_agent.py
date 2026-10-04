@@ -13,8 +13,10 @@ Architecture:
   - name/email come from authenticated user — never asked.
 """
 
+import difflib
 import json
 import logging
+from pathlib import Path
 import re
 from typing import Any
 
@@ -131,6 +133,180 @@ def _classify_segment(text: str, current_role: str, gap_years: float) -> str:
 # ─────────────────────────────────────────────────────────────────────────────
 # Rule-based extraction helpers (Hinglish + English, word-boundary regex)
 # ─────────────────────────────────────────────────────────────────────────────
+# Skills Taxonomy Loading & Fuzzy Matcher (fuzzy ratio >= 0.85)
+# ─────────────────────────────────────────────────────────────────────────────
+
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+
+
+def _load_taxonomy_skills() -> list[dict]:
+    p = DATA_DIR / "skills_taxonomy.json"
+    if p.exists():
+        try:
+            with open(p, encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.warning("Failed to load skills_taxonomy.json: %s", e)
+    return []
+
+
+_TAXONOMY_DATA = _load_taxonomy_skills()
+_TAXONOMY_MAP: dict[str, str] = {}
+for _item in _TAXONOMY_DATA:
+    _name = _item.get("name", "").strip()
+    if not _name:
+        continue
+    _TAXONOMY_MAP[_name.lower()] = _name
+    for _alias in _item.get("aliases", []):
+        if _alias and str(_alias).strip():
+            _TAXONOMY_MAP[str(_alias).strip().lower()] = _name
+
+_KNOWN_ROLE_TERMS = {
+    "student", "engineer", "developer", "tester", "partner", "executive",
+    "manager", "lead", "architect", "intern", "fresher", "consultant", "analyst"
+}
+
+_FILENAME_EXTS = (".pdf", ".docx", ".doc", ".txt", ".rtf", ".odt")
+
+
+def _fuzzy_match_taxonomy_skill(raw_token: str) -> str | None:
+    """
+    Match raw_token against skills taxonomy with fuzzy ratio >= 0.85 (85%).
+    Never returns filenames, roles, sentences, or noise.
+    """
+    token = raw_token.strip().strip(".,;:|/()[]{}'\"“”‘’")
+    if not token or len(token) < 2:
+        return None
+
+    t_lower = token.lower()
+
+    # Reject filenames
+    if any(t_lower.endswith(ext) for ext in _FILENAME_EXTS) or "/" in token or "\\" in token:
+        return None
+    if any(word in t_lower for word in ["resume", "uploaded", "curriculum", "attachment"]):
+        return None
+
+    # Reject sentences (> 4 words)
+    words = token.split()
+    if len(words) > 4:
+        return None
+
+    # Reject conversational sentence starters
+    if any(starter in t_lower for starter in [
+        "i am", "my role", "my name", "i have", "i work", "working as", "looking for",
+        "i'm", "mera", "main", "mujhe", "karta"
+    ]):
+        return None
+
+    # Reject pure role descriptions unless the term is explicitly in the taxonomy
+    if any(r in t_lower for r in _KNOWN_ROLE_TERMS):
+        if t_lower not in _TAXONOMY_MAP:
+            return None
+
+    # 1. Exact match against canonical name or alias (case-insensitive)
+    if t_lower in _TAXONOMY_MAP:
+        return _TAXONOMY_MAP[t_lower]
+
+    # 2. Fuzzy match against canonical names and aliases (ratio >= 0.85)
+    best_canonical = None
+    best_ratio = 0.0
+
+    for term, canonical in _TAXONOMY_MAP.items():
+        if len(term) <= 3:
+            if t_lower == term:
+                return canonical
+            continue
+
+        if abs(len(t_lower) - len(term)) > 3:
+            continue
+
+        ratio = difflib.SequenceMatcher(None, t_lower, term).ratio()
+        if ratio >= 0.85 and ratio > best_ratio:
+            best_ratio = ratio
+            best_canonical = canonical
+
+    return best_canonical
+
+
+def _extract_taxonomy_skills_from_text(msg: str) -> list[str]:
+    """Extract skills matching taxonomy with fuzzy ratio >= 0.85. Never returns filenames, roles, sentences."""
+    tokens = re.split(r"[,/|;•\n]|\band\b", msg, flags=re.I)
+    results: list[str] = []
+    for raw in tokens:
+        clean = raw.strip()
+        if not clean:
+            continue
+        skill = _fuzzy_match_taxonomy_skill(clean)
+        if skill and skill not in results:
+            results.append(skill)
+    return results
+
+
+def _normalize_current_role(msg: str) -> str | None:
+    """Clean conversational phrasing from current role."""
+    s = msg.strip().strip(".,!?:")
+    if not s:
+        return None
+    # Remove leading conversational prefixes
+    s = re.sub(
+        r"^(?:i\s+am\s+(?:a(?:n)?\s+)?|i'm\s+(?:a(?:n)?\s+)?|working\s+as\s+(?:a(?:n)?\s+)?|worked\s+as\s+(?:a(?:n)?\s+)?|i\s+work\s+as\s+(?:a(?:n)?\s+)?|my\s+(?:current\s+)?role\s+(?:is|of)\s+|role\s*:\s*|main\s+|mera\s+(?:kaam|role)\s+(?:hai\s+|he\s+)?|mera\s+kaam\s+)",
+        "",
+        s,
+        flags=re.I,
+    ).strip()
+    # Remove trailing Hinglish verbs
+    s = re.sub(
+        r"\s+(?:karta\s+hun|karti\s+hun|karta\s+hoon|karti\s+hoon|karta|karti|hun|hoon|hai|he)$",
+        "",
+        s,
+        flags=re.I,
+    ).strip()
+    if not s or any(w in s.lower() for w in ["naam", "lucknow", "pune", "delhi", "mumbai"]):
+        return None
+    if s.lower() == "delivery":
+        return "Delivery Partner"
+    if s.lower() in ("student", "final year student", "college student"):
+        return "Final Year Student"
+    if len(s.split()) <= 5:
+        return s.title()
+    return None
+
+
+def _normalize_target_role(msg: str) -> str | None:
+    """Clean conversational phrasing from target role."""
+    s = msg.strip().strip(".,!?:")
+    if not s:
+        return None
+    s = re.sub(
+        r"^(?:i\s+want\s+to\s+(?:be|become)\s+(?:a(?:n)?\s+)?|aiming\s+for\s+(?:a(?:n)?\s+)?|target\s+(?:role\s+)?(?:is\s+)?|looking\s+(?:for|to\s+become)\s+(?:a(?:n)?\s+)?|role\s*:\s*|mujhe\s+|main\s+)",
+        "",
+        s,
+        flags=re.I,
+    ).strip()
+    s = re.sub(
+        r"\s+(?:banna\s+chahta\s+hun|banna\s+chahti\s+hun|chahta\s+hun|chahti\s+hun|karna\s+hai)$",
+        "",
+        s,
+        flags=re.I,
+    ).strip()
+    if not s:
+        return None
+    if len(s.split()) <= 5:
+        return s.title()
+    return None
+
+
+def _normalize_city(msg: str) -> str | None:
+    extracted = _rule_extract_city(msg)
+    if extracted:
+        return extracted
+    cleaned = msg.strip().strip(".,!?:")
+    cleaned = re.sub(r"^(?:in\s+|at\s+|based\s+in\s+|living\s+in\s+|mein\s+|me\s+)", "", cleaned, flags=re.I).strip()
+    cleaned = re.sub(r"\s+(?:me|mein|se)\s*$", "", cleaned, flags=re.I).strip()
+    if len(cleaned.split()) <= 2 and len(cleaned) >= 3 and not any(ch.isdigit() for ch in cleaned):
+        return _CITY_NORM.get(cleaned.title(), cleaned.title())
+    return None
+
 
 def _rule_extract_current_role(msg: str) -> str | None:
     """Word-boundary patterns for current role in English + Hinglish."""
@@ -148,12 +324,13 @@ def _rule_extract_current_role(msg: str) -> str | None:
         m = re.search(pat, msg, re.I)
         if m:
             role = m.group(1).strip().strip(",.")
-            # Filter out noise
             if role and len(role) > 2 and not any(
                 w in role.lower() for w in ["naam", "name", "lucknow", "pune", "delhi", "mumbai"]
             ):
+                if role.lower() == "delivery":
+                    return "Delivery Partner"
                 return role.title()
-    return None
+    return _normalize_current_role(msg)
 
 
 def _rule_extract_city(msg: str) -> str | None:
@@ -171,27 +348,9 @@ def _rule_extract_city(msg: str) -> str | None:
 
 
 def _rule_extract_skills(msg: str, existing: list[str]) -> list[str]:
-    # Split on commas / slashes / semicolons / "and"
-    items = re.split(r"[,/|;]|\band\b", msg, flags=re.I)
-    skills = []
-    noise = {
-        "i", "am", "a", "an", "the", "in", "at", "my", "me", "is", "are",
-        "was", "were", "will", "have", "has", "had", "this", "that",
-        "skip", "yes", "no", "hi", "hello", "hey",
-        # Hinglish noise
-        "mera", "naam", "main", "hun", "karta", "karti", "hoon", "hai", "me", "mein",
-    }
-    for item in items:
-        token = item.strip().strip(".,!?")
-        if (
-            token
-            and len(token) > 1
-            and token.lower() not in noise
-            and not any(char.isdigit() for char in token)
-        ):
-            skills.append(token.title())
-    merged = list(dict.fromkeys(existing + skills))
-    return merged
+    """Extract only items matching taxonomy with fuzzy ratio >= 0.85."""
+    extracted = _extract_taxonomy_skills_from_text(msg)
+    return list(dict.fromkeys(existing + extracted))
 
 
 def _rule_extract_gap_from_dates(msg: str) -> float | None:
@@ -265,7 +424,7 @@ def _rule_extract_name(msg: str) -> str | None:
 
 _SLOT_QUESTIONS_EN = {
     "current_role": (
-        "Welcome! To build your AI career intelligence, what is your **current or most recent role**?"
+        "To build your AI career intelligence, what is your **current or most recent role**?"
     ),
     "skills": (
         "Great! What are your **top skills** (list at least 3 — e.g. Python, Selenium, MS Excel)?"
@@ -286,7 +445,7 @@ _SLOT_QUESTIONS_EN = {
 
 _SLOT_QUESTIONS_HI = {
     "current_role": (
-        "Namaste! Aapka **abhi ka ya pichla role** kya hai?"
+        "Aapka **abhi ka ya pichla role** kya hai?"
     ),
     "skills": (
         "Bahut achha! Aapki **top skills** kya hain? (Kam se kam 3 batayein — jaise Python, Excel, Testing)"
@@ -364,7 +523,7 @@ def _draft_missing(draft: dict) -> list[str]:
     if not draft.get("current_role"):
         missing.append("current_role")
     skills = draft.get("skills_raw", [])
-    if not skills or len(skills) < 1:
+    if not skills or len(skills) < 3:
         missing.append("skills")
     if not draft.get("target_role"):
         missing.append("target_role")
@@ -379,9 +538,9 @@ def _all_required_filled(draft: dict) -> bool:
 
 def _next_required_slot(draft: dict) -> str | None:
     for slot in REQUIRED_SLOTS:
-        key = "skills_raw" if slot == "skills" else slot
         if slot == "skills":
-            if not draft.get("skills_raw"):
+            skills = draft.get("skills_raw", [])
+            if not skills or len(skills) < 3:
                 return "skills"
         elif not draft.get(slot):
             return slot
@@ -480,14 +639,13 @@ async def _llm_extract(
 # Apply extractions to draft
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _apply_to_draft(draft: dict, ext: _LLMExtract | None, rule: dict) -> None:
+def _apply_to_draft(draft: dict, ext: _LLMExtract | None, rule: dict, pending_slot: str = "") -> None:
     """Merge rule-based extractions first, then LLM (LLM wins on non-empty)."""
 
     def _set(key: str, val: Any) -> None:
         if val is not None and val != "" and val != []:
             draft[key] = val
 
-    # Rule-based wins for city/role to prevent hallucination
     _set("current_role", rule.get("current_role"))
     _set("city", rule.get("city"))
     _set("target_role", rule.get("target_role"))
@@ -495,7 +653,8 @@ def _apply_to_draft(draft: dict, ext: _LLMExtract | None, rule: dict) -> None:
         draft["experience_years"] = rule["experience_years"]
     if rule.get("career_gap_years") is not None:
         draft["career_gap_years"] = rule["career_gap_years"]
-    if rule.get("skills"):
+    # Only merge skills if pending_slot == "skills"
+    if rule.get("skills") and pending_slot == "skills":
         draft["skills_raw"] = list(dict.fromkeys(
             draft.get("skills_raw", []) + rule["skills"]
         ))
@@ -515,15 +674,22 @@ def _apply_to_draft(draft: dict, ext: _LLMExtract | None, rule: dict) -> None:
         draft["experience_years"] = ext.experience_years
     if ext.career_gap_years is not None and not draft.get("career_gap_years"):
         draft["career_gap_years"] = ext.career_gap_years
-    if ext.skills:
-        draft["skills_raw"] = list(dict.fromkeys(
-            draft.get("skills_raw", []) + ext.skills
-        ))
+    # Skills from LLM only if pending_slot == "skills", filtered through taxonomy
+    if ext.skills and pending_slot == "skills":
+        valid_llm_skills = []
+        for s in ext.skills:
+            matched = _fuzzy_match_taxonomy_skill(s)
+            if matched and matched not in valid_llm_skills:
+                valid_llm_skills.append(matched)
+        if valid_llm_skills:
+            draft["skills_raw"] = list(dict.fromkeys(
+                draft.get("skills_raw", []) + valid_llm_skills
+            ))
     if ext.expected_salary_lpa is not None:
         draft["expected_salary_lpa"] = ext.expected_salary_lpa
 
 
-def _apply_rule_extractions(msg: str, draft: dict) -> dict:
+def _apply_rule_extractions(msg: str, draft: dict, pending_slot: str = "") -> dict:
     """Pure rule-based extraction — no LLM. Returns dict of extracted values."""
     extracted: dict = {}
     r = _rule_extract_current_role(msg)
@@ -532,10 +698,11 @@ def _apply_rule_extractions(msg: str, draft: dict) -> dict:
     c = _rule_extract_city(msg)
     if c:
         extracted["city"] = c
-    # Skills: always try
-    merged = _rule_extract_skills(msg, draft.get("skills_raw", []))
-    if len(merged) > len(draft.get("skills_raw", [])):
-        extracted["skills"] = [s for s in merged if s not in draft.get("skills_raw", [])]
+    # Skills: ONLY if pending_slot == "skills"
+    if pending_slot == "skills":
+        merged = _rule_extract_skills(msg, draft.get("skills_raw", []))
+        if len(merged) > len(draft.get("skills_raw", [])):
+            extracted["skills"] = [s for s in merged if s not in draft.get("skills_raw", [])]
     exp = _rule_extract_experience(msg)
     if exp is not None:
         extracted["experience_years"] = exp
@@ -553,6 +720,10 @@ def _apply_rule_extractions(msg: str, draft: dict) -> dict:
         if re.search(r"\b" + re.escape(tr) + r"\b", msg, re.I):
             extracted["target_role"] = tr
             break
+    if not extracted.get("target_role") and pending_slot == "target_role":
+        tr_norm = _normalize_target_role(msg)
+        if tr_norm:
+            extracted["target_role"] = tr_norm
     return extracted
 
 
@@ -610,9 +781,9 @@ def _rule_reply(slot: str, draft: dict, lang: str) -> tuple[str, list[str]]:
 
     question = _slot_question(slot, lang)
     if slot == "current_role" and lang == "en":
-        question = f"Welcome! " + question
+        question = "Welcome! " + question
     elif slot == "current_role" and lang == "hi":
-        question = f"Namaste! " + question
+        question = "Namaste! " + question
     elif slot == "skills":
         question = f"Got it{greeting}. " + question if lang == "en" else f"Theek hai{greeting}. " + question
 
@@ -696,16 +867,17 @@ async def handle_onboarding_chat(
     # ── 2. Resume processing ──────────────────────────────────────────────────
     if resume_text and len(resume_text.strip()) > 15:
         parsed = await parse_resume_text(resume_text)
-        # Never invent: only apply if resume actually extracted them
         if parsed.name and parsed.name not in ("Candidate", ""):
-            draft["name"] = parsed.name  # override from resume if present
+            draft["name"] = parsed.name
         if parsed.email:
             draft["email"] = parsed.email
-        # city: do NOT default — leave empty if not found so agent asks
-        if parsed.city and parsed.city != "Bengaluru":
-            draft["city"] = parsed.city
-        # current_role: do NOT default to "Software Professional"
-        if parsed.current_role and parsed.current_role != "Software Professional":
+        # city: extract if actually present in resume_text, never invent
+        resume_city = _rule_extract_city(resume_text)
+        if resume_city:
+            draft["city"] = resume_city
+        elif parsed.city and parsed.city != "Bengaluru":
+            draft["city"] = _CITY_NORM.get(parsed.city, parsed.city)
+        if parsed.current_role:
             draft["current_role"] = parsed.current_role
         if parsed.target_role:
             draft["target_role"] = parsed.target_role
@@ -713,12 +885,22 @@ async def handle_onboarding_chat(
             draft["experience_years"] = parsed.experience_years
         if parsed.career_gap_years:
             draft["career_gap_years"] = parsed.career_gap_years
+        
+        # Keep all parsed skills (validate through taxonomy)
         if parsed.skills:
-            draft["skills_raw"] = list(dict.fromkeys(
-                draft.get("skills_raw", []) + parsed.skills
-            ))
+            valid_resume_skills = []
+            for s in parsed.skills:
+                m = _fuzzy_match_taxonomy_skill(s)
+                if m and m not in valid_resume_skills:
+                    valid_resume_skills.append(m)
+                elif not m and s and len(s) > 1 and s not in valid_resume_skills:
+                    # Keep resume-extracted skill
+                    valid_resume_skills.append(s)
+            if valid_resume_skills:
+                draft["skills_raw"] = list(dict.fromkeys(
+                    draft.get("skills_raw", []) + valid_resume_skills
+                ))
 
-        # Also try date-range gap extraction from raw text
         date_gap = _rule_extract_gap_from_dates(resume_text)
         if date_gap and not draft.get("career_gap_years"):
             draft["career_gap_years"] = date_gap
@@ -760,26 +942,130 @@ async def handle_onboarding_chat(
     # ── 3. Text turn ──────────────────────────────────────────────────────────
     _append_history(row, "user", message)
 
+    pending_slot = row.current_slot or "current_role"
+    slot_attempts = draft.setdefault("_slot_attempts", {})
+    attempts = slot_attempts.get(pending_slot, 0)
+    llm_ext: _LLMExtract | None = None
+
     # Skip detection: word-boundary "skip" — skips CURRENT optional slot only
     is_skip = bool(re.search(r"\bskip\b", message, re.I))
 
-    # Rule-based extractions (deterministic, no LLM)
-    rule_ext = _apply_rule_extractions(message, draft)
+    if is_skip and pending_slot in OPTIONAL_SLOTS:
+        slot_attempts[pending_slot] = 0
+        row.current_slot = _advance_slot(draft, pending_slot, True)
+    else:
+        # Fills pending_slot directly (light normalization)
+        if pending_slot == "current_role":
+            role = _normalize_current_role(message)
+            if role:
+                draft["current_role"] = role
+            elif attempts >= 1:
+                raw_ans = message.strip().strip(".,!?")
+                if raw_ans:
+                    draft["current_role"] = raw_ans.title()
 
-    # Try LLM extraction (enrichment only)
-    llm_ext: _LLMExtract | None = None
-    try:
-        llm_ext = await _llm_extract(
-            user_msg=message,
-            draft=draft,
-            history=list(row.history),
-            current_slot=row.current_slot,
-        )
-    except Exception as exc:
-        logger.warning("LLM call error: %s", exc)
+        elif pending_slot == "skills":
+            matched_skills = _extract_taxonomy_skills_from_text(message)
+            if matched_skills:
+                existing = draft.get("skills_raw", [])
+                draft["skills_raw"] = list(dict.fromkeys(existing + matched_skills))
+            elif attempts >= 1:
+                raw_tokens = [s.strip().title() for s in re.split(r"[,/|;]|\band\b", message) if s.strip() and len(s.strip()) > 1]
+                if raw_tokens:
+                    existing = draft.get("skills_raw", [])
+                    draft["skills_raw"] = list(dict.fromkeys(existing + raw_tokens))
 
-    # Merge extractions into draft
-    _apply_to_draft(draft, llm_ext, rule_ext)
+        elif pending_slot == "target_role":
+            target = _normalize_target_role(message)
+            if target:
+                draft["target_role"] = target
+            elif attempts >= 1:
+                raw_ans = message.strip().strip(".,!?")
+                if raw_ans:
+                    draft["target_role"] = raw_ans.title()
+
+        elif pending_slot == "city":
+            city = _normalize_city(message)
+            if city:
+                draft["city"] = city
+            elif attempts >= 1:
+                raw_ans = message.strip().strip(".,!?")
+                if raw_ans:
+                    draft["city"] = raw_ans.title()
+
+        elif pending_slot == "career_gap":
+            gap = _rule_extract_gap_from_dates(message)
+            if gap is not None:
+                draft["career_gap_years"] = gap
+            elif re.search(r"\b(no|none|zero|never|0)\b", message, re.I):
+                draft["career_gap_years"] = 0.0
+            elif attempts >= 1:
+                draft["career_gap_years"] = 0.0
+
+        elif pending_slot == "expected_salary":
+            sal_matches = re.findall(r"(\d+(?:\.\d+)?)", message)
+            if sal_matches:
+                try:
+                    draft["expected_salary_lpa"] = float(sal_matches[0])
+                except ValueError:
+                    pass
+            elif attempts >= 1:
+                draft["expected_salary_lpa"] = 0.0
+
+        # Rule-based extractions for any additional fields in a compound message
+        rule_ext = _apply_rule_extractions(message, draft, pending_slot=pending_slot)
+        _apply_to_draft(draft, None, rule_ext, pending_slot=pending_slot)
+
+        # Try LLM extraction (enrichment only)
+        llm_ext: _LLMExtract | None = None
+        try:
+            llm_ext = await _llm_extract(
+                user_msg=message,
+                draft=draft,
+                history=list(row.history),
+                current_slot=pending_slot,
+            )
+            if llm_ext:
+                _apply_to_draft(draft, llm_ext, {}, pending_slot=pending_slot)
+        except Exception as exc:
+            logger.warning("LLM call error: %s", exc)
+
+        # Check if pending slot is now filled
+        slot_filled = False
+        if pending_slot == "skills":
+            slot_filled = len(draft.get("skills_raw", [])) >= 3
+        elif pending_slot in ("current_role", "target_role", "city"):
+            slot_filled = bool(draft.get(pending_slot))
+        elif pending_slot in ("career_gap", "expected_salary"):
+            slot_filled = True
+
+        if slot_filled:
+            slot_attempts[pending_slot] = 0
+        else:
+            slot_attempts[pending_slot] = attempts + 1
+
+        next_slot = _advance_slot(draft, pending_slot, is_skip)
+
+        # Loop guard: never ask the same slot twice in a row; on second attempt accept raw answer
+        if next_slot == pending_slot and slot_attempts.get(pending_slot, 0) >= 1:
+            raw_val = message.strip().strip(".,!?").title() or "General"
+            if pending_slot == "current_role":
+                draft["current_role"] = raw_val
+            elif pending_slot == "target_role":
+                draft["target_role"] = raw_val
+            elif pending_slot == "city":
+                draft["city"] = raw_val
+            elif pending_slot == "skills":
+                cur_skills = draft.get("skills_raw", [])
+                toks = [t.strip().title() for t in message.split(",") if t.strip()]
+                for t in toks:
+                    if t not in cur_skills:
+                        cur_skills.append(t)
+                draft["skills_raw"] = cur_skills
+            slot_attempts[pending_slot] = 0
+            next_slot = _advance_slot(draft, pending_slot, is_skip)
+
+        row.current_slot = next_slot
 
     # Re-classify segment
     new_seg = _classify_segment(
@@ -791,8 +1077,6 @@ async def handle_onboarding_chat(
         row.segment = new_seg
         draft["user_type"] = new_seg
 
-    # Determine next slot
-    row.current_slot = _advance_slot(draft, row.current_slot, is_skip)
     row.profile_draft = draft
     missing = _draft_missing(draft)
 

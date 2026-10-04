@@ -31,27 +31,14 @@ export function useResumeUpload({
       setIsUploading(true)
       setUploadError(null)
       const parsed = await profileApi.uploadResume(file)
-      setProfileDraft((prev) => ({
-        ...prev,
-        city: parsed.city || prev.city || '',
-        current_role: parsed.current_role || prev.current_role || '',
-        target_role: parsed.target_role || prev.target_role || '',
-        experience_years: parsed.experience_years ?? prev.experience_years ?? 0,
-        career_gap_years: parsed.career_gap_years ?? prev.career_gap_years ?? 0,
-        skills_raw: parsed.skills?.length ? parsed.skills : prev.skills_raw,
-      }))
       const res = await onboardingApi.chat({
         session_id: sessionId,
-        message: `Uploaded resume: ${file.name}`,
-        resume_text: parsed.resume_text || parsed.summary || file.name,
+        message: '',
+        resume_text: parsed.resume_text || parsed.summary || '',
       })
-      setProfileDraft((prev) => ({
-        ...prev,
-        ...res.profile_draft,
-        skills_raw: res.profile_draft.skills_raw?.length
-          ? res.profile_draft.skills_raw
-          : (parsed.skills?.length ? parsed.skills : prev.skills_raw),
-      }))
+      if (res.profile_draft) {
+        setProfileDraft(res.profile_draft)
+      }
       setMessages((prev) => [
         ...prev,
         {

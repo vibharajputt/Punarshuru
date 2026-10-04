@@ -64,12 +64,7 @@ export function useOnboardingAgent() {
       })
 
       if (res.profile_draft) {
-        setProfileDraft((prev) => ({
-          ...prev,
-          ...res.profile_draft,
-          name: prev.name || res.profile_draft.name || authUser?.name || '',
-          email: prev.email || res.profile_draft.email || authUser?.email || '',
-        }))
+        setProfileDraft(res.profile_draft)
       }
 
       const botMsg: Message = {
