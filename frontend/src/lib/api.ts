@@ -188,6 +188,7 @@ export interface OnboardingChatRequest {
   session_id: string
   message: string
   resume_text?: string | null
+  action?: string | null
 }
 
 export interface OnboardingChatResponse {
@@ -199,12 +200,22 @@ export interface OnboardingChatResponse {
   done: boolean
 }
 
+export interface OnboardingSessionResponse {
+  user_id: string
+  profile_draft: Partial<Profile>
+  current_slot: string
+  segment: UserType
+  done: boolean
+  history: Array<{ role: string; content: string }>
+}
+
 export const onboardingApi = {
   chat: (data: OnboardingChatRequest) =>
     request<OnboardingChatResponse>('/api/onboarding/chat', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  getSession: () => request<OnboardingSessionResponse>('/api/onboarding/session'),
 }
 
 export interface TranscriptionResponse {

@@ -48,6 +48,9 @@ export default function App() {
 
           {/* ── Protected app routes (require login) ───────────────── */}
           <Route element={<ProtectedRoute />}>
+            {/* Onboarding is full-screen — no sidebar wrapper */}
+            <Route path="/onboarding" element={<OnboardingPage />} />
+
             <Route element={<AppLayout />}>
               {/* Primary nav routes (ux.md) */}
               <Route path="/home"     element={<HomePage />} />
@@ -55,9 +58,6 @@ export default function App() {
               <Route path="/path"     element={<PathPage />} />
               <Route path="/jobs"     element={<JobsPage />} />
               <Route path="/passport" element={<PassportPage />} />
-
-              {/* Supporting routes */}
-              <Route path="/onboarding" element={<OnboardingPage />} />
             </Route>
           </Route>
 

@@ -13,8 +13,12 @@ SIGNUP_PAYLOAD = {
 }
 
 
-async def _signup(client: AsyncClient, payload: dict | None = None) -> dict:
-    data = payload or SIGNUP_PAYLOAD
+async def _signup(
+    client: AsyncClient, payload: dict | None = None, email: str | None = None
+) -> dict:
+    data = dict(payload or SIGNUP_PAYLOAD)
+    if email:
+        data["email"] = email
     resp = await client.post("/api/auth/signup", json=data)
     return resp
 
@@ -125,8 +129,8 @@ async def test_me_with_invalid_token_returns_401(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_post_profile_duplicate_email_upserts_not_500(client: AsyncClient):
-    """Calling POST /api/profile twice with the same email must not 500."""
+async def test_post_profile_without_auth_returns_401(client: AsyncClient):
+    """Calling POST /api/profile without auth (non-demo) must return 401."""
     payload = {
         "name": "Rahul Dev",
         "email": "rahul@example.com",
@@ -135,25 +139,91 @@ async def test_post_profile_duplicate_email_upserts_not_500(client: AsyncClient)
         "skills_raw": ["Python"],
         "skills_taxonomy_ids": [],
     }
-    r1 = await client.post("/api/profile", json=payload)
-    assert r1.status_code == 201, r1.text
+    r = await client.post("/api/profile", json=payload)
+    assert r.status_code == 401, r.text
 
-    r2 = await client.post("/api/profile", json=payload)
-    # Must upsert — not 500
-    assert r2.status_code == 201, r2.text
-    # Same profile id returned (upserted)
-    assert r1.json()["id"] == r2.json()["id"]
+
+@pytest.mark.asyncio
+async def test_get_and_put_profile_without_auth_returns_401(client: AsyncClient):
+    """Calling GET and PUT /api/profile/{id} without auth (non-demo) must return 401."""
+    # First create profile with auth
+    signup_resp = await _signup(client, email="user_getput@example.com")
+    token = signup_resp.json()["access_token"]
+    payload = {
+        "name": "Auth User",
+        "email": "user_getput@example.com",
+        "user_type": "returner",
+        "experience_years": 4,
+        "skills_raw": ["Python"],
+        "skills_taxonomy_ids": [],
+    }
+    res = await client.post("/api/profile", json=payload, headers={"Authorization": f"Bearer {token}"})
+    assert res.status_code == 201
+    profile_id = res.json()["id"]
+
+    # GET without auth
+    get_res = await client.get(f"/api/profile/{profile_id}")
+    assert get_res.status_code == 401
+
+    # PUT without auth
+    put_res = await client.put(f"/api/profile/{profile_id}", json={"experience_years": 5})
+    assert put_res.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_post_profile_upserts_by_user_id_not_email(client: AsyncClient):
+    """Profiles upsert strictly by user_id. Email-based linking is removed."""
+    # User 1 creates profile
+    s1 = await _signup(client, email="owner1@example.com")
+    token1 = s1.json()["access_token"]
+    payload1 = {
+        "name": "Owner One",
+        "email": "owner1@example.com",
+        "user_type": "returner",
+        "experience_years": 3,
+        "skills_raw": ["Java"],
+        "skills_taxonomy_ids": [],
+    }
+    r1 = await client.post("/api/profile", json=payload1, headers={"Authorization": f"Bearer {token1}"})
+    assert r1.status_code == 201
+    p1_id = r1.json()["id"]
+
+    # User 1 calls POST again -> upserts their own profile
+    payload1_updated = {**payload1, "experience_years": 4}
+    r1_up = await client.post("/api/profile", json=payload1_updated, headers={"Authorization": f"Bearer {token1}"})
+    assert r1_up.status_code == 201
+    assert r1_up.json()["id"] == p1_id
+    assert r1_up.json()["experience_years"] == 4
+
+    # User 2 creates their own profile -> separate profile created (keyed to user 2, not linked by email)
+    s2 = await _signup(client, email="owner2@example.com")
+    token2 = s2.json()["access_token"]
+    payload2 = {
+        "name": "Owner Two",
+        "email": "owner2@example.com",
+        "user_type": "gig",
+        "experience_years": 2,
+        "skills_raw": ["Node.js"],
+        "skills_taxonomy_ids": [],
+    }
+    r2 = await client.post("/api/profile", json=payload2, headers={"Authorization": f"Bearer {token2}"})
+    assert r2.status_code == 201
+    p2_id = r2.json()["id"]
+    # Separate profile created — keyed by user_id!
+    assert p2_id != p1_id
+    assert r2.json()["user_id"] is not None
+    assert r2.json()["user_id"] != r1_up.json()["user_id"]
 
 
 @pytest.mark.asyncio
 async def test_post_profile_with_auth_links_user_id(client: AsyncClient):
     """Profile created with a valid JWT must have user_id set."""
-    signup_resp = await _signup(client)
+    signup_resp = await _signup(client, email="unique_link@example.com")
     token = signup_resp.json()["access_token"]
 
     payload = {
         "name": "Priya Test",
-        "email": SIGNUP_PAYLOAD["email"],
+        "email": "unique_link@example.com",
         "user_type": "returner",
         "experience_years": 5,
         "skills_raw": ["Java"],
@@ -167,3 +237,4 @@ async def test_post_profile_with_auth_links_user_id(client: AsyncClient):
     assert resp.status_code == 201, resp.text
     body = resp.json()
     assert body["user_id"] is not None
+

@@ -37,3 +37,19 @@ Disruption Index/Score → Career Risk Score | Skill Obsolescence → Outdated s
 
 ## Delete
 Dashboard tabs, DashboardCompanyBanner, QuickResumeParserCard, CareerSimulatorWidget, PersonaSwitcher, FloatingDemoSwitcher, ModuleNavCards, company brand names/logos.
+
+## Agent v2 (overrides earlier agent behaviour)
+- Architecture: slot-filling state machine. Code decides next question and done. LLM only (a) extracts fields as JSON, (b) phrases the reply. Never let LLM set done.
+- Slots in order: current_role, skills (≥3), target_role, city, career_gap (optional, ask only if experience>0, offer "Skip"), expected_salary (optional).
+- name and email come from logged-in user (GET /api/auth/me). Never ask name.
+- Done = all required slots filled (current_role, skills, target_role, city) AND user taps the Confirm button. Confirm is an action field in the request, never text matching.
+- "Skip" skips only the current optional slot.
+- Validate LLM output with a Pydantic model; drop unknown keys; coerce types; ignore empty values.
+- Pass last 6 messages of history to the LLM.
+- Resume: never invent missing fields (no default city/target/name). Extract gap from date ranges. After resume, ask only missing slots.
+- Rule-based fallback: word-boundary regex, supports English + Hinglish patterns ("mera naam", "main ... hun/karta hun", "... banna hai", "... me kaam"). Replies in user's language using templates (en + hi).
+- Sessions persisted in DB table onboarding_sessions keyed by user_id; resume chat after refresh.
+- LLM timeouts: 5s per provider, total ≤ 10s. Log provider failures at WARNING.
+- Rate limit /api/onboarding/chat: 20 requests/min per user.
+- Quick replies: generic examples only, no persona names, no brand names.
+- Frontend: render markdown in bubbles; onboarding is full-screen (no sidebar).
