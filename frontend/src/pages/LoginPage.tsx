@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Eye, EyeOff, Loader2, LogIn, AlertCircle } from 'lucide-react'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
@@ -7,6 +7,7 @@ import { useProfileStore } from '@/store/profileStore'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const setAuth = useAuthStore((s) => s.setAuth)
   const profile = useProfileStore((s) => s.profile)
 
@@ -14,9 +15,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-
+  const initialMsg = searchParams.get('message')
+  const [error, setError] = useState<string | null>(initialMsg || null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -34,7 +34,8 @@ export default function LoginPage() {
         (profile?.skills_raw?.length ?? 0) >= 1 &&
         !!profile?.target_role &&
         !!profile?.city
-      navigate(isComplete ? '/home' : '/onboarding', { replace: true })
+      const next = searchParams.get('next')
+      navigate(next || (isComplete ? '/home' : '/onboarding'), { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed. Check your email and password.')
     } finally {

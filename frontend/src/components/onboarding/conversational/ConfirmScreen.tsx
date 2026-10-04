@@ -16,8 +16,12 @@ export default function ConfirmScreen({
   onBackToChat,
   isFinalizing,
 }: ConfirmScreenProps) {
-  const badgeClass =
-    ARCHETYPE_BADGES[profileDraft.user_type || 'returner'] || ARCHETYPE_BADGES.returner
+  const isClassified = !!profileDraft.user_type && profileDraft.user_type !== 'detecting'
+  const badgeClass = isClassified
+    ? (ARCHETYPE_BADGES[profileDraft.user_type!] || 'bg-slate-100 text-slate-700 border-slate-200')
+    : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800'
+
+  const skillsCount = profileDraft.skills_raw?.length || 0
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6">
@@ -48,7 +52,7 @@ export default function ConfirmScreen({
               <span className="text-xs text-slate-400">{profileDraft.city || 'India'}</span>
             </div>
             <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${badgeClass}`}>
-              {profileDraft.user_type?.toUpperCase() || 'RETURNER'}
+              {isClassified ? profileDraft.user_type!.toUpperCase() : 'Detecting…'}
             </span>
           </div>
 
@@ -81,7 +85,10 @@ export default function ConfirmScreen({
 
           <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 space-y-1.5">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-              Calibrated Skills ({profileDraft.skills_raw?.length || 0})
+              {skillsCount} {skillsCount === 1 ? 'skill' : 'skills'}
+              {skillsCount < 3 && (
+                <span className="ml-1 text-amber-500 font-normal normal-case">(add at least 3)</span>
+              )}
             </span>
             <div className="flex flex-wrap gap-1.5">
               {profileDraft.skills_raw && profileDraft.skills_raw.length > 0 ? (

@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/store/authStore'
 import type {
   Profile,
   UserType,
@@ -43,11 +44,12 @@ export interface TrendsResponse {
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
 async function request<T>(endpoint: string, options?: RequestInit, token?: string): Promise<T> {
+  const activeToken = token ?? useAuthStore.getState().token
   const url = `${BASE_URL}${endpoint}`
   const isFormData = options?.body instanceof FormData
   const headers: Record<string, string> = {
     ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(activeToken ? { Authorization: `Bearer ${activeToken}` } : {}),
     ...(options?.headers as Record<string, string>),
   }
   const res = await fetch(url, {
@@ -56,6 +58,31 @@ async function request<T>(endpoint: string, options?: RequestInit, token?: strin
   })
 
   if (!res.ok) {
+    if (res.status === 401) {
+      // If unauthorized, check /api/auth/me unless this was already an auth call
+      if (!endpoint.startsWith('/api/auth/')) {
+        let isTokenValid = false
+        if (activeToken) {
+          try {
+            const meRes = await fetch(`${BASE_URL}/api/auth/me`, {
+              headers: { Authorization: `Bearer ${activeToken}` },
+            })
+            isTokenValid = meRes.ok
+          } catch {
+            isTokenValid = false
+          }
+        }
+        if (!isTokenValid) {
+          useAuthStore.getState().clearAuth()
+          if (typeof window !== 'undefined') {
+            const msg = encodeURIComponent('Session expired, please log in again')
+            window.location.href = `/login?next=/onboarding&message=${msg}`
+          }
+          throw new Error('Session expired, please log in again')
+        }
+      }
+    }
+
     let errorDetail = `HTTP ${res.status}: ${res.statusText}`
     try {
       const errJson = await res.json()
@@ -64,6 +91,11 @@ async function request<T>(endpoint: string, options?: RequestInit, token?: strin
       }
     } catch {
       // ignore json parse error
+    }
+
+    // Never show raw "Not authenticated" to the user
+    if (res.status === 401 || errorDetail.toLowerCase().includes('not authenticated') || errorDetail.toLowerCase().includes('could not validate')) {
+      errorDetail = 'Session expired, please log in again'
     }
     throw new Error(errorDetail)
   }
@@ -120,27 +152,13 @@ export const profileApi = {
       method: 'POST',
       body: JSON.stringify({ resume_text }),
     }),
-  uploadResume: async (file: File) => {
+  uploadResume: (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
-    const url = `${BASE_URL}/api/profile/upload-resume`
-    const res = await fetch(url, {
+    return request<ResumeParseResponse>('/api/profile/upload-resume', {
       method: 'POST',
       body: formData,
     })
-    if (!res.ok) {
-      let errorDetail = `HTTP ${res.status}: ${res.statusText}`
-      try {
-        const errJson = await res.json()
-        if (errJson && errJson.detail) {
-          errorDetail = typeof errJson.detail === 'string' ? errJson.detail : JSON.stringify(errJson.detail)
-        }
-      } catch {
-        // ignore
-      }
-      throw new Error(errorDetail)
-    }
-    return res.json() as Promise<ResumeParseResponse>
   },
 }
 
