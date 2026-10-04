@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 
 class OnboardingChatRequest(BaseModel):
-    session_id: str
+    session_id: str = ""
     message: str = ""
     resume_text: str | None = None
     # action:"confirm" signals the user tapped the Confirm button (never text-matched)
@@ -15,13 +15,14 @@ class OnboardingChatResponse(BaseModel):
     profile_draft: dict = Field(default_factory=dict)
     missing_fields: list[str] = Field(default_factory=list)
     segment: str = "detecting"
+    can_confirm: bool = False
     done: bool = False
 
 
 class OnboardingSessionResponse(BaseModel):
     user_id: str
     profile_draft: dict = Field(default_factory=dict)
-    current_slot: str = "current_role"
+    current_slot: str = ""
     segment: str = "detecting"
     done: bool = False
     history: list[dict] = Field(default_factory=list)

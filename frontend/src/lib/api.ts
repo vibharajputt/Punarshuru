@@ -215,6 +215,7 @@ export interface OnboardingChatResponse {
   profile_draft: Partial<Profile>
   missing_fields: string[]
   segment: UserType
+  can_confirm: boolean
   done: boolean
 }
 
@@ -234,6 +235,8 @@ export const onboardingApi = {
       body: JSON.stringify(data),
     }),
   getSession: () => request<OnboardingSessionResponse>('/api/onboarding/session'),
+  deleteSession: () =>
+    request<void>('/api/onboarding/session', { method: 'DELETE' }),
 }
 
 export interface TranscriptionResponse {

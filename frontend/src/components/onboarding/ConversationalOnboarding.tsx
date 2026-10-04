@@ -5,7 +5,6 @@ import ResumeUploadZone from './conversational/ResumeUploadZone'
 import ChatMessageBubble from './conversational/ChatMessageBubble'
 import ChatInputBar from './conversational/ChatInputBar'
 import LiveProfileCard from './conversational/LiveProfileCard'
-import ConfirmScreen from './conversational/ConfirmScreen'
 import { useOnboardingAgent } from './conversational/useOnboardingAgent'
 import { useVoiceAssistant } from './conversational/useVoiceAssistant'
 
@@ -27,13 +26,11 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
     uploadError,
     isDone,
     isConfirming,
-    isFinalizing,
-    showConfirmScreen,
-    setShowConfirmScreen,
+    canConfirm,
     profileDraft,
     handleSendMessage,
     handleFileUpload,
-    handleConfirmAndFinish,
+    handleStartOver,
   } = useOnboardingAgent()
 
   const {
@@ -56,17 +53,6 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
     const next = voiceLang === 'hi-IN' ? 'en-IN' : 'hi-IN'
     setVoiceLang(next)
     i18n.changeLanguage(next === 'hi-IN' ? 'hi' : 'en')
-  }
-
-  if (showConfirmScreen) {
-    return (
-      <ConfirmScreen
-        profileDraft={profileDraft}
-        onFinish={handleConfirmAndFinish}
-        onBackToChat={() => setShowConfirmScreen(false)}
-        isFinalizing={isFinalizing}
-      />
-    )
   }
 
   return (
@@ -93,11 +79,8 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                 speakingMsgId={speakingMsgId}
                 onToggleSpeak={handleToggleSpeak}
                 onQuickReply={(text) => {
-                  if (text === 'Confirm Profile' || text === 'Confirm & Save Profile') {
-                    handleSendMessage('', 'confirm')
-                  } else {
-                    handleSendMessage(text)
-                  }
+                  // Quick replies send their text as a message (never special-cased here)
+                  handleSendMessage(text)
                 }}
                 isTyping={isTyping}
                 isDone={isDone}
@@ -111,7 +94,7 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                   <span className="w-1.5 h-1.5 bg-[#0B4F9C] rounded-full animate-bounce [animation-delay:0.2s]" />
                   <span className="w-1.5 h-1.5 bg-[#0B4F9C] rounded-full animate-bounce [animation-delay:0.4s]" />
                 </div>
-                <span className="text-[11px]">AI is calibrating...</span>
+                <span className="text-[11px]">AI is thinking...</span>
               </div>
             )}
 
@@ -131,9 +114,11 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
         </div>
 
         <LiveProfileCard
-          profileDraft={profileDraft}
+          profileDraft={profileDraft as Record<string, unknown>}
+          canConfirm={canConfirm}
           onConfirm={() => handleSendMessage('', 'confirm')}
           isConfirming={isConfirming}
+          onStartOver={handleStartOver}
         />
       </div>
     </div>

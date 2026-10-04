@@ -1,19 +1,18 @@
 import { useState } from 'react'
 import { onboardingApi, profileApi } from '@/lib/api'
-import type { Profile } from '@/types'
 import type { Message } from './types'
 
 interface UseResumeUploadProps {
-  sessionId: string
-  setProfileDraft: React.Dispatch<React.SetStateAction<Partial<Profile>>>
+  setProfileDraft: (draft: Record<string, unknown>) => void
+  setCanConfirm: (v: boolean) => void
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>
   setIsDone: (done: boolean) => void
   setShowConfirmScreen: (show: boolean) => void
 }
 
 export function useResumeUpload({
-  sessionId,
   setProfileDraft,
+  setCanConfirm,
   setMessages,
   setIsDone,
   setShowConfirmScreen,
@@ -30,15 +29,22 @@ export function useResumeUpload({
     try {
       setIsUploading(true)
       setUploadError(null)
+
+      // 1. Parse the resume to get text + structured data
       const parsed = await profileApi.uploadResume(file)
+      const resumeText = parsed.resume_text || parsed.summary || ''
+
+      // 2. Send resume_text (not filename) to the onboarding chat
       const res = await onboardingApi.chat({
-        session_id: sessionId,
-        message: '',
-        resume_text: parsed.resume_text || parsed.summary || '',
+        session_id: '',
+        message: '',           // never send the filename as a message
+        resume_text: resumeText,
       })
-      if (res.profile_draft) {
-        setProfileDraft(res.profile_draft)
-      }
+
+      // 3. Backend is the single source of truth
+      if (res.profile_draft) setProfileDraft(res.profile_draft as Record<string, unknown>)
+      if (typeof res.can_confirm === 'boolean') setCanConfirm(res.can_confirm)
+
       setMessages((prev) => [
         ...prev,
         {
@@ -55,6 +61,7 @@ export function useResumeUpload({
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ])
+
       if (res.done) {
         setIsDone(true)
         setShowConfirmScreen(true)
