@@ -21,6 +21,24 @@ import {
   Sun,
   Moon,
   Globe,
+  FileSearch,
+  Compass,
+  FileText,
+  Calculator,
+  Database,
+  Shuffle,
+  CreditCard,
+  GitBranch,
+  Layers,
+  BarChart3,
+  TrendingUp,
+  CheckCircle2,
+  Scale,
+  ScanLine,
+  BookOpen,
+  Sliders,
+  MapPin,
+  Users,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/store/authStore'
@@ -28,6 +46,9 @@ import { useProfileStore } from '@/store/profileStore'
 import { useDemoStore } from '@/store/demoStore'
 import DemoStrip from '@/components/demo/DemoStrip'
 import DemoModal from '@/components/demo/DemoModal'
+import { ARCHETYPES } from '@/components/dashboard/RoleSelectorModal'
+import { ROLE_FEATURES } from '@/pages/RoleFeaturesPage'
+import RoleSelectorModal from '@/components/dashboard/RoleSelectorModal'
 
 /* ── Nav item definition ──────────────────────────────────────────────────── */
 interface NavItem {
@@ -41,16 +62,25 @@ const getNavItems = (t: (key: string, fallback: string) => string): NavItem[] =>
   { to: '/skills',   label: t('nav.skill_gap', 'My Skills'),     icon: Zap },
   { to: '/path',     label: t('nav.pathways', 'My Path'),        icon: Map },
   { to: '/jobs',     label: t('nav.market', 'Jobs & Salary'),    icon: Briefcase },
-  { to: '/passport', label: t('nav.passport', 'Skill Passport'), icon: Award },
 ]
 
-function getPageTitle(pathname: string, t: (key: string, fallback: string) => string): string {
+function getPageTitle(pathname: string, userType: string, t: (key: string, fallback: string) => string): string {
   if (pathname === '/home') return t('nav.dashboard', 'Home')
   if (pathname === '/skills') return t('nav.skill_gap', 'My Skills')
   if (pathname === '/path') return t('nav.pathways', 'My Path')
   if (pathname === '/jobs') return t('nav.market', 'Jobs & Salary')
   if (pathname === '/passport') return t('nav.passport', 'Skill Passport')
   if (pathname === '/onboarding') return t('onboarding.title', 'Onboarding')
+  
+  if (pathname.startsWith('/features')) {
+    const featureKey = pathname.split('/')[2]
+    const features = ROLE_FEATURES[userType] || ROLE_FEATURES.returner
+    if (featureKey) {
+      const match = features.find((f) => f.key === featureKey)
+      if (match) return match.title
+    }
+    return 'Role Toolkit'
+  }
   return t('app_name', 'Punarshuru')
 }
 
@@ -172,7 +202,7 @@ function AvatarMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 mt-2 w-48 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_8px_32px_rgba(11,79,156,0.12)] overflow-hidden z-50 animate-fade-in-up"
+          className="absolute right-0 mt-2 w-52 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_8px_32px_rgba(11,79,156,0.12)] overflow-hidden z-50 animate-fade-in-up"
         >
           {user && (
             <div className="px-4 py-3 border-b border-[#E2E8F0] dark:border-slate-700">
@@ -180,6 +210,17 @@ function AvatarMenu() {
               <p className="text-sm font-semibold text-[#0F172A] dark:text-white truncate">{user.email}</p>
             </div>
           )}
+
+          <button
+            role="menuitem"
+            id="avatar-skill-passport"
+            onClick={() => { setOpen(false); navigate('/passport') }}
+            className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-[#0F172A] dark:text-slate-200 hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors"
+          >
+            <Award size={15} className="text-[#0B4F9C] dark:text-sky-400" />
+            <span>Skill Passport</span>
+          </button>
+
           <button
             role="menuitem"
             id="avatar-edit-profile"
@@ -187,8 +228,11 @@ function AvatarMenu() {
             className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-[#0F172A] dark:text-slate-200 hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors"
           >
             <User size={15} />
-            Edit profile
+            <span>Edit profile</span>
           </button>
+
+          <div className="border-t border-[#E2E8F0] dark:border-slate-700 my-1" />
+
           <button
             role="menuitem"
             id="avatar-logout"
@@ -196,7 +240,7 @@ function AvatarMenu() {
             className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
           >
             <LogOut size={15} />
-            Log out
+            <span>Log out</span>
           </button>
         </div>
       )}
@@ -231,15 +275,54 @@ function LangToggle() {
   )
 }
 
-/* ── Main layout ──────────────────────────────────────────────────────────── */
+const FEATURE_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  // Returner
+  'gap-analyzer': FileSearch,
+  'reentry-roadmap': Compass,
+  'resume-rebuilder': FileText,
+  'purchasing-power': Calculator,
+
+  // Gig
+  'skill-passport': Award,
+  'evidence-vault': Database,
+  'job-translator': Shuffle,
+  'portable-profile': CreditCard,
+
+  // Laid Off
+  'adjacent-roles': GitBranch,
+  'transferability': Layers,
+  'laidoff-path': Zap,
+  'market-direction': BarChart3,
+
+  // Stagnant
+  'career-growth': TrendingUp,
+  'promotion-readiness': CheckCircle2,
+  'salary-benchmark': Calculator,
+  'stay-or-switch': Scale,
+
+  // Student
+  'senior-mentorship': Users,
+  'readiness-scan': ScanLine,
+  'curriculum-mapper': BookOpen,
+  'what-if': Sliders,
+  'pathways-explorer': MapPin,
+}
+
 export default function AppLayout() {
   const { t } = useTranslation()
   const { theme, toggle } = useTheme()
   const location = useLocation()
-  const title = getPageTitle(location.pathname, t)
+  const profile = useProfileStore((s) => s.profile)
+  const userType = profile?.user_type || 'returner'
+  const title = getPageTitle(location.pathname, userType, t)
   const isDemo = useDemoStore((s) => s.isDemo)
   const [demoModalOpen, setDemoModalOpen] = useState(false)
+  const [roleModalOpen, setRoleModalOpen] = useState(false)
   const navItems = getNavItems(t)
+
+  const currentArchetype = ARCHETYPES.find((a) => a.type === userType) || ARCHETYPES[0]
+  const ArchetypeIcon = currentArchetype.icon
+  const roleFeatures = ROLE_FEATURES[userType] || ROLE_FEATURES.returner
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC] dark:bg-[#080F1A] text-[#0F172A] dark:text-white">
@@ -250,65 +333,112 @@ export default function AppLayout() {
         {/* ── Desktop sidebar ─────────────────────────────────────────────── */}
         <aside
           id="app-sidebar"
-          className="hidden lg:flex flex-col w-60 shrink-0 h-[calc(100vh-2rem)] sticky top-0 border-r border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-[#0D1526]"
+          className="hidden lg:flex flex-col w-64 shrink-0 h-screen sticky top-0 border-r border-[#E2E8F0] dark:border-slate-800 bg-white dark:bg-[#0D1526]"
         >
           {/* Logo */}
-          <div className="px-5 py-5 border-b border-[#E2E8F0] dark:border-slate-800">
+          <div className="px-5 py-4 border-b border-[#E2E8F0] dark:border-slate-800 flex items-center justify-between">
             <span className="text-xl font-black tracking-tight text-gradient">Punarshuru</span>
+            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0B4F9C] dark:text-sky-300 border border-blue-200/60 dark:border-blue-800/60">
+              v2.0
+            </span>
           </div>
 
-        {/* Nav links */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto" aria-label="Main navigation">
-          {navItems.map((item) => (
-            <SideNavLink key={item.to} item={item} />
-          ))}
-        </nav>
+          {/* Nav links (All items rendered continuously) */}
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto" aria-label="Main navigation">
+            {navItems.map((item) => (
+              <SideNavLink key={item.to} item={item} />
+            ))}
 
-        {/* Footer hint */}
-        <div className="px-4 py-4 border-t border-[#E2E8F0] dark:border-slate-800">
-          <p className="text-[11px] text-[#94A3B8] dark:text-slate-500 leading-snug">
-            AI career intelligence<br />for Bharat 2.0
-          </p>
-        </div>
-      </aside>
+            {roleFeatures.map((feat) => {
+              const targetPath = `/features/${feat.key}`
+              const Icon = FEATURE_ICONS[feat.key] || Zap
+              return (
+                <NavLink
+                  key={feat.key}
+                  to={targetPath}
+                  id={`nav-feat-${feat.key}`}
+                  className={({ isActive }) =>
+                    [
+                      'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-150',
+                      isActive
+                        ? 'bg-[#0B4F9C] text-white shadow-[0_4px_14px_rgba(11,79,156,0.30)]'
+                        : 'text-[#475569] dark:text-slate-400 hover:bg-[#E8F3FF] dark:hover:bg-slate-800 hover:text-[#0B4F9C] dark:hover:text-white',
+                    ].join(' ')
+                  }
+                >
+                  <Icon size={18} />
+                  <span>{feat.shortTitle}</span>
+                </NavLink>
+              )
+            })}
+          </nav>
 
-      {/* ── Content area ────────────────────────────────────────────────── */}
-      <div className="flex flex-col flex-1 min-w-0">
-
-        {/* ── Top bar ─────────────────────────────────────────────────── */}
-        <header
-          id="app-topbar"
-          className="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 h-14 border-b border-[#E2E8F0] dark:border-slate-800 bg-white/90 dark:bg-[#0D1526]/90 backdrop-blur-md"
-        >
-          {/* Page title */}
-          <h2 className="text-base font-bold text-[#0F172A] dark:text-white truncate">{title}</h2>
-
-          {/* Right controls */}
-          <div className="flex items-center gap-2">
-            <LangToggle />
-
-            {/* Theme toggle */}
+          {/* Footer hint & Role Switch Card */}
+          <div className="p-3 border-t border-[#E2E8F0] dark:border-slate-800 space-y-2">
             <button
-              id="theme-toggle-btn"
-              onClick={toggle}
-              className="p-2 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#0B4F9C]/40 transition"
-              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              onClick={() => setRoleModalOpen(true)}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-700/60 transition text-left cursor-pointer group"
             >
-              {theme === 'dark'
-                ? <Sun size={16} className="text-amber-400" />
-                : <Moon size={16} className="text-slate-500" />}
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-6 h-6 rounded-lg bg-white dark:bg-slate-900 flex items-center justify-center text-xs shadow-2xs">
+                  <ArchetypeIcon size={12} className={currentArchetype.accent} />
+                </div>
+                <div className="truncate">
+                  <p className="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-[#0B4F9C] transition">
+                    {currentArchetype.title}
+                  </p>
+                  <p className="text-[9px] text-slate-400 dark:text-slate-500">Tap to change role</p>
+                </div>
+              </div>
+              <ChevronDown size={12} className="text-slate-400 group-hover:text-[#0B4F9C] transition" />
             </button>
-
-            <AvatarMenu />
           </div>
-        </header>
+        </aside>
 
-        {/* ── Page content ────────────────────────────────────────────── */}
-        <main className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 lg:pb-6">
-          <Outlet />
-        </main>
-      </div>
+        {/* ── Content area ────────────────────────────────────────────────── */}
+        <div className="flex flex-col flex-1 min-w-0">
+
+          {/* ── Top bar ─────────────────────────────────────────────────── */}
+          <header
+            id="app-topbar"
+            className="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 h-14 border-b border-[#E2E8F0] dark:border-slate-800 bg-white/90 dark:bg-[#0D1526]/90 backdrop-blur-md"
+          >
+            {/* Page title */}
+            <div className="flex items-center gap-2 truncate">
+              <h2 className="text-base font-bold text-[#0F172A] dark:text-white truncate">{title}</h2>
+              {location.pathname.startsWith('/features') && (
+                <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-[#0B4F9C] dark:text-sky-300">
+                  {currentArchetype.title}
+                </span>
+              )}
+            </div>
+
+            {/* Right controls */}
+            <div className="flex items-center gap-2">
+              <LangToggle />
+
+              {/* Theme toggle */}
+              <button
+                id="theme-toggle-btn"
+                onClick={toggle}
+                className="p-2 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#0B4F9C]/40 transition"
+                aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {theme === 'dark'
+                  ? <Sun size={16} className="text-amber-400" />
+                  : <Moon size={16} className="text-slate-500" />}
+              </button>
+
+              <AvatarMenu />
+            </div>
+          </header>
+
+          {/* ── Page content ────────────────────────────────────────────── */}
+          <main className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 lg:pb-6">
+            <Outlet />
+          </main>
+        </div>
       </div>
 
       {/* ── Mobile bottom nav ────────────────────────────────────────────── */}
@@ -324,6 +454,9 @@ export default function AppLayout() {
 
       {/* ── Demo Switcher Modal ── */}
       <DemoModal isOpen={demoModalOpen} onClose={() => setDemoModalOpen(false)} />
+
+      {/* ── Role Archetype Switcher Modal ── */}
+      <RoleSelectorModal isOpen={roleModalOpen} onClose={() => setRoleModalOpen(false)} />
     </div>
   )
 }

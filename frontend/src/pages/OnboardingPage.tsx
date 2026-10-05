@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, ArrowRight, MessageSquare } from 'lucide-react'
@@ -28,12 +28,6 @@ export default function OnboardingPage() {
   const navigate = useNavigate()
   const authUser = useAuthStore((s) => s.user)
   const setProfile = useProfileStore((s) => s.setProfile)
-  const clearProfile = useProfileStore((s) => s.clearProfile)
-
-  // Onboarding starts EMPTY for new users per ux.md Onboarding spec
-  useEffect(() => {
-    clearProfile()
-  }, [clearProfile])
 
   // Default to Conversational Chat Agent
   const [mode, setMode] = useState<'chat' | 'form'>('chat')

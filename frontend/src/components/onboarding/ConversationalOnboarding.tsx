@@ -79,8 +79,14 @@ export default function ConversationalOnboarding({ onSwitchToForm }: Conversatio
                 speakingMsgId={speakingMsgId}
                 onToggleSpeak={handleToggleSpeak}
                 onQuickReply={(text) => {
-                  // Quick replies send their text as a message (never special-cased here)
-                  handleSendMessage(text)
+                  if (
+                    text.toLowerCase().includes('confirm') ||
+                    text.toLowerCase().includes('dashboard')
+                  ) {
+                    handleSendMessage('', 'confirm')
+                  } else {
+                    handleSendMessage(text)
+                  }
                 }}
                 isTyping={isTyping}
                 isDone={isDone}
