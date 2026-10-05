@@ -23,6 +23,7 @@ import PassportPage from '@/pages/PassportPage'  // /passport
 // Other app pages
 import OnboardingPage from '@/pages/OnboardingPage'
 import PublicPassportPage from '@/pages/PublicPassportPage'
+import RoleFeaturesPage from '@/pages/RoleFeaturesPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,6 +59,10 @@ export default function App() {
               <Route path="/path"     element={<PathPage />} />
               <Route path="/jobs"     element={<JobsPage />} />
               <Route path="/passport" element={<PassportPage />} />
+
+              {/* Role-specific feature routes */}
+              <Route path="/features" element={<RoleFeaturesPage />} />
+              <Route path="/features/:featureKey" element={<RoleFeaturesPage />} />
             </Route>
           </Route>
 

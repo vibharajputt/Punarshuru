@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "change-me-in-production"
     ALLOWED_ORIGINS: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
-    EMBEDDING_MODEL: str = "paraphrase-multilingual-MiniLM-L12-v2"
+    EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
     SIMILARITY_THRESHOLD: float = 0.75
 
     @field_validator("ALLOWED_ORIGINS", mode="before")

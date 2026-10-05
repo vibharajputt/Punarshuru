@@ -187,11 +187,14 @@ async def chat_onboarding(
     state = await _load_state(current_user, db)
 
     saved_profile: Profile | None = None
+    msg_low = (req.message or "").strip().lower()
+    is_confirm_word = any(w in msg_low for w in ["confirm", "looks good", "go to dashboard", "haan", "theek", "done", "proceed", "ready", "accept"])
+
     if req.resume_text:
         parsed = await parse_resume_text(req.resume_text)
         state = apply_resume(state, parsed.model_dump())
 
-    elif req.action == "confirm":
+    elif req.action == "confirm" or (state.get("pending_slot") is None and is_complete(state) and is_confirm_word):
         state = engine_confirm(state)
         if is_complete(state):
             out = build_response(state)
