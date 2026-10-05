@@ -8,6 +8,10 @@ class ProfileBase(BaseModel):
     email: str | None = None
     user_type: UserType
     city: str | None = None
+    current_city: str | None = None
+    preferred_city: str | None = None
+    gap_reason: str | None = None
+    achievements: list[str] = []
     current_role: str | None = None
     target_role: str | None = None
     experience_years: int = 0
@@ -27,6 +31,10 @@ class ProfileUpdate(BaseModel):
     email: str | None = None
     user_type: UserType | None = None
     city: str | None = None
+    current_city: str | None = None
+    preferred_city: str | None = None
+    gap_reason: str | None = None
+    achievements: list[str] | None = None
     current_role: str | None = None
     target_role: str | None = None
     experience_years: int | None = None

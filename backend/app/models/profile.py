@@ -31,6 +31,10 @@ class Profile(Base):
     )
 
     city: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    current_city: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    preferred_city: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    gap_reason: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    achievements: Mapped[list] = mapped_column(JSON, default=list)
     current_role: Mapped[str | None] = mapped_column(String(120), nullable=True)
     target_role: Mapped[str | None] = mapped_column(String(120), nullable=True)
     experience_years: Mapped[int] = mapped_column(Integer, default=0)

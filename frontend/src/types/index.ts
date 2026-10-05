@@ -6,6 +6,10 @@ export interface Profile {
   email?: string | null
   user_type: UserType
   city?: string | null
+  current_city?: string | null
+  preferred_city?: string | null
+  gap_reason?: string | null
+  achievements?: string[]
   current_role?: string | null
   target_role?: string | null
   experience_years: number
@@ -198,6 +202,10 @@ export interface ResumeParseResponse {
   email?: string | null
   phone?: string | null
   city?: string | null
+  current_city?: string | null
+  preferred_city?: string | null
+  gap_reason?: string | null
+  achievements?: string[]
   current_role?: string | null
   target_role?: string | null
   experience_years?: number
@@ -206,6 +214,7 @@ export interface ResumeParseResponse {
   education?: string | null
   summary?: string | null
   resume_text?: string | null
+  user_type?: string | null
   confidence_score?: number
 }
 

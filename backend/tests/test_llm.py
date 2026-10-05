@@ -115,7 +115,7 @@ async def test_gemini_5s_timeout():
             pass
         raise asyncio.TimeoutError()
 
-    with patch("app.core.config.get_settings") as mock_settings, \
+    with patch("app.services.llm.get_settings") as mock_settings, \
          patch("google.genai.Client"), \
          patch("asyncio.wait_for", side_effect=mock_wait_for):
         mock_settings.return_value = Settings(
@@ -147,7 +147,7 @@ async def test_call_gemini_empty_response_raises():
     mock_resp.text = "   "
     mock_client.models.generate_content.return_value = mock_resp
 
-    with patch("app.core.config.get_settings") as mock_settings, \
+    with patch("app.services.llm.get_settings") as mock_settings, \
          patch("google.genai.Client", return_value=mock_client):
         mock_settings.return_value = Settings(
             GEMINI_API_KEY="AIzaSyDummy1234567890",

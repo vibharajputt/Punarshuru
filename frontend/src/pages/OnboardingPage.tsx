@@ -249,7 +249,11 @@ export default function OnboardingPage() {
                   {userType === 'gig' ? (
                     <Step2GigForm data={gigData} onChange={setGigData} />
                   ) : (
-                    <Step2Background data={bgData} onChange={setBgData} />
+                    <Step2Background
+                      data={bgData}
+                      onChange={setBgData}
+                      onArchetypeDetected={(t) => setUserType(t as UserType)}
+                    />
                   )}
                 </motion.div>
               )}

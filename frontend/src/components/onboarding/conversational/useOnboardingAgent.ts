@@ -4,7 +4,7 @@ import { onboardingApi, profileApi } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 import { useProfileStore } from '@/store/profileStore'
 import type { Message } from './types'
-import { useSessionRestore } from './useSessionRestore'
+import { useSessionRestore, createInitMsg } from './useSessionRestore'
 import { useResumeUpload } from './useResumeUpload'
 
 export function useOnboardingAgent() {
@@ -84,7 +84,11 @@ export function useOnboardingAgent() {
           name: draft.name || authUser?.name || 'Candidate',
           email: draft.email || authUser?.email,
           user_type: draft.user_type || 'stagnant',
-          city: draft.city || '',
+          city: draft.current_city || draft.city || '',
+          current_city: draft.current_city || draft.city || '',
+          preferred_city: draft.preferred_city || '',
+          gap_reason: draft.gap_reason || null,
+          achievements: draft.achievements || [],
           current_role: draft.current_role || '',
           target_role: draft.target_role || '',
           experience_years: Number(draft.experience_years || 0),
@@ -128,16 +132,35 @@ export function useOnboardingAgent() {
   const handleStartOver = async () => {
     try {
       await onboardingApi.deleteSession()
-      setProfileDraft({} as never)
-      setCanConfirm(false)
-      setIsDone(false)
-      setShowConfirmScreen(false)
-      setMessages([])
-      // Trigger greeting by sending an empty turn
-      await handleSendMessage('')
-    } catch {
-      // ignore
+    } catch (err) {
+      console.warn('Failed to delete onboarding session:', err)
     }
+
+    // Clear saved profile from store
+    useProfileStore.getState().clearProfile()
+
+    // Reset draft fields to empty
+    setProfileDraft({
+      name: authUser?.name || '',
+      email: authUser?.email || '',
+      current_role: '',
+      target_role: '',
+      city: '',
+      current_city: '',
+      preferred_city: '',
+      gap_reason: '',
+      achievements: [],
+      experience_years: 0,
+      career_gap_years: null,
+      skills_raw: [],
+      user_type: '',
+    } as never)
+
+    setCanConfirm(false)
+    setIsDone(false)
+    setShowConfirmScreen(false)
+    setInputMessage('')
+    setMessages([createInitMsg()])
   }
 
   return {

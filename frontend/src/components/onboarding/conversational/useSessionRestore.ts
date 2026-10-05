@@ -2,18 +2,20 @@ import { useState, useEffect } from 'react'
 import { onboardingApi } from '@/lib/api'
 import type { Message } from './types'
 
-const INIT_MSG: Message = {
-  id: 'init-1',
-  sender: 'assistant',
-  text: "Namaste! I am your AI Career Intelligence Agent. Let's build your profile \u2014 upload your resume or tell me about your current role.",
-  quickReplies: [
-    'Software Engineer',
-    'Delivery Partner',
-    'Manual QA Tester',
-    'Customer Support',
-    'Final Year Student',
-  ],
-  timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+export function createInitMsg(): Message {
+  return {
+    id: `init-${Date.now()}`,
+    sender: 'assistant',
+    text: "Namaste! I am your AI Career Intelligence Agent. Let's build your profile — upload your resume or tell me about your current role.",
+    quickReplies: [
+      'Software Engineer',
+      'Delivery Partner',
+      'Manual QA Tester',
+      'Customer Support',
+      'Final Year Student',
+    ],
+    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  }
 }
 
 interface UseSessionRestoreProps {
@@ -21,7 +23,7 @@ interface UseSessionRestoreProps {
 }
 
 export function useSessionRestore({ authUser }: UseSessionRestoreProps) {
-  const [messages, setMessages] = useState<Message[]>([INIT_MSG])
+  const [messages, setMessages] = useState<Message[]>([createInitMsg()])
   const [isDone, setIsDone] = useState(false)
   const [showConfirmScreen, setShowConfirmScreen] = useState(false)
   const [profileDraft, setProfileDraft] = useState<Record<string, unknown>>({
@@ -50,7 +52,7 @@ export function useSessionRestore({ authUser }: UseSessionRestoreProps) {
             text: h.content,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           }))
-          setMessages([INIT_MSG, ...restored])
+          setMessages([createInitMsg(), ...restored])
         }
         if (sess.done) {
           setIsDone(true)

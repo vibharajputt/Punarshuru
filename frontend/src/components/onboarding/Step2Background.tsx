@@ -17,13 +17,15 @@ export interface BackgroundFormData {
 interface Step2BackgroundProps {
   data: BackgroundFormData
   onChange: (data: BackgroundFormData) => void
+  onArchetypeDetected?: (type: string) => void
 }
 
-export default function Step2Background({ data, onChange }: Step2BackgroundProps) {
+export default function Step2Background({ data, onChange, onArchetypeDetected }: Step2BackgroundProps) {
   const [activeTab, setActiveTab] = useState<'upload' | 'paste' | 'manual'>('upload')
   const [parsing, setParsing] = useState(false)
   const [parseError, setParseError] = useState<string | null>(null)
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null)
+  const [detectedInfo, setDetectedInfo] = useState<{ userType: string; gapYears: number; skillsCount: number } | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [rawText, setRawText] = useState(data.resume_text || '')
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -48,12 +50,20 @@ export default function Step2Background({ data, onChange }: Step2BackgroundProps
       setParseError(null)
       setUploadedFileName(file.name)
       const res = await profileApi.uploadResume(file)
+      if (res.user_type) {
+        onArchetypeDetected?.(res.user_type)
+        setDetectedInfo({
+          userType: res.user_type,
+          gapYears: res.career_gap_years || 0,
+          skillsCount: res.skills?.length || 0,
+        })
+      }
       onChange({
         ...data,
         name: res.name || data.name || 'Candidate',
         email: res.email || data.email || '',
-        city: res.city || data.city || 'Bengaluru',
-        current_role: res.current_role || data.current_role || 'Software Professional',
+        city: res.city || data.city || '',
+        current_role: res.current_role || data.current_role || '',
         experience_years: res.experience_years || data.experience_years || 0,
         career_gap_years: res.career_gap_years || data.career_gap_years || 0,
         resume_text: res.summary || file.name,
@@ -85,12 +95,20 @@ export default function Step2Background({ data, onChange }: Step2BackgroundProps
       setParsing(true)
       setParseError(null)
       const res = await profileApi.parseResume(textToParse)
+      if (res.user_type) {
+        onArchetypeDetected?.(res.user_type)
+        setDetectedInfo({
+          userType: res.user_type,
+          gapYears: res.career_gap_years || 0,
+          skillsCount: res.skills?.length || 0,
+        })
+      }
       onChange({
         ...data,
         name: res.name || data.name || 'Candidate',
         email: res.email || data.email || '',
-        city: res.city || data.city || 'Bengaluru',
-        current_role: res.current_role || data.current_role || 'Software Professional',
+        city: res.city || data.city || '',
+        current_role: res.current_role || data.current_role || '',
         experience_years: res.experience_years || data.experience_years || 0,
         career_gap_years: res.career_gap_years || data.career_gap_years || 0,
         resume_text: textToParse,
@@ -231,6 +249,32 @@ export default function Step2Background({ data, onChange }: Step2BackgroundProps
               placeholder="Paste your resume text, job summary, career gap details, and tech stack here..."
               className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-200 focus:outline-[#0B4F9C]"
             />
+          </div>
+        </div>
+      )}
+
+      {detectedInfo && (
+        <div className="p-3.5 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 flex items-start gap-3">
+          <Sparkles className="text-indigo-600 dark:text-indigo-400 mt-0.5 shrink-0" size={16} />
+          <div className="space-y-1 flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-bold text-indigo-950 dark:text-indigo-200">
+                AI Resume Intelligence
+              </span>
+              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-indigo-200 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+                {detectedInfo.userType} Persona
+              </span>
+              {detectedInfo.gapYears > 0 && (
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200">
+                  {detectedInfo.gapYears} Yrs Gap Detected
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] text-indigo-700 dark:text-indigo-300">
+              {detectedInfo.gapYears > 0
+                ? `Dynamic analysis relative to current year detected a ${detectedInfo.gapYears}-year break. Categorized as Returner to bridge your skills gap.`
+                : `Profile categorized as ${detectedInfo.userType} archetype. Extracted ${detectedInfo.skillsCount} skills.`}
+            </p>
           </div>
         </div>
       )}
