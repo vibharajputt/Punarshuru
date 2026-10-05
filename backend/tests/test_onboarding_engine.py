@@ -11,11 +11,13 @@ def chat(state, *msgs):
 
 def test_no_loop_student_flow():
     s, out = chat(new_state("Vibha Rajput", "v@x.in"),
-                  "Final Year Student", "Python, Java, SQL", "ML Engineer", "Mohali", "No break")
+                  "Final Year Student", "Python, Java, SQL", "ML Engineer", "Mohali", "No break", "Remote", "Smart India Hackathon Winner")
     d = out["profile_draft"]
     assert d["current_role"] == "Final Year Student"
     assert d["skills_raw"] == ["Python", "Java", "SQL"]
     assert d["target_role"] == "ML Engineer" and d["city"] == "Mohali"
+    assert d["preferred_city"] == "Remote"
+    assert "Smart India Hackathon Winner" in d["achievements"]
     assert out["segment"] == "student" and out["can_confirm"] and out["quick_replies"] == []
     assert confirm(s)["done"]
 

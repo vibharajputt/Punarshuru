@@ -206,3 +206,184 @@ async def test_onboarding_chat_with_resume_text_asks_target_role(client: AsyncCl
     assert any(phrase in data["reply"].lower() for phrase in ("target role", "aiming for", "role do you want", "which **role"))
     assert any("engineer" in qr.lower() or "analyst" in qr.lower() or "qa" in qr.lower() for qr in data["quick_replies"])
 
+
+def test_resume_parser_computes_gap_from_last_experience_2023():
+    """If last experience ended in 2023 with no current job, gap is 3.0 years in 2026."""
+    resume = """
+    Priya Sharma
+    Email: priya@example.com
+    City: Pune
+
+    Experience:
+    Java Developer at Tech Corp (2020 - 2023)
+
+    Skills:
+    Java, Spring Boot, MySQL, REST APIs
+    """
+    res = _fallback_parse(resume)
+    assert res.career_gap_years >= 3.0
+    assert res.user_type == "returner"
+
+
+def test_resume_parser_computes_gap_from_last_education_2023():
+    """If last education was in 2023 with no work experience, gap is 3.0 years in 2026."""
+    resume = """
+    Rohan Gupta
+    Email: rohan@example.com
+    City: Delhi
+
+    Education:
+    B.Tech in Computer Science (2019 - 2023)
+
+    Skills:
+    Python, Django, PostgreSQL
+    """
+    res = _fallback_parse(resume)
+    assert res.career_gap_years >= 3.0
+    assert res.user_type == "returner"
+
+
+def test_resume_parser_classifies_gig_worker():
+    resume = """
+    Ramesh Kumar
+    Email: ramesh@example.com
+    City: Lucknow
+
+    Experience:
+    Swiggy Delivery Partner (2022 - Present)
+
+    Skills:
+    Customer Service, Route Planning
+    """
+    res = _fallback_parse(resume)
+    assert res.user_type == "gig"
+
+
+def test_resume_parser_classifies_laid_off_worker():
+    resume = """
+    Arjun Mehta
+    Email: arjun@example.com
+    City: Bengaluru
+
+    Experience:
+    Manual QA Engineer at Fintech Startup (2021 - 2024)
+    Laid off due to team restructuring in 2024.
+
+    Skills:
+    Manual Testing, JIRA, SQL
+    """
+    res = _fallback_parse(resume)
+    assert res.user_type == "laid_off"
+
+
+def test_resume_parser_classifies_fresher_student():
+    resume = """
+    Rohit Singh
+    Email: rohit@example.com
+    City: Mohali
+
+    Summary:
+    Final Year Student / CS Fresher graduating in 2026.
+
+    Skills:
+    Python, Machine Learning, Git
+    """
+    res = _fallback_parse(resume)
+    assert res.user_type == "student"
+
+
+def test_resume_parser_computes_gap_from_system_date_work_ended_2023():
+    from datetime import datetime
+    current_year = datetime.now().year
+    resume = """
+    Priya Sharma
+    Email: priya@example.com
+    City: Pune
+
+    Experience:
+    Java Developer at Tech Corp (2020 - 2023)
+
+    Skills:
+    Java, Spring Boot, MySQL
+    """
+    res = _fallback_parse(resume)
+    expected_gap = float(current_year - 2023)
+    assert res.career_gap_years == expected_gap
+    assert res.user_type == "returner"
+
+
+def test_resume_parser_computes_gap_from_system_date_education_ended_2023():
+    from datetime import datetime
+    current_year = datetime.now().year
+    resume = """
+    Vibha Kumari
+    Email: vibha@example.com
+    City: Bengaluru
+
+    Education:
+    B.Tech Computer Science (Graduated in 2023)
+
+    Skills:
+    Python, SQL, HTML
+    """
+    res = _fallback_parse(resume)
+    expected_gap = float(current_year - 2023)
+    assert res.career_gap_years == expected_gap
+    assert res.user_type == "returner"
+
+
+def test_resume_parser_does_not_invent_city_or_role_when_absent():
+    resume_no_city_no_role = """
+    Anonymous Candidate
+    Email: anon@example.com
+    Phone: 9988776655
+
+    Skills:
+    Python, Django, FastAPI, Docker
+    """
+    res = _fallback_parse(resume_no_city_no_role)
+    # City and role MUST NOT be hardcoded to Bengaluru or Software Professional
+    assert res.city is None
+    assert res.current_role is None
+
+
+def test_resume_parser_extracts_various_indian_cities_correctly():
+    cities_to_test = [
+        ("Location: Pune, Maharashtra", "Pune"),
+        ("Current Location: Jaipur", "Jaipur"),
+        ("Based in: Mohali", "Mohali"),
+        ("Address: Sector 62, Noida, UP", "Noida"),
+        ("Living in Lucknow", "Lucknow"),
+        ("Hyderabad, Telangana", "Hyderabad"),
+        ("Kolkata, WB", "Kolkata"),
+    ]
+    for text_snippet, expected_city in cities_to_test:
+        resume = f"""
+        Candidate Test
+        Email: test@example.com
+        {text_snippet}
+        Skills: Python, SQL
+        """
+        res = _fallback_parse(resume)
+        assert res.city == expected_city, f"Failed for snippet: {text_snippet}"
+
+
+def test_onboarding_engine_prompts_for_missing_city_and_role_from_resume():
+    from app.services.onboarding_engine import new_state, apply_resume, next_slot
+    state = new_state("Test User", "test@example.com")
+    resume_no_city = """
+    Test User
+    Email: test@example.com
+    Role: Java Developer
+    Skills: Java, Spring Boot, MySQL, REST APIs
+    """
+    parsed = _fallback_parse(resume_no_city)
+    assert parsed.city is None
+    state = apply_resume(state, parsed.model_dump())
+    # Since city and target_role were not in resume, next_slot must ask for them
+    slot = next_slot(state)
+    assert slot in ("target_role", "city")
+    assert state["draft"]["city"] == ""
+
+
+

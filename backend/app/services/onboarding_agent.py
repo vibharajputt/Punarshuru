@@ -13,6 +13,7 @@ Architecture:
   - name/email come from authenticated user — never asked.
 """
 
+from datetime import datetime
 import difflib
 import json
 import logging
@@ -117,15 +118,15 @@ class _LLMExtract(BaseModel):
 
 def _classify_segment(text: str, current_role: str, gap_years: float) -> str:
     t = f"{text} {current_role}".lower()
-    if re.search(r"\b(student|college|fresher|b\.?tech|graduate)\b", t):
-        return "student"
-    if re.search(r"\b(delivery|swiggy|zomato|uber|ola|gig|driver|courier|freelanc)\b", t):
+    if re.search(r"\b(delivery|swiggy|zomato|uber|ola|gig|driver|courier|freelanc|logistics\s*operations)\b", t):
         return "gig"
-    if re.search(r"\b(laid.?off|downsized|fired|retrench|let.?go)\b", t):
+    if re.search(r"\b(laid.?off|downsized|fired|retrench|let.?go|company\s*shut)\b", t):
         return "laid_off"
-    if gap_years >= 0.5 or re.search(r"\b(maternity|career.?gap|career.?break|sabbatical)\b", t):
+    if gap_years >= 0.5 or re.search(r"\b(maternity|career.?gap|career.?break|sabbatical|family\s*care)\b", t):
         return "returner"
-    if re.search(r"\b(stagnant|support|customer.?care|bpo|no.?growth|call.?centre)\b", t):
+    if re.search(r"\b(student|college|fresher|b\.?tech|graduate|final\s*year|intern)\b", t):
+        return "student"
+    if re.search(r"\b(stagnant|support|customer.?care|bpo|no.?growth|call.?centre)\b", t) or current_role:
         return "stagnant"
     return "detecting"
 
@@ -354,23 +355,53 @@ def _rule_extract_skills(msg: str, existing: list[str]) -> list[str]:
 
 
 def _rule_extract_gap_from_dates(msg: str) -> float | None:
-    """Extract career gap from date ranges like '2020-2024' or 'Career break 2020-2024'."""
+    """
+    Extract career gap from date ranges like '2020-2024' or calendar years like '2023 tak', 'till 2023'.
+    Calculates dynamic gap based on current system year (e.g. 2026 - 2023 = 3.0)!
+    """
+    current_year = datetime.now().year
+
+    # Negative / no break
+    if re.search(r"\b(no|none|zero|never|nahi|nhi|koi\s*nahi|continuous)\b", msg, re.I):
+        return 0.0
+
     # Explicit gap mention: "X year gap/break"
-    m = re.search(r"(\d+(?:\.\d+)?)\s*(?:years?|yrs?|yr)?\s*(?:career\s*)?(?:gap|break)", msg, re.I)
+    m = re.search(r"(\d+(?:\.\d+)?)\s*(?:years?|yrs?|yr|saal)?\s*(?:career\s*)?(?:gap|break)", msg, re.I)
     if m:
         try:
-            return float(m.group(1))
+            val = float(m.group(1))
+            if val > 50:
+                if 1980 <= val <= current_year:
+                    return float(current_year - int(val))
+            else:
+                return val
         except ValueError:
             pass
-    # Date range: YYYY-YYYY or YYYY – YYYY (gap period)
+
+    # Date range: YYYY-YYYY or YYYY – YYYY (gap period or work period)
     m = re.search(r"\b(20\d{2})\s*[-–—]\s*(20\d{2})\b", msg)
     if m:
         try:
             start, end = int(m.group(1)), int(m.group(2))
             if end > start:
+                # If end is in the past (e.g. 2020 - 2023), post-work gap is current_year - 2023
+                if end < current_year and not re.search(r"\b(present|current|now)\b", msg, re.I):
+                    return float(current_year - end)
                 return float(end - start)
         except ValueError:
             pass
+
+    # Single calendar year: e.g. "2023 tak", "till 2023", "graduated in 2023", "2023 passout", "2023 se", "2023"
+    cal_m = re.search(r"\b(19\d{2}|20\d{2})\b", msg)
+    if cal_m:
+        try:
+            y = int(cal_m.group(1))
+            if 1980 <= y <= current_year:
+                if not re.search(r"\b(present|current|now|till\s*date|ongoing)\b", msg, re.I):
+                    return float(current_year - y)
+        except ValueError:
+            pass
+
     return None
 
 
@@ -598,10 +629,18 @@ async def _llm_extract(
     hist_text = "\n".join(
         f"{h['role'].upper()}: {h['content']}" for h in history[-6:]
     )
+    current_year = datetime.now().year
     prompt = (
-        "You are Punarshuru, an AI career onboarding assistant for Indian professionals.\n"
-        "TASK: Extract career info from the user message and phrase a SHORT encouraging reply.\n"
+        f"You are Punarshuru, an AI career onboarding assistant for Indian professionals. Current year is {current_year}.\n"
+        "TASK: Extract career info from the user message, compute gaps relative to the current system year, categorize into the appropriate demo persona archetype, and phrase an encouraging reply tailored to their background.\n"
         "LANGUAGE RULE: Reply in the SAME language/dialect as the user (English, Hindi, or Hinglish).\n"
+        f"CAREER GAP RULE: If user says their last job was in past year (e.g. 2023) or graduation was in 2023 without current work, compute career_gap_years = ({current_year} - past_year) (e.g. {current_year} - 2023 = 3.0), and set segment to 'returner'.\n"
+        "PERSONA CATEGORIES (segment):\n"
+        "- 'returner': Has career gap >= 0.5 yrs (maternity, sabbatical, last role in past year like 2023).\n"
+        "- 'gig': Gig platform worker (Swiggy, Zomato, Uber, Ola, delivery partner, driver, courier).\n"
+        "- 'laid_off': Laid-off, downsized, retrenched, company shutdown.\n"
+        "- 'student': Student, fresher, final year, recent graduate with <= 1 year exp and no gap.\n"
+        "- 'stagnant': Currently employed professional (1+ years experience, no gap) looking to switch.\n\n"
         f"Conversation so far:\n{hist_text}\n\n"
         f"Current profile draft: {json.dumps(draft, ensure_ascii=False)}\n"
         f"We are currently collecting: {current_slot}\n"

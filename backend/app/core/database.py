@@ -51,5 +51,18 @@ async def init_db() -> None:
             cols = [row[1] for row in res.fetchall()]
             if cols and "engine_state" not in cols:
                 await conn.execute(text("ALTER TABLE onboarding_sessions ADD COLUMN engine_state JSON"))
+
+            # Profiles table migrations
+            res_p = await conn.execute(text("PRAGMA table_info('profiles')"))
+            p_cols = [row[1] for row in res_p.fetchall()]
+            if p_cols:
+                if "current_city" not in p_cols:
+                    await conn.execute(text("ALTER TABLE profiles ADD COLUMN current_city VARCHAR(60)"))
+                if "preferred_city" not in p_cols:
+                    await conn.execute(text("ALTER TABLE profiles ADD COLUMN preferred_city VARCHAR(60)"))
+                if "gap_reason" not in p_cols:
+                    await conn.execute(text("ALTER TABLE profiles ADD COLUMN gap_reason VARCHAR(200)"))
+                if "achievements" not in p_cols:
+                    await conn.execute(text("ALTER TABLE profiles ADD COLUMN achievements JSON"))
         except Exception:
             pass

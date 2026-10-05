@@ -100,6 +100,10 @@ async function request<T>(endpoint: string, options?: RequestInit, token?: strin
     throw new Error(errorDetail)
   }
 
+  if (res.status === 204 || res.headers.get('content-length') === '0') {
+    return {} as T
+  }
+
   return res.json() as Promise<T>
 }
 

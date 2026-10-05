@@ -5,8 +5,10 @@ POST  /api/onboarding/chat    auth-required, rate-limited 20 req/min
 GET   /api/onboarding/session auth-required
 DELETE /api/onboarding/session auth-required (reset / start-over)
 """
+import re
 import time
 from collections import defaultdict
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select, delete
@@ -98,13 +100,22 @@ async def _upsert_profile(user: User, db: AsyncSession, draft: dict) -> Profile:
     except ValueError:
         utype = UserType.stagnant
 
+    cur_city = draft.get("current_city") or draft.get("city") or ""
+    pref_city = draft.get("preferred_city") or ""
+    gap_reason = draft.get("gap_reason") or None
+    achievements = draft.get("achievements") or []
+
     if profile is None:
         profile = Profile(
             name=draft.get("name") or user.name,
             email=draft.get("email") or user.email,
             user_id=user.id,
             user_type=utype,
-            city=draft.get("city") or "",
+            city=cur_city,
+            current_city=cur_city,
+            preferred_city=pref_city,
+            gap_reason=gap_reason,
+            achievements=achievements,
             current_role=draft.get("current_role") or "",
             target_role=draft.get("target_role") or "",
             experience_years=int(draft.get("experience_years") or 0),
@@ -115,7 +126,13 @@ async def _upsert_profile(user: User, db: AsyncSession, draft: dict) -> Profile:
         db.add(profile)
     else:
         profile.user_type = utype
-        profile.city = draft.get("city") or profile.city
+        profile.city = cur_city or profile.city
+        profile.current_city = cur_city or profile.current_city
+        profile.preferred_city = pref_city or profile.preferred_city
+        if gap_reason:
+            profile.gap_reason = gap_reason
+        if achievements:
+            profile.achievements = achievements
         profile.current_role = draft.get("current_role") or profile.current_role
         profile.target_role = draft.get("target_role") or profile.target_role
         profile.experience_years = int(draft.get("experience_years") or profile.experience_years)
@@ -190,6 +207,14 @@ async def chat_onboarding(
     if req.resume_text:
         parsed = await parse_resume_text(req.resume_text)
         state = apply_resume(state, parsed.model_dump())
+        # Set persona category and laid_off flag detected from resume
+        if parsed.user_type:
+            state["draft"]["user_type"] = parsed.user_type
+        if parsed.user_type == "laid_off" or re.search(r"\b(laid\s*off|layoff|fired|downsized)\b", req.resume_text, re.I):
+            state["draft"]["laid_off"] = True
+            state["draft"]["user_type"] = "laid_off"
+        elif parsed.career_gap_years and parsed.career_gap_years >= 0.5:
+            state["draft"]["user_type"] = "returner"
 
     elif req.action == "confirm":
         state = engine_confirm(state)
@@ -198,7 +223,27 @@ async def chat_onboarding(
             saved_profile = await _upsert_profile(current_user, db, out["profile_draft"])
 
     else:
-        state = handle_message(state, req.message or "")
+        # Check if user mentioned a calendar year for their last job/education/gap (e.g. 2023 -> 3yr gap in 2026)
+        msg = (req.message or "").strip()
+        current_year = datetime.now().year
+        cal_year_match = re.search(r"\b(19\d{2}|20\d{2})\b", msg)
+        if cal_year_match and not re.search(r"\b(present|current|now|till\s*date|ongoing)\b", msg, re.I):
+            past_year = int(cal_year_match.group(1))
+            if 1980 <= past_year <= current_year:
+                is_gap_context = (
+                    state.get("pending_slot") == "career_gap"
+                    or bool(re.search(r"\b(tak|tk|till|until|left|graduated|pass\s*out|passout|khatam|over|se|since|last|ended|break|gap)\b", msg, re.I))
+                )
+                if is_gap_context:
+                    computed_gap = float(current_year - past_year)
+                    if computed_gap >= 0.5:
+                        state["draft"]["career_gap_years"] = computed_gap
+                        if state.get("pending_slot") == "career_gap":
+                            state["pending_slot"] = None
+                        if not state["draft"].get("user_type") or state["draft"]["user_type"] in ("detecting", "stagnant"):
+                            state["draft"]["user_type"] = "returner"
+
+        state = handle_message(state, msg)
 
     await _save_state(current_user, db, state)
     out = build_response(state)
