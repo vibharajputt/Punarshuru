@@ -19,15 +19,21 @@ import MuscleMemoryGym from '@/components/dashboard/returner/MuscleMemoryGym'
 
 // Gig Components
 import SkillPassportWidget from '@/components/dashboard/gig/SkillPassportWidget'
-import EvidenceVault from '@/components/dashboard/gig/EvidenceVault'
 import FormalJobTranslator from '@/components/dashboard/gig/FormalJobTranslator'
 import PortableCareerProfile from '@/components/dashboard/gig/PortableCareerProfile'
+import GigUnifiedEarnings from '@/components/dashboard/gig/GigUnifiedEarnings'
+import GigDemandHeatmap from '@/components/dashboard/gig/GigDemandHeatmap'
+import GigSurakshaVault from '@/components/dashboard/gig/GigSurakshaVault'
+import GigWorkProofCareer from '@/components/dashboard/gig/GigWorkProofCareer'
 
 // Laid-off Components
 import AdjacentRolesMapper from '@/components/dashboard/laidoff/AdjacentRolesMapper'
 import TransferabilityScoreCard from '@/components/dashboard/laidoff/TransferabilityScoreCard'
-import LaidOffLearningPath from '@/components/dashboard/laidoff/LaidOffLearningPath'
-import JobMarketDirection from '@/components/dashboard/laidoff/JobMarketDirection'
+import LaidOffFinancialRunway from '@/components/dashboard/laidoff/LaidOffFinancialRunway'
+import LaidOffJobTracker from '@/components/dashboard/laidoff/LaidOffJobTracker'
+import LaidOffAICopilot from '@/components/dashboard/laidoff/LaidOffAICopilot'
+import LaidOffNetworkingCRM from '@/components/dashboard/laidoff/LaidOffNetworkingCRM'
+import LaidOffWellbeingPlanner from '@/components/dashboard/laidoff/LaidOffWellbeingPlanner'
 
 // Stagnant Components
 import CareerGrowthDashboard from '@/components/dashboard/stagnant/CareerGrowthDashboard'
@@ -121,20 +127,44 @@ export const ROLE_FEATURES: Record<string, FeatureDefinition[]> = {
   ],
   gig: [
     {
-      key: 'skill-passport',
-      title: 'Cryptographic Skill Passport',
-      shortTitle: 'Skill Passport',
-      badge: 'Credentials',
-      description: 'Verifiable proof of high-intensity logistics and delivery competencies.',
-      component: () => <SkillPassportWidget />,
+      key: 'earnings',
+      title: 'Unified Multi-Platform Earnings & Asli Bachat Calculator',
+      shortTitle: 'Kamai & Asli Bachat',
+      badge: 'Earnings',
+      description: 'Swiggy, Zomato, Uber aur Zepto ki consolidated kamai, petrol aur maintenance kaat kar net bachat, daily target aur tax helper.',
+      component: () => <GigUnifiedEarnings />,
     },
     {
-      key: 'evidence-vault',
-      title: 'Earnings & Performance Evidence Vault',
-      shortTitle: 'Evidence Vault',
-      badge: 'Proof Storage',
-      description: 'Digitize screenshot ratings, kilometers driven, and performance proofs.',
-      component: () => <EvidenceVault />,
+      key: 'smart-ai',
+      title: 'AI Demand Heatmap, Peak Hours & Route Fuel-Saver',
+      shortTitle: 'AI Demand & Routes',
+      badge: 'AI Radar',
+      description: 'City corridors me live demand surge zones, hourly peak predictions aur petrol bachane ke cluster routing tips.',
+      component: () => <GigDemandHeatmap />,
+    },
+    {
+      key: 'suraksha',
+      title: '1-Tap Emergency SOS, Arogya Guard & Document Reminders',
+      shortTitle: 'Suraksha & SOS',
+      badge: 'Safety',
+      description: 'Emergency SOS WhatsApp location sharing, accident/health coverage status, sick-day wage buffer aur Driving Licence/PUC renewal alerts.',
+      component: () => <GigSurakshaVault />,
+    },
+    {
+      key: 'work-proof',
+      title: 'Bank & Recruiter Verified Work/Income Certificate',
+      shortTitle: 'Loan & Job Proof',
+      badge: 'Verified Certificate',
+      description: 'Official stamped & QR-backed income certificate for SBI/HDFC bank loans and direct applications to permanent salaried corporate roles.',
+      component: (p) => <GigWorkProofCareer candidateName={p?.name} city={p?.city || 'Lucknow'} />,
+    },
+    {
+      key: 'skill-passport',
+      title: 'Karamveer Cryptographic Skill Passport',
+      shortTitle: 'Skill Passport',
+      badge: 'Credentials',
+      description: 'Verifiable proof of high-intensity logistics, route optimization, customer dispute de-escalation, and SLA delivery competencies.',
+      component: () => <SkillPassportWidget />,
     },
     {
       key: 'job-translator',
@@ -156,12 +186,44 @@ export const ROLE_FEATURES: Record<string, FeatureDefinition[]> = {
   ],
   laid_off: [
     {
-      key: 'adjacent-roles',
-      title: 'Adjacent Roles & Industry Reallocation',
-      shortTitle: 'Adjacent Roles',
-      badge: 'Pivot Tool',
-      description: 'Escape shrinking industries by pivoting into high-velocity adjacent tech sectors.',
-      component: (p) => <AdjacentRolesMapper currentRole={p?.current_role || 'Manual QA'} />,
+      key: 'runway',
+      title: 'Financial Runway, Severance & Expense Cutter Engine',
+      shortTitle: 'Runway & Expenses',
+      badge: 'Finances',
+      description: 'Zero-income survival calculator, Aashiyana expense pauses (+1.8 months), FnF settlement checklist, and insurance continuity alerts.',
+      component: () => <LaidOffFinancialRunway />,
+    },
+    {
+      key: 'job-tracker',
+      title: 'Re-Employment Application Pipeline & Goal Kanban',
+      shortTitle: 'Job Pipeline Kanban',
+      badge: 'Pipeline',
+      description: '4-stage interactive application Kanban (Applied, Interview, Offer) with target salaries and 1-click recruiter follow-up templates.',
+      component: () => <LaidOffJobTracker />,
+    },
+    {
+      key: 'ai-tailor',
+      title: 'JD-to-Resume Keyword Tailor & Layoff Narrative Pitch',
+      shortTitle: 'AI Resume & HR Pitch',
+      badge: 'AI Copilot',
+      description: 'Paste target JD to extract missing keywords, synthesize quantified ATS bullets, and rehearse confident, stigma-free layoff answers.',
+      component: () => <LaidOffAICopilot />,
+    },
+    {
+      key: 'networking',
+      title: 'Advocate Referral CRM & Interim Contract Gigs',
+      shortTitle: 'Networking CRM',
+      badge: 'Referrals',
+      description: 'Track warm referrals from ex-colleagues, pick up short 4-8 week engineering contract gigs, and view statutory relief guides.',
+      component: () => <LaidOffNetworkingCRM />,
+    },
+    {
+      key: 'wellbeing',
+      title: 'Daily Routine Timetable & Mental Resilience Hub',
+      shortTitle: 'Daily Routine',
+      badge: 'Discipline',
+      description: 'Structured daily schedule balancing job applications, upskilling sprints, networking, and weekly resilience check-ins.',
+      component: () => <LaidOffWellbeingPlanner />,
     },
     {
       key: 'transferability',
@@ -172,20 +234,12 @@ export const ROLE_FEATURES: Record<string, FeatureDefinition[]> = {
       component: () => <TransferabilityScoreCard />,
     },
     {
-      key: 'laidoff-path',
-      title: 'Laid-Off Fast-Track Sprint Curriculum',
-      shortTitle: 'Fast-Track Sprint',
-      badge: 'Sprint Plan',
-      description: 'Accelerated 4-week learning sprint focusing exclusively on high-ROI delta skills.',
-      component: () => <LaidOffLearningPath />,
-    },
-    {
-      key: 'market-direction',
-      title: 'Live Hiring Velocity & Market Direction',
-      shortTitle: 'Hiring Velocity',
-      badge: 'Market Radar',
-      description: 'Real-time hiring trends comparing legacy vs emerging role velocities in India.',
-      component: () => <JobMarketDirection />,
+      key: 'adjacent-roles',
+      title: 'Adjacent Roles & Industry Reallocation',
+      shortTitle: 'Adjacent Roles',
+      badge: 'Pivot Tool',
+      description: 'Escape shrinking industries by pivoting into high-velocity adjacent tech sectors.',
+      component: (p) => <AdjacentRolesMapper currentRole={p?.current_role || 'Manual QA'} />,
     },
     UNIVERSAL_PURCHASING_POWER_FEATURE,
   ],

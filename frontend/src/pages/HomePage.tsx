@@ -17,6 +17,9 @@ import {
   Award,
   Activity,
   Flame,
+  ShieldAlert,
+  IndianRupee,
+  FileCheck,
 } from 'lucide-react'
 import { Navigate, useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -618,6 +621,259 @@ export default function HomePage() {
           })}
         </div>
       </div>
+
+      {/* ── 2B. GIG WORKER EXCLUSIVE RAPID COCKPIT STRIP ── */}
+      {userType === 'gig' && (
+        <div className="p-6 rounded-3xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-slate-900 border border-amber-300/80 dark:border-amber-900/60 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-amber-200/60 dark:border-slate-800 pb-3">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <span>Gig Partner Live Shift Cockpit</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black">
+                  {activeProfile?.city || 'Lucknow'} / Active
+                </span>
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Link
+                to="/features/suraksha"
+                className="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black flex items-center gap-1.5 shadow-sm animate-pulse"
+              >
+                <ShieldAlert size={14} />
+                <span>1-Tap SOS Alert</span>
+              </Link>
+
+              <Link
+                to="/features/earnings"
+                className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold hover:border-amber-500 transition shadow-2xs"
+              >
+                <span>Open Full Cockpit →</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Daily Target Progress Bar */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs font-bold">
+              <span className="text-slate-700 dark:text-slate-300">
+                🎯 Aaj Ka Target: <strong className="text-slate-900 dark:text-white">₹1,260</strong> / ₹1,500 (84% Ho Gaya)
+              </span>
+              <span className="text-orange-600 dark:text-orange-400 font-black flex items-center gap-1">
+                <Flame size={13} className="fill-orange-500 text-orange-500" />
+                14 Din Streak! (₹240 baki)
+              </span>
+            </div>
+            <div className="w-full h-3 rounded-full bg-white dark:bg-slate-800 overflow-hidden p-0.5 border border-amber-200 dark:border-slate-700">
+              <div className="h-full rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-500 w-[84%]" />
+            </div>
+          </div>
+
+          {/* 4 Quick Launch Tiles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+            <Link
+              to="/features/earnings"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-amber-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Kamai & Asli Bachat</span>
+                  <IndianRupee size={14} className="text-amber-500" />
+                </div>
+                <p className="text-base font-black text-emerald-600 dark:text-emerald-400 mt-1">₹975 Asli Bachat</p>
+                <p className="text-[11px] text-slate-500">Gross ₹1,260 minus petrol & wear</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-[#0B4F9C] dark:text-sky-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>View Breakdown</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/smart-ai"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-orange-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>AI Demand Radar</span>
+                  <Flame size={14} className="text-orange-500 fill-orange-500" />
+                </div>
+                <p className="text-base font-black text-orange-600 mt-1">1.8x Dinner Surge</p>
+                <p className="text-[11px] text-slate-500">Gomti Nagar & Hazratganj hot</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-orange-600 dark:text-orange-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>Check Surge Map</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/suraksha"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-rose-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Suraksha & Docs</span>
+                  <ShieldAlert size={14} className="text-rose-500" />
+                </div>
+                <p className="text-base font-black text-amber-600 mt-1">PUC: 6 Din Baki</p>
+                <p className="text-[11px] text-slate-500">₹5L accident cover active</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-rose-600 dark:text-rose-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>Manage Vault</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/work-proof"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-blue-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Work/Income Proof</span>
+                  <FileCheck size={14} className="text-[#0B4F9C]" />
+                </div>
+                <p className="text-base font-black text-[#0B4F9C] dark:text-sky-400 mt-1">₹28.5k/mo Cert</p>
+                <p className="text-[11px] text-slate-500">Bank loan & Zepto/DL jobs</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-[#0B4F9C] dark:text-sky-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>Get Stamped PDF</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* ── 2C. LAID-OFF EXCLUSIVE IMMEDIATE RE-EMPLOYMENT STRIP ── */}
+      {userType === 'laid_off' && (
+        <div className="p-6 rounded-3xl bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-emerald-500/10 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-slate-900 border border-blue-300/80 dark:border-blue-900/60 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-200/60 dark:border-slate-800 pb-3">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <span>0-Day Immediate Joiner Advantage</span>
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500 text-white font-black">
+                  Zero Notice Period Priority ⚡
+                </span>
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Link
+                to="/features/runway"
+                className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold hover:border-[#0B4F9C] transition shadow-2xs"
+              >
+                <span>Financial Runway: 5.4 Months →</span>
+              </Link>
+              <Link
+                to="/features/job-tracker"
+                className="px-3.5 py-1.5 rounded-xl bg-[#0B4F9C] hover:bg-blue-800 text-white text-xs font-black shadow-sm transition"
+              >
+                <span>Job Pipeline Kanban →</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Runway & Pipeline Quick Indicators */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
+              <p className="text-[10px] uppercase font-bold text-slate-400">Survival Runway</p>
+              <p className="text-base font-black text-emerald-600 dark:text-emerald-400">5.4 Months (Safe)</p>
+              <p className="text-[11px] text-slate-500">₹8.0L Total Liquid Funds</p>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
+              <p className="text-[10px] uppercase font-bold text-slate-400">Active Interview Loops</p>
+              <p className="text-base font-black text-[#0B4F9C] dark:text-sky-400">3 Companies</p>
+              <p className="text-[11px] text-slate-500">Razorpay, PhonePe & Groww (Offer)</p>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
+              <p className="text-[10px] uppercase font-bold text-slate-400">Weekly Activity Target</p>
+              <p className="text-base font-black text-purple-600 dark:text-purple-400">7 / 10 Applied</p>
+              <p className="text-[11px] text-slate-500">🔥 8-Day Re-Employment Streak</p>
+            </div>
+          </div>
+
+          {/* 4 Quick Launch Tiles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+            <Link
+              to="/features/runway"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-blue-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Runway & Expenses</span>
+                  <IndianRupee size={14} className="text-emerald-500" />
+                </div>
+                <p className="text-base font-black text-slate-900 dark:text-white mt-1">Expense Cutter</p>
+                <p className="text-[11px] text-slate-500">Pause subs to gain +1.8 months</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-[#0B4F9C] dark:text-sky-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>View Calculator</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/job-tracker"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-indigo-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Job Pipeline Kanban</span>
+                  <Briefcase size={14} className="text-indigo-500" />
+                </div>
+                <p className="text-base font-black text-slate-900 dark:text-white mt-1">1 Offer In Hand</p>
+                <p className="text-[11px] text-slate-500">₹21 LPA Groww offer review</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>Manage Pipeline</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/ai-tailor"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-purple-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>AI Resume & Pitch</span>
+                  <Sparkles size={14} className="text-purple-500" />
+                </div>
+                <p className="text-base font-black text-slate-900 dark:text-white mt-1">Stigma-Free Narrative</p>
+                <p className="text-[11px] text-slate-500">Restructuring interview script</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-purple-600 dark:text-purple-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>Generate Bullets</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/networking"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-teal-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Networking & Gigs</span>
+                  <Target size={14} className="text-teal-500" />
+                </div>
+                <p className="text-base font-black text-slate-900 dark:text-white mt-1">4 Warm Referrals</p>
+                <p className="text-[11px] text-slate-500">₹85k/mo contract sprints</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-teal-600 dark:text-teal-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>View CRM & Gigs</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* ── 3. Core Career Risk & Immediate Next Step Cards ── */}
       <div className="space-y-6">
