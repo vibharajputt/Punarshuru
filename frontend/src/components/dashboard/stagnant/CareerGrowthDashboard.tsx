@@ -179,15 +179,57 @@ export default function CareerGrowthDashboard({
           </div>
         </div>
 
-        <div className="pt-2 flex items-center justify-between text-xs">
-          <span className="text-slate-500">Ready to break the stagnation cycle? Check your custom action sprint.</span>
-          <Link
-            to="/path"
-            className="font-bold text-[#0B4F9C] dark:text-sky-400 hover:text-blue-800 flex items-center gap-1 transition"
-          >
-            <span>View 30-Day Growth Sprint</span>
-            <ArrowRight size={13} />
-          </Link>
+        {/* ── 5. Connected Action Paths (Ready-to-Use) ── */}
+        <div className="pt-3 border-t border-slate-200/80 dark:border-slate-700/80 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">
+              Choose Your Action Plan:
+            </span>
+            <span className="text-[10px] text-slate-400 font-medium">
+              Integrated Stagnation Breakout Tools
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Link
+              to="/features/manager-1on1"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-[#0B4F9C] transition group shadow-2xs space-y-1 block"
+            >
+              <div className="flex items-center justify-between text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#0B4F9C]">
+                <span>Stay & Negotiate</span>
+                <ArrowRight size={13} className="text-slate-400 group-hover:text-[#0B4F9C] transition" />
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
+                Use replacement cost math & AI script for off-cycle hike.
+              </p>
+            </Link>
+
+            <Link
+              to="/features/notice-buyout"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-amber-500 transition group shadow-2xs space-y-1 block"
+            >
+              <div className="flex items-center justify-between text-xs font-bold text-slate-900 dark:text-white group-hover:text-amber-600">
+                <span>Switch & Buyout</span>
+                <ArrowRight size={13} className="text-slate-400 group-hover:text-amber-600 transition" />
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
+                Break the 90-day notice trap & calculate net ROI (+₹8.4L).
+              </p>
+            </Link>
+
+            <Link
+              to="/features/stay-or-switch"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition group shadow-2xs space-y-1 block"
+            >
+              <div className="flex items-center justify-between text-xs font-bold text-slate-900 dark:text-white group-hover:text-emerald-600">
+                <span>Hiring Companies</span>
+                <ArrowRight size={13} className="text-slate-400 group-hover:text-emerald-600 transition" />
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
+                View 10+ target firms (Razorpay, Barclays, Lowe's) with 45-75% hikes.
+              </p>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
