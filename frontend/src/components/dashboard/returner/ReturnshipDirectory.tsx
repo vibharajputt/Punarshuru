@@ -244,28 +244,28 @@ export default function ReturnshipDirectory() {
           >
             {/* Top Bar: Company Badge & Name */}
             <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div
                   className={`w-11 h-11 rounded-2xl ${prog.badgeColor} flex items-center justify-center font-black text-xs shadow-xs shrink-0`}
                 >
                   {prog.logoBadge}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-black text-base text-slate-900 dark:text-white">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <h4 className="font-black text-base text-slate-900 dark:text-white truncate">
                       {prog.company}
                     </h4>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800 whitespace-nowrap shrink-0">
                       {prog.minGapMonths}+ Mo Gap
                     </span>
                   </div>
-                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
+                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 truncate">
                     {prog.programName}
                   </div>
                 </div>
               </div>
 
-              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-800 shrink-0">
+              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-800 shrink-0 whitespace-nowrap">
                 {prog.conversionRate}
               </span>
             </div>
