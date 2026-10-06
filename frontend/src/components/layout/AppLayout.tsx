@@ -17,6 +17,7 @@ import {
   Award,
   LogOut,
   User,
+  RefreshCw,
   ChevronDown,
   Sun,
   Moon,
@@ -44,6 +45,8 @@ import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/store/authStore'
 import { useProfileStore } from '@/store/profileStore'
 import { useDemoStore } from '@/store/demoStore'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
+import { profileApi } from '@/lib/api'
 import DemoStrip from '@/components/demo/DemoStrip'
 import DemoModal from '@/components/demo/DemoModal'
 import { ARCHETYPES } from '@/components/dashboard/RoleSelectorModal'
@@ -154,12 +157,13 @@ function BottomNavLink({ item }: { item: NavItem }) {
 }
 
 /* ── Avatar dropdown ──────────────────────────────────────────────────────── */
-function AvatarMenu() {
+function AvatarMenu({ onOpenDemoModal }: { onOpenDemoModal?: () => void }) {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { clearAuth, user } = useAuthStore()
-  const { clearProfile } = useProfileStore()
+  const { clearProfile, profile } = useProfileStore()
+  const { isDemo, personaName, personaRole, clearDemo } = useDemoStore()
 
   // Close on outside click
   useEffect(() => {
@@ -173,75 +177,158 @@ function AvatarMenu() {
   function handleLogout() {
     clearAuth()
     clearProfile()
+    clearDemo()
     setOpen(false)
     navigate('/', { replace: true })
   }
 
-  const initials = user?.name
-    ? user.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
-    : 'U'
+  function handleExitDemo() {
+    clearDemo()
+    clearProfile()
+    setOpen(false)
+    if (user && useAuthStore.getState().token) {
+      profileApi.getMyProfile(useAuthStore.getState().token!).then((p) => {
+        if (p) useProfileStore.getState().setProfile(p)
+      }).catch(() => {})
+      navigate('/home', { replace: true })
+    } else {
+      navigate('/', { replace: true })
+    }
+  }
+
+  const isDemoActive = isDemo
+  const displayName = isDemoActive
+    ? personaName || profile?.name || 'Demo Persona'
+    : user?.name ?? 'Account'
+
+  const initials = displayName
+    .split(' ')
+    .filter(Boolean)
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase() || 'PS'
 
   return (
     <div ref={menuRef} className="relative">
       <button
         id="avatar-menu-btn"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors"
+        className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors cursor-pointer"
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <span className="w-7 h-7 rounded-full bg-gradient-to-br from-[#0B4F9C] to-[#F26B1D] flex items-center justify-center text-white text-xs font-bold">
+        <span
+          className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold ${
+            isDemoActive
+              ? 'bg-gradient-to-br from-amber-500 to-[#F26B1D] ring-2 ring-amber-400/40'
+              : 'bg-gradient-to-br from-[#0B4F9C] to-[#F26B1D]'
+          }`}
+        >
           {initials}
         </span>
-        <span className="hidden sm:block text-sm font-medium text-[#0F172A] dark:text-white max-w-[100px] truncate">
-          {user?.name ?? 'Account'}
-        </span>
+        <div className="hidden sm:flex flex-col items-start leading-tight">
+          <span className="text-xs font-bold text-[#0F172A] dark:text-white max-w-[110px] truncate">
+            {displayName}
+          </span>
+          {isDemoActive && (
+            <span className="text-[9px] font-extrabold text-[#F26B1D] uppercase tracking-wider">
+              Demo Mode
+            </span>
+          )}
+        </div>
         <ChevronDown size={14} className={`text-[#94A3B8] transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
         <div
           role="menu"
-          className="absolute right-0 mt-2 w-52 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_8px_32px_rgba(11,79,156,0.12)] overflow-hidden z-50 animate-fade-in-up"
+          className="absolute right-0 mt-2 w-60 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-900 shadow-[0_8px_32px_rgba(11,79,156,0.12)] overflow-hidden z-50 animate-fade-in-up"
         >
-          {user && (
+          {isDemoActive ? (
+            <div className="px-4 py-3 border-b border-[#E2E8F0] dark:border-slate-700 bg-amber-50/50 dark:bg-amber-950/20">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300">
+                  Demo Session
+                </span>
+                <span className="text-[10px] text-slate-400">Sandbox</span>
+              </div>
+              <p className="text-sm font-bold text-[#0F172A] dark:text-white truncate">
+                {displayName}
+              </p>
+              <p className="text-xs text-[#64748B] dark:text-slate-400 truncate">
+                {personaRole || profile?.current_role || 'Target: GenAI Engineer'}
+              </p>
+            </div>
+          ) : user ? (
             <div className="px-4 py-3 border-b border-[#E2E8F0] dark:border-slate-700">
               <p className="text-xs text-[#64748B] dark:text-slate-400">Signed in as</p>
-              <p className="text-sm font-semibold text-[#0F172A] dark:text-white truncate">{user.email}</p>
+              <p className="text-sm font-semibold text-[#0F172A] dark:text-white truncate" title={user.email}>
+                {user.email}
+              </p>
             </div>
+          ) : null}
+
+          {isDemoActive && (
+            <button
+              role="menuitem"
+              id="avatar-switch-demo"
+              onClick={() => {
+                setOpen(false)
+                onOpenDemoModal?.()
+              }}
+              className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-[#0B4F9C] dark:text-sky-400 hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors font-medium cursor-pointer"
+            >
+              <RefreshCw size={15} />
+              <span>Switch Demo Persona</span>
+            </button>
           )}
 
           <button
             role="menuitem"
             id="avatar-skill-passport"
             onClick={() => { setOpen(false); navigate('/passport') }}
-            className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-[#0F172A] dark:text-slate-200 hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors"
+            className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-[#0F172A] dark:text-slate-200 hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <Award size={15} className="text-[#0B4F9C] dark:text-sky-400" />
             <span>Skill Passport</span>
           </button>
 
-          <button
-            role="menuitem"
-            id="avatar-edit-profile"
-            onClick={() => { setOpen(false); navigate('/onboarding') }}
-            className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-[#0F172A] dark:text-slate-200 hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors"
-          >
-            <User size={15} />
-            <span>Edit profile</span>
-          </button>
+          {!isDemoActive && (
+            <button
+              role="menuitem"
+              id="avatar-edit-profile"
+              onClick={() => { setOpen(false); navigate('/onboarding') }}
+              className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-[#0F172A] dark:text-slate-200 hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            >
+              <User size={15} />
+              <span>Edit profile</span>
+            </button>
+          )}
 
           <div className="border-t border-[#E2E8F0] dark:border-slate-700 my-1" />
 
-          <button
-            role="menuitem"
-            id="avatar-logout"
-            onClick={handleLogout}
-            className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
-          >
-            <LogOut size={15} />
-            <span>Log out</span>
-          </button>
+          {isDemoActive ? (
+            <button
+              role="menuitem"
+              id="avatar-exit-demo"
+              onClick={handleExitDemo}
+              className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-colors font-semibold cursor-pointer"
+            >
+              <LogOut size={15} />
+              <span>Exit Demo Mode</span>
+            </button>
+          ) : (
+            <button
+              role="menuitem"
+              id="avatar-logout"
+              onClick={handleLogout}
+              className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors cursor-pointer"
+            >
+              <LogOut size={15} />
+              <span>Log out</span>
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -312,13 +399,34 @@ export default function AppLayout() {
   const { t } = useTranslation()
   const { theme, toggle } = useTheme()
   const location = useLocation()
+  const { profile: activeProfile, isDemo } = useActiveProfile()
   const profile = useProfileStore((s) => s.profile)
-  const userType = profile?.user_type || 'returner'
-  const title = getPageTitle(location.pathname, userType, t)
-  const isDemo = useDemoStore((s) => s.isDemo)
+  const setProfile = useProfileStore((s) => s.setProfile)
+  const token = useAuthStore((s) => s.token)
+  const user = useAuthStore((s) => s.user)
   const [demoModalOpen, setDemoModalOpen] = useState(false)
   const [roleModalOpen, setRoleModalOpen] = useState(false)
   const navItems = getNavItems(t)
+
+  // Sync profile when authenticated and NOT in demo mode
+  useEffect(() => {
+    if (token && !isDemo && user) {
+      const isMismatched =
+        !profile ||
+        profile.id?.startsWith('demo-') ||
+        (profile.email && user.email && profile.email.toLowerCase() !== user.email.toLowerCase()) ||
+        (profile.user_id && profile.user_id !== user.id)
+
+      if (isMismatched) {
+        profileApi.getMyProfile(token).then((p) => {
+          if (p) setProfile(p)
+        }).catch(() => {})
+      }
+    }
+  }, [token, isDemo, user?.id, user?.email])
+
+  const userType = isDemo ? (activeProfile?.user_type || 'returner') : (profile?.user_type || 'stagnant')
+  const title = getPageTitle(location.pathname, userType, t)
 
   const currentArchetype = ARCHETYPES.find((a) => a.type === userType) || ARCHETYPES[0]
   const ArchetypeIcon = currentArchetype.icon
@@ -430,7 +538,7 @@ export default function AppLayout() {
                   : <Moon size={16} className="text-slate-500" />}
               </button>
 
-              <AvatarMenu />
+              <AvatarMenu onOpenDemoModal={() => setDemoModalOpen(true)} />
             </div>
           </header>
 

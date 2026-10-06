@@ -24,6 +24,8 @@ import {
 import { Navigate, useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useProfileStore } from '@/store/profileStore'
+import { useAuthStore } from '@/store/authStore'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { assessApi, profileApi } from '@/lib/api'
 
 // Existing Core Dashboard Components
@@ -161,7 +163,7 @@ const ROLE_DASHBOARD_CONFIG: Record<
         icon: Clock,
         accent: 'text-[#F26B1D]',
         label: 'Career Break',
-        getValue: (p) => (p?.career_gap_years ? `${p.career_gap_years} Years Gap` : '3.0 Years Gap'),
+        getValue: (p) => (p?.career_gap_years !== undefined && p?.career_gap_years !== null ? `${p.career_gap_years} Years Gap` : '4 Years Gap'),
       },
       {
         icon: Briefcase,
@@ -445,15 +447,28 @@ const ROLE_DASHBOARD_CONFIG: Record<
 export default function HomePage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { profile: hookActiveProfile, isDemo } = useActiveProfile()
   const profile = useProfileStore((s) => s.profile)
   const setProfile = useProfileStore((s) => s.setProfile)
+  const token = useAuthStore((s) => s.token)
+  const authUser = useAuthStore((s) => s.user)
   const [roleModalOpen, setRoleModalOpen] = useState(false)
 
+  const isAuthSession = !isDemo && !!token
+
+  // Cached store profile is invalid if logged in and it belongs to a demo persona or a different user
+  const isCachedProfileInvalid = isAuthSession && (
+    !profile ||
+    profile.id?.startsWith('demo-') ||
+    (!!authUser?.email && !!profile.email && profile.email.toLowerCase() !== authUser.email.toLowerCase()) ||
+    (!!authUser?.id && !!profile.user_id && profile.user_id !== authUser.id)
+  )
+
   const { data: serverProfile, isLoading: isProfileLoading } = useQuery({
-    queryKey: ['my-profile'],
+    queryKey: ['my-profile', authUser?.id || 'anonymous'],
     queryFn: async () => {
       try {
-        const p = await profileApi.getMyProfile()
+        const p = await profileApi.getMyProfile(token || undefined)
         if (p) {
           setProfile(p)
           return p
@@ -463,27 +478,19 @@ export default function HomePage() {
       }
       return null
     },
-    enabled: !profile,
+    enabled: isAuthSession ? isCachedProfileInvalid : (!isDemo && !profile),
     retry: 1,
   })
 
-  const activeProfile = profile || serverProfile
+  // When demo is active, ALWAYS use hookActiveProfile (checks demoStore first).
+  // When logged in without demo, use authenticated user profile (never demo persona).
+  const activeProfile = isDemo
+    ? hookActiveProfile
+    : (isAuthSession
+        ? (isCachedProfileInvalid ? (serverProfile || null) : (profile || serverProfile))
+        : (profile || serverProfile || hookActiveProfile))
 
-  if (!activeProfile && isProfileLoading) {
-    return (
-      <div className="max-w-6xl mx-auto py-24 flex flex-col items-center justify-center space-y-4">
-        <div className="w-10 h-10 border-4 border-[#0B4F9C] border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm font-semibold text-slate-500">Loading your career intelligence...</p>
-      </div>
-    )
-  }
-
-  // No profile in store or server → send to onboarding
-  if (!activeProfile && !isProfileLoading) {
-    return <Navigate to="/onboarding" replace />
-  }
-
-  const profileId = activeProfile?.id || 'demo-priya'
+  const profileId = activeProfile?.id || (isAuthSession ? '' : 'demo-priya')
   const userType = (activeProfile?.user_type || 'returner') as keyof typeof ROLE_DASHBOARD_CONFIG
 
   const { data: disruptionData } = useQuery({
@@ -498,12 +505,26 @@ export default function HomePage() {
     enabled: !!profileId,
   })
 
+  if (isAuthSession && isCachedProfileInvalid && isProfileLoading) {
+    return (
+      <div className="max-w-6xl mx-auto py-24 flex flex-col items-center justify-center space-y-4">
+        <div className="w-10 h-10 border-4 border-[#0B4F9C] border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm font-semibold text-slate-500">Loading your career intelligence...</p>
+      </div>
+    )
+  }
+
+  // No profile in store or server → send to onboarding
+  if (!activeProfile && !isProfileLoading) {
+    return <Navigate to="/onboarding" replace />
+  }
+
   const currentScore = activeProfile?.disruption_score || disruptionData?.score || 72
   const targetRole = activeProfile?.target_role || 'GenAI Engineer'
   const matchPct = gapData?.match_pct || 42
   const missingSkills = gapData?.missing_skills || ['Python & Vector Embeddings', 'LangChain', 'RAG']
   const topMissing = missingSkills[0] || 'Python & Vector Embeddings'
-  const firstName = activeProfile?.name ? activeProfile.name.split(' ')[0] : 'Candidate'
+  const firstName = activeProfile?.name ? activeProfile.name.split(' ')[0] : (authUser?.name ? authUser.name.split(' ')[0] : 'Candidate')
 
   const currentArchetypeInfo = ARCHETYPES.find((a) => a.type === userType) || ARCHETYPES[0]
   const ArchetypeIcon = currentArchetypeInfo.icon
@@ -880,7 +901,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
           <CareerRiskCard
             score={currentScore}
-            breakdown={disruptionData?.breakdown}
+            breakdown={disruptionData?.breakdown || (activeProfile as any)?.disruption_breakdown}
           />
           <NextStepCard
             targetRole={targetRole}

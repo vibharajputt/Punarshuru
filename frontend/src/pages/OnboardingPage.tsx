@@ -91,18 +91,34 @@ export default function OnboardingPage() {
         preferred_city: 'Bengaluru',
         timeframe_months: 3,
       })
-    } else if (type === 'laid_off') {
+    } else if (type === 'returner') {
       setBgData((prev) => ({
         ...prev,
-        current_role: 'QA Engineer',
-        experience_years: 4,
-        career_gap_years: 0.5,
+        current_role: 'Java Developer',
+        experience_years: 5,
+        career_gap_years: 4,
+        city: 'Pune',
       }))
-      setSkills(['Testing', 'JIRA', 'Agile', 'SQL'])
+      setSkills(['Java', 'Spring Boot', 'MySQL', 'REST APIs'])
       setGoals({
-        target_role: 'Automation QA / SDET',
-        target_salary_lpa: 12.0,
-        preferred_city: 'Bengaluru',
+        target_role: 'GenAI Engineer',
+        target_salary_lpa: 16.0,
+        preferred_city: 'Pune',
+        timeframe_months: 4,
+      })
+    } else if (type === 'stagnant') {
+      setBgData((prev) => ({
+        ...prev,
+        current_role: 'Customer Support Executive',
+        experience_years: 5,
+        career_gap_years: 0,
+        city: 'Noida',
+      }))
+      setSkills(['Customer Support', 'Communication', 'CRM', 'Zendesk'])
+      setGoals({
+        target_role: 'AI Chatbot Trainer',
+        target_salary_lpa: 8.5,
+        preferred_city: 'Noida',
         timeframe_months: 3,
       })
     }

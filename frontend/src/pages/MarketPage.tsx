@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { TrendingUp, RefreshCw } from 'lucide-react'
 import { marketApi } from '@/lib/api'
-import TrendLine from '@/components/charts/TrendLine'
+import TrendLine, { COMPENSATION_TRAJECTORY_DATA } from '@/components/charts/TrendLine'
 import SkillsDemandTrends from '@/components/market/SkillsDemandTrends'
 import CitySalaryBenchmarks from '@/components/market/CitySalaryBenchmarks'
 import JobRolesTable from '@/components/market/JobRolesTable'
@@ -76,7 +76,7 @@ export default function MarketPage() {
           </span>
         </div>
 
-        <TrendLine height={250} />
+        <TrendLine data={COMPENSATION_TRAJECTORY_DATA} height={250} />
       </div>
 
       {/* Rising vs Declining Skills */}

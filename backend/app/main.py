@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import get_settings
 from app.core.database import init_db
 import app.models  # noqa: F401 — ensure all models are registered before create_all
-from app.routers import health, demo, profile, assess, market, pathway, compensation, passport, onboarding, voice, auth
+from app.routers import health, demo, profile, assess, market, pathway, compensation, passport, onboarding, voice, auth, copilot
 
 settings = get_settings()
 
@@ -46,6 +46,7 @@ app.include_router(compensation.router, prefix="/api")
 app.include_router(passport.router, prefix="/api")
 app.include_router(onboarding.router, prefix="/api")
 app.include_router(voice.router, prefix="/api")
+app.include_router(copilot.router, prefix="/api")
 
 
 

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { CheckCircle2, RefreshCw, ArrowRight } from 'lucide-react'
 import type { Profile } from '@/types'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { ARCHETYPE_BADGES } from './types'
 
 interface ConfirmScreenProps {
@@ -16,6 +17,8 @@ export default function ConfirmScreen({
   onBackToChat,
   isFinalizing,
 }: ConfirmScreenProps) {
+  const { profile: activeProfile, isDemo } = useActiveProfile()
+  const gapVal = isDemo ? (activeProfile?.career_gap_years ?? 4) : profileDraft.career_gap_years
   const isClassified = !!profileDraft.user_type && profileDraft.user_type !== 'detecting'
   const badgeClass = isClassified
     ? (ARCHETYPE_BADGES[profileDraft.user_type!] || 'bg-slate-100 text-slate-700 border-slate-200')
@@ -78,7 +81,7 @@ export default function ConfirmScreen({
             <div>
               <span className="text-[10px] font-medium text-slate-400 block">Career Gap</span>
               <span className="font-semibold text-slate-700 dark:text-slate-300">
-                {profileDraft.career_gap_years ? `${profileDraft.career_gap_years} years` : 'None'}
+                {gapVal ? `${gapVal} ${gapVal === 1 ? 'year' : 'years'}` : 'None'}
               </span>
             </div>
           </div>

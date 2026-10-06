@@ -248,5 +248,13 @@
   {"id": 247, "name": "Low-Code/No-Code", "aliases": ["bubble", "webflow", "retool", "appsmith", "powerautomate"], "category": "Tools", "demand_trend": "rising", "automation_risk": 15},
   {"id": 248, "name": "RPA", "aliases": ["robotic process automation", "uipath", "automation anywhere", "blueprism"], "category": "Automation", "demand_trend": "rising", "automation_risk": 10},
   {"id": 249, "name": "Process Mining", "aliases": ["celonis", "process discovery", "conformance checking"], "category": "Automation", "demand_trend": "rising", "automation_risk": 15},
-  {"id": 250, "name": "Hyperautomation", "aliases": ["intelligent automation", "ai rpa", "end-to-end automation"], "category": "Automation", "demand_trend": "rising", "automation_risk": 8}
+  {"id": 250, "name": "Hyperautomation", "aliases": ["intelligent automation", "ai rpa", "end-to-end automation"], "category": "Automation", "demand_trend": "rising", "automation_risk": 8},
+  {"id": 251, "name": "AutoCAD", "aliases": ["autocad 2d", "autocad 3d", "cad drafting", "cad"], "category": "Engineering", "demand_trend": "stable", "automation_risk": 35},
+  {"id": 252, "name": "SolidWorks", "aliases": ["solid works", "solidworks 3d", "cad modeling"], "category": "Engineering", "demand_trend": "stable", "automation_risk": 30},
+  {"id": 253, "name": "ANSYS", "aliases": ["ansys simulation", "fea", "cfd"], "category": "Engineering", "demand_trend": "stable", "automation_risk": 25},
+  {"id": 254, "name": "MATLAB", "aliases": ["matlab simulink", "simulink"], "category": "Engineering", "demand_trend": "stable", "automation_risk": 20},
+  {"id": 255, "name": "Embedded Systems", "aliases": ["embedded c", "microcontrollers", "arm cortex"], "category": "Engineering", "demand_trend": "rising", "automation_risk": 15},
+  {"id": 256, "name": "IoT", "aliases": ["internet of things", "esp32", "mqtt"], "category": "Engineering", "demand_trend": "rising", "automation_risk": 15},
+  {"id": 257, "name": "CATIA", "aliases": ["catia v5", "catia 3d"], "category": "Engineering", "demand_trend": "stable", "automation_risk": 25},
+  {"id": 258, "name": "Six Sigma", "aliases": ["six sigma green belt", "lean six sigma"], "category": "Process", "demand_trend": "stable", "automation_risk": 20}
 ]

@@ -20,7 +20,35 @@ async def generate_passport(
     res = await db.execute(stmt)
     profile = res.scalars().first()
     if not profile:
-        raise HTTPException(status_code=404, detail=f"Profile '{profile_id}' not found")
+        demo_key = profile_id.replace("demo-", "").lower()
+        from app.routers.demo import _load
+        personas = _load("personas.json")
+        p_data = next((p for p in personas if p["key"] == demo_key), None)
+        if p_data:
+            stmt = select(Profile).where(Profile.email == f"{demo_key}@demo.punarshuru.in")
+            res = await db.execute(stmt)
+            profile = res.scalars().first()
+            if not profile:
+                profile = Profile(
+                    id=f"demo-{demo_key}",
+                    name=p_data["name"],
+                    email=f"{demo_key}@demo.punarshuru.in",
+                    user_type=p_data["user_type"],
+                    city=p_data["city"],
+                    current_role=p_data["current_role"],
+                    target_role=p_data["target_role"],
+                    experience_years=p_data.get("experience_years", 3),
+                    career_gap_years=p_data.get("career_gap_years", 0),
+                    current_salary_lpa=p_data.get("current_salary_lpa", 8.0),
+                    skills_raw=p_data.get("skills", []),
+                    skills_taxonomy_ids=[1, 2, 3],
+                    disruption_score=p_data.get("disruption_score", 70.0),
+                )
+                db.add(profile)
+                await db.commit()
+                await db.refresh(profile)
+        else:
+            raise HTTPException(status_code=404, detail=f"Profile '{profile_id}' not found")
 
     return await create_or_update_passport(profile, db, passport_data)
 

@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom'
 import { Sparkles, RefreshCw, LogOut } from 'lucide-react'
 import { useDemoStore } from '@/store/demoStore'
 import { useProfileStore } from '@/store/profileStore'
+import { useAuthStore } from '@/store/authStore'
+import { profileApi } from '@/lib/api'
 
 interface DemoStripProps {
   onSwitch: () => void
@@ -16,7 +18,15 @@ export default function DemoStrip({ onSwitch }: DemoStripProps) {
   const handleExitDemo = () => {
     clearDemo()
     clearProfile()
-    navigate('/', { replace: true })
+    const token = useAuthStore.getState().token
+    if (token) {
+      profileApi.getMyProfile(token).then((p) => {
+        if (p) useProfileStore.getState().setProfile(p)
+      }).catch(() => {})
+      navigate('/home', { replace: true })
+    } else {
+      navigate('/', { replace: true })
+    }
   }
 
   return (

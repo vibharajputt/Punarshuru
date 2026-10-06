@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   RotateCcw,
@@ -12,9 +13,9 @@ import {
   X,
   Bot,
 } from 'lucide-react'
-import { useProfileStore } from '@/store/profileStore'
-import { useDemoStore } from '@/store/demoStore'
-import type { UserType, Profile } from '@/types'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
+import { DEMO_PERSONAS, activateDemoPersona } from '@/components/demo/DemoModal'
+import type { UserType } from '@/types'
 
 export interface RoleSelectorModalProps {
   isOpen: boolean
@@ -85,9 +86,9 @@ export const ARCHETYPES = [
 ]
 
 export default function RoleSelectorModal({ isOpen, onClose }: RoleSelectorModalProps) {
-  const profile = useProfileStore((s) => s.profile)
-  const setProfile = useProfileStore((s) => s.setProfile)
-  const setDemo = useDemoStore((s) => s.setDemo)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { profile } = useActiveProfile()
 
   const [aiDiagnosticMode, setAiDiagnosticMode] = useState(false)
   const [diagAnswers, setDiagAnswers] = useState<Record<number, string>>({})
@@ -96,25 +97,16 @@ export default function RoleSelectorModal({ isOpen, onClose }: RoleSelectorModal
   if (!isOpen) return null
 
   const handleSelect = (archetype: typeof ARCHETYPES[0]) => {
-    const updated: Profile = {
-      id: profile?.id || `user-${archetype.type}`,
-      name: profile?.name || 'Candidate',
-      user_type: archetype.type,
-      city: profile?.city || archetype.defaultCity,
-      current_role: archetype.defaultRole.split('→')[0].trim(),
-      target_role: archetype.defaultRole.split('→')[1]?.trim() || 'Software Engineer',
-      experience_years: archetype.type === 'student' ? 0 : archetype.type === 'returner' ? 5 : 3.5,
-      career_gap_years: archetype.type === 'returner' ? 3 : 0,
-      current_salary_lpa: archetype.defaultSalary,
-      skills_raw: archetype.skills,
-      skills_taxonomy_ids: [1, 2, 3],
-      disruption_score: archetype.type === 'laid_off' ? 78 : archetype.type === 'returner' ? 72 : 64,
-      created_at: profile?.created_at || new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-    setProfile(updated)
-    setDemo(archetype.type, updated.name)
+    // 1. Resolve canonical demo persona for this archetype
+    const canonical = DEMO_PERSONAS.find((p) => p.user_type === archetype.type) || DEMO_PERSONAS[0]
+
+    // 2. Dispatch through unified activateDemoPersona (sets demoStore + canonical profileStore + background enrichment)
+    activateDemoPersona(canonical)
     onClose()
+
+    if (location.pathname.startsWith('/features')) {
+      navigate('/features')
+    }
   }
 
   const runDiagnosis = () => {
@@ -172,6 +164,7 @@ export default function RoleSelectorModal({ isOpen, onClose }: RoleSelectorModal
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {ARCHETYPES.map((arch) => {
                   const Icon = arch.icon
+                  const canonical = DEMO_PERSONAS.find((p) => p.user_type === arch.type)
                   const isCurrent = profile?.user_type === arch.type
 
                   return (
@@ -191,25 +184,36 @@ export default function RoleSelectorModal({ isOpen, onClose }: RoleSelectorModal
                           <div className={`p-2.5 rounded-xl bg-white dark:bg-slate-900 shadow-2xs ${arch.accent}`}>
                             <Icon size={20} />
                           </div>
-                          {isCurrent && (
+                          {isCurrent ? (
                             <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#0B4F9C] text-white">
                               Active Mode
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200/60 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                              {canonical?.name}
                             </span>
                           )}
                         </div>
 
-                        <h3 className="font-bold text-sm text-slate-900 dark:text-white">
-                          {arch.title}
-                        </h3>
+                        <div>
+                          <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+                            {arch.title}
+                          </h3>
+                          {canonical && (
+                            <p className="text-[11px] font-semibold text-[#0B4F9C] dark:text-sky-400 mt-0.5">
+                              Persona: {canonical.name} ({canonical.city})
+                            </p>
+                          )}
+                        </div>
                         <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
                           {arch.tagline}
                         </p>
                       </div>
 
                       <div className="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 text-[11px] font-semibold text-slate-600 dark:text-slate-300 flex items-center justify-between">
-                        <span>{arch.defaultCity}</span>
+                        <span>{canonical?.city || arch.defaultCity}</span>
                         <span className="text-[#F26B1D] flex items-center gap-1 font-bold">
-                          Select <ArrowRight size={12} />
+                          Select {canonical?.name?.split(' ')[0] || ''} <ArrowRight size={12} />
                         </span>
                       </div>
                     </motion.div>

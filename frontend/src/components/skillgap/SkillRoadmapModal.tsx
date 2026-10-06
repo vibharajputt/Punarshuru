@@ -15,6 +15,7 @@ import {
   Check,
   BookmarkPlus,
   Play,
+  Search,
 } from 'lucide-react'
 
 export interface SkillRoadmapData {
@@ -145,7 +146,7 @@ const SKILL_DATABASE: Record<string, SkillRoadmapData> = {
         channel: 'Krish Naik',
         duration: '3 hrs 40 mins',
         platform: 'YouTube',
-        url: 'https://www.youtube.com/results?search_query=complete+rag+system+krish+naik',
+        url: 'https://www.youtube.com/watch?v=2xxziIWmaSA',
         isFree: true,
       },
     ],
@@ -516,7 +517,7 @@ find /var/log -type f -name "*.log" -mtime +7 -delete`,
         channel: 'FastBit Embedded Academy',
         duration: '6 hrs',
         platform: 'YouTube',
-        url: 'https://www.youtube.com/results?search_query=embedded+c+arm+cortex+fastbit',
+        url: 'https://www.youtube.com/watch?v=3V9eqvkMzHA',
         isFree: true,
       },
       {
@@ -524,7 +525,7 @@ find /var/log -type f -name "*.log" -mtime +7 -delete`,
         channel: 'Mitch Davis',
         duration: '4 hrs',
         platform: 'YouTube',
-        url: 'https://www.youtube.com/results?search_query=freertos+tutorial+mitch+davis',
+        url: 'https://www.youtube.com/watch?v=F321087yYy4',
         isFree: true,
       },
     ],
@@ -636,7 +637,7 @@ void toggle_pin5(void) {
         channel: 'Random Nerd Tutorials',
         duration: '4 hrs',
         platform: 'YouTube',
-        url: 'https://www.youtube.com/results?search_query=esp32+mqtt+complete+tutorial',
+        url: 'https://www.youtube.com/watch?v=k_DEJ3cZ90c',
         isFree: true,
       },
       {
@@ -644,7 +645,7 @@ void toggle_pin5(void) {
         channel: 'freeCodeCamp.org',
         duration: '3 hrs',
         platform: 'freeCodeCamp',
-        url: 'https://www.youtube.com/watch?v=kCc8FmEb1nY',
+        url: 'https://www.youtube.com/watch?v=6mBC5Fkmqkc',
         isFree: true,
       },
     ],
@@ -703,9 +704,220 @@ client.publish(TOPIC_TELEMETRY, payload, qos=1)`,
   },
 }
 
+// ── Curated Real Video Links for Popular Common Skills ────────────────────────
+const CURATED_SKILL_VIDEOS: Record<string, SkillRoadmapData['videos']> = {
+  python: [
+    {
+      title: 'Python Tutorial for Beginners - Full Course',
+      channel: 'freeCodeCamp.org',
+      duration: '4 hrs 26 mins',
+      platform: 'freeCodeCamp',
+      url: 'https://www.youtube.com/watch?v=rfscVS0vtbw',
+      isFree: true,
+    },
+    {
+      title: 'Python for Beginners – Full Course [Programming with Mosh]',
+      channel: 'Programming with Mosh',
+      duration: '6 hrs 14 mins',
+      platform: 'YouTube',
+      url: 'https://www.youtube.com/watch?v=_uQrJ0TkZlc',
+      isFree: true,
+    },
+    {
+      title: 'NPTEL: The Joy of Computing using Python',
+      channel: 'IIT Madras / NPTEL',
+      duration: '12 Weeks',
+      platform: 'NPTEL',
+      url: 'https://nptel.ac.in/courses/106/106/106106182/',
+      isFree: true,
+    },
+  ],
+  docker: [
+    {
+      title: 'Docker Tutorial for Beginners [Full Course]',
+      channel: 'freeCodeCamp.org',
+      duration: '4 hrs 10 mins',
+      platform: 'freeCodeCamp',
+      url: 'https://www.youtube.com/watch?v=fqMOX6JJhGo',
+      isFree: true,
+    },
+    {
+      title: 'Docker Tutorial for Beginners [Hindi / English]',
+      channel: 'TechWorld with Nana',
+      duration: '3 hrs',
+      platform: 'YouTube',
+      url: 'https://www.youtube.com/watch?v=3c-iBn73dDE',
+      isFree: true,
+    },
+    {
+      title: 'NPTEL: Cloud Computing & Virtualization',
+      channel: 'IIT Kharagpur / NPTEL',
+      duration: '8 Weeks',
+      platform: 'NPTEL',
+      url: 'https://nptel.ac.in/courses/106/105/106105167/',
+      isFree: true,
+    },
+  ],
+  react: [
+    {
+      title: "React Course - Beginner's Tutorial for React JavaScript",
+      channel: 'freeCodeCamp.org',
+      duration: '12 hrs',
+      platform: 'freeCodeCamp',
+      url: 'https://www.youtube.com/watch?v=bMknfKXIFA8',
+      isFree: true,
+    },
+    {
+      title: 'React JS Full Course in Hindi (Chai aur Code)',
+      channel: 'Chai aur Code',
+      duration: '10 hrs',
+      platform: 'YouTube',
+      url: 'https://www.youtube.com/watch?v=vz1RlUy5594',
+      isFree: true,
+    },
+    {
+      title: 'NPTEL: Modern Application Development - Web Technologies',
+      channel: 'IIT Madras / NPTEL',
+      duration: '8 Weeks',
+      platform: 'NPTEL',
+      url: 'https://nptel.ac.in/courses/106/106/106106222/',
+      isFree: true,
+    },
+  ],
+  java: [
+    {
+      title: 'Java Tutorial for Beginners - Full Course',
+      channel: 'freeCodeCamp.org',
+      duration: '9 hrs 30 mins',
+      platform: 'freeCodeCamp',
+      url: 'https://www.youtube.com/watch?v=A74TOX803D0',
+      isFree: true,
+    },
+    {
+      title: 'Java Full Course 2024 (Telusko)',
+      channel: 'Telusko',
+      duration: '12 hrs',
+      platform: 'YouTube',
+      url: 'https://www.youtube.com/watch?v=BGTx91t8q50',
+      isFree: true,
+    },
+    {
+      title: 'NPTEL: Programming in Java',
+      channel: 'IIT Kharagpur / NPTEL',
+      duration: '12 Weeks',
+      platform: 'NPTEL',
+      url: 'https://nptel.ac.in/courses/106/105/106105191/',
+      isFree: true,
+    },
+  ],
+  'spring boot': [
+    {
+      title: 'Spring Boot Tutorial for Beginners - Full Course',
+      channel: 'freeCodeCamp.org',
+      duration: '4 hrs',
+      platform: 'freeCodeCamp',
+      url: 'https://www.youtube.com/watch?v=9SGDpanrc8U',
+      isFree: true,
+    },
+    {
+      title: 'Spring Boot 3 Tutorial Crash Course',
+      channel: 'Amigoscode',
+      duration: '5 hrs',
+      platform: 'YouTube',
+      url: 'https://www.youtube.com/watch?v=5r3QU09903k',
+      isFree: true,
+    },
+  ],
+  sql: [
+    {
+      title: 'SQL Tutorial - Full Database Course for Beginners',
+      channel: 'freeCodeCamp.org',
+      duration: '4 hrs 20 mins',
+      platform: 'freeCodeCamp',
+      url: 'https://www.youtube.com/watch?v=HXV3zeQKqGY',
+      isFree: true,
+    },
+    {
+      title: 'NPTEL: Database Management System',
+      channel: 'IIT Kharagpur / NPTEL',
+      duration: '8 Weeks',
+      platform: 'NPTEL',
+      url: 'https://nptel.ac.in/courses/106/105/106105175/',
+      isFree: true,
+    },
+  ],
+  aws: [
+    {
+      title: 'AWS Certified Cloud Practitioner Course',
+      channel: 'freeCodeCamp.org',
+      duration: '14 hrs',
+      platform: 'freeCodeCamp',
+      url: 'https://www.youtube.com/watch?v=SOTamWNgDKc',
+      isFree: true,
+    },
+    {
+      title: 'NPTEL: Cloud Computing',
+      channel: 'IIT Kharagpur / NPTEL',
+      duration: '8 Weeks',
+      platform: 'NPTEL',
+      url: 'https://nptel.ac.in/courses/106/105/106105167/',
+      isFree: true,
+    },
+  ],
+  langchain: [
+    {
+      title: 'LangChain Full Course 2024 – Generative AI with Python',
+      channel: 'freeCodeCamp.org',
+      duration: '3 hrs 30 mins',
+      platform: 'freeCodeCamp',
+      url: 'https://www.youtube.com/watch?v=aywZrzNaKjs',
+      isFree: true,
+    },
+    {
+      title: 'Complete LangChain Tutorial with RAG and LLMs',
+      channel: 'Krish Naik',
+      duration: '3 hrs 40 mins',
+      platform: 'YouTube',
+      url: 'https://www.youtube.com/watch?v=2xxziIWmaSA',
+      isFree: true,
+    },
+  ],
+}
+
 // ── Generic Dynamic Generator for Any Skill ──────────────────────────────────
 function generateDynamicRoadmap(skillName: string): SkillRoadmapData {
   const cleanName = skillName.trim()
+  const lower = cleanName.toLowerCase()
+  const matchedKey = Object.keys(CURATED_SKILL_VIDEOS).find((k) => lower.includes(k))
+  const videoList = matchedKey
+    ? CURATED_SKILL_VIDEOS[matchedKey]
+    : [
+        {
+          title: `${cleanName} Full Course for Beginners (Zero to Hero)`,
+          channel: 'freeCodeCamp.org',
+          duration: '4–6 hrs',
+          platform: 'freeCodeCamp' as const,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent(cleanName + ' full course tutorial freecodecamp')}`,
+          isFree: true,
+        },
+        {
+          title: `${cleanName} Complete Practical Crash Course`,
+          channel: 'YouTube Technical Educators',
+          duration: '3 hrs',
+          platform: 'YouTube' as const,
+          url: `https://www.youtube.com/results?search_query=${encodeURIComponent(cleanName + ' practical crash course')}`,
+          isFree: true,
+        },
+        {
+          title: `SWAYAM / NPTEL: Certified Industry Course for ${cleanName}`,
+          channel: 'NPTEL / SWAYAM Govt Portal',
+          duration: '8 Weeks',
+          platform: 'SWAYAM' as const,
+          url: `https://swayam.gov.in/explorer?searchText=${encodeURIComponent(cleanName)}`,
+          isFree: true,
+        },
+      ]
+
   return {
     skill: cleanName,
     category: 'Technical Competency',
@@ -750,32 +962,7 @@ function generateDynamicRoadmap(skillName: string): SkillRoadmapData {
         milestone: `Publish a tested, documented open-source repository on GitHub demonstrating mastery of ${cleanName}.`,
       },
     ],
-    videos: [
-      {
-        title: `${cleanName} Full Course for Beginners (Zero to Hero)`,
-        channel: 'freeCodeCamp.org',
-        duration: '4–6 hrs',
-        platform: 'freeCodeCamp',
-        url: `https://www.youtube.com/results?search_query=${encodeURIComponent(cleanName + ' full course tutorial freecodecamp')}`,
-        isFree: true,
-      },
-      {
-        title: `${cleanName} Complete Roadmap & Practical Crash Course`,
-        channel: 'Top Tech Educators (Hindi/English)',
-        duration: '3 hrs',
-        platform: 'YouTube',
-        url: `https://www.youtube.com/results?search_query=${encodeURIComponent(cleanName + ' crash course practical project')}`,
-        isFree: true,
-      },
-      {
-        title: `SWAYAM / NPTEL: Certified Industry Course for ${cleanName}`,
-        channel: 'NPTEL / SWAYAM Govt Portal',
-        duration: '8 Weeks',
-        platform: 'SWAYAM',
-        url: 'https://swayam.gov.in/',
-        isFree: true,
-      },
-    ],
+    videos: videoList,
     notes: {
       title: `${cleanName} Quick Reference & Core Architecture Notes`,
       content: `${cleanName} is widely demanded across modern software engineering and technical roles in India. Key focus areas include clean code structure, memory efficiency, and integration with modern toolchains.`,
@@ -842,6 +1029,14 @@ export default function SkillRoadmapModal({ skillName, isOpen, onClose }: SkillR
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
+
+  const hasSearchLinks = data.videos.some(
+    (vid) =>
+      vid.url.includes('results?search_query') ||
+      vid.url.includes('swayam.gov.in/explorer') ||
+      vid.url === 'https://swayam.gov.in/' ||
+      vid.url === 'https://swayam.gov.in'
+  )
 
   return (
     <AnimatePresence>
@@ -973,46 +1168,64 @@ export default function SkillRoadmapModal({ skillName, isOpen, onClose }: SkillR
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                   <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                    Verified Free Video Lectures & Courses
+                    {hasSearchLinks ? 'Curated Free Videos & Course Search' : 'Verified Free Video Lectures & Courses'}
                   </h3>
-                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">
-                    ✓ 100% Free & Open Access
+                  <span
+                    className={`text-xs font-bold ${
+                      hasSearchLinks
+                        ? 'text-amber-600 dark:text-amber-400'
+                        : 'text-emerald-600 dark:text-emerald-400'
+                    }`}
+                  >
+                    {hasSearchLinks ? 'Search for free resources' : '✓ 100% Free & Open Access'}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {data.videos.map((vid, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 hover:border-[#0B4F9C] transition-all shadow-xs flex flex-col justify-between space-y-3 group"
-                    >
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-blue-100 dark:bg-blue-950 text-[#0B4F9C] dark:text-sky-300">
-                            {vid.platform}
-                          </span>
-                          <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
-                            <Clock size={11} /> {vid.duration}
-                          </span>
-                        </div>
-                        <h4 className="text-sm font-black text-slate-900 dark:text-white group-hover:text-[#0B4F9C] dark:group-hover:text-sky-400 transition-colors">
-                          {vid.title}
-                        </h4>
-                        <p className="text-xs text-slate-500">Instructor / Channel: {vid.channel}</p>
-                      </div>
+                  {data.videos.map((vid, idx) => {
+                    const isSearchLink =
+                      vid.url.includes('results?search_query') ||
+                      vid.url.includes('swayam.gov.in/explorer') ||
+                      vid.url === 'https://swayam.gov.in/' ||
+                      vid.url === 'https://swayam.gov.in'
 
-                      <a
-                        href={vid.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-[#0B4F9C] hover:text-white dark:hover:bg-[#0B4F9C] text-xs font-bold text-slate-800 dark:text-slate-200 transition-all shadow-xs cursor-pointer"
+                    return (
+                      <div
+                        key={idx}
+                        className="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 hover:border-[#0B4F9C] transition-all shadow-xs flex flex-col justify-between space-y-3 group"
                       >
-                        <Play size={13} className="fill-current" />
-                        <span>Watch Free Course</span>
-                        <ExternalLink size={12} className="ml-1" />
-                      </a>
-                    </div>
-                  ))}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-blue-100 dark:bg-blue-950 text-[#0B4F9C] dark:text-sky-300">
+                              {vid.platform}
+                            </span>
+                            <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
+                              <Clock size={11} /> {vid.duration}
+                            </span>
+                          </div>
+                          <h4 className="text-sm font-black text-slate-900 dark:text-white group-hover:text-[#0B4F9C] dark:group-hover:text-sky-400 transition-colors">
+                            {vid.title}
+                          </h4>
+                          <p className="text-xs text-slate-500">Instructor / Channel: {vid.channel}</p>
+                        </div>
+
+                        <a
+                          href={vid.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-[#0B4F9C] hover:text-white dark:hover:bg-[#0B4F9C] text-xs font-bold text-slate-800 dark:text-slate-200 transition-all shadow-xs cursor-pointer"
+                        >
+                          {isSearchLink ? (
+                            <Search size={13} className="shrink-0" />
+                          ) : (
+                            <Play size={13} className="fill-current shrink-0" />
+                          )}
+                          <span>{isSearchLink ? 'Search for free resources' : 'Watch Free Course'}</span>
+                          <ExternalLink size={12} className="ml-1 shrink-0" />
+                        </a>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}

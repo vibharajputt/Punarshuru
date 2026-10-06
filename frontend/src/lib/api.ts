@@ -146,7 +146,7 @@ export const profileApi = {
       body: JSON.stringify(data),
     }),
   get: (id: string) => request<Profile>(`/api/profile/${id}`),
-  getMyProfile: () => request<Profile>('/api/profile/me'),
+  getMyProfile: (token?: string) => request<Profile>('/api/profile/me', undefined, token),
   update: (id: string, data: Partial<Profile>) =>
     request<Profile>(`/api/profile/${id}`, {
       method: 'PUT',
@@ -262,6 +262,26 @@ export const voiceApi = {
       body: formData,
     })
   },
+}
+
+export interface CopilotChatRequest {
+  message: string
+  profile?: Partial<Profile> | null
+  history?: Array<{ sender: string; text: string }> | null
+}
+
+export interface CopilotChatResponse {
+  reply: string
+  actions: string[]
+  quick_replies: string[]
+}
+
+export const copilotApi = {
+  chat: (data: CopilotChatRequest) =>
+    request<CopilotChatResponse>('/api/copilot/chat', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 }
 
 

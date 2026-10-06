@@ -77,3 +77,29 @@ def test_gap_and_laid_off():
     s, out = chat(new_state("B"), "Manual QA Tester, laid off last month", "Manual Testing, JIRA, SQL",
                   "Automation QA", "Bengaluru", "No break")
     assert out["segment"] == "laid_off"
+
+
+def test_free_text_role_and_experience_extraction():
+    # 1. Direct free text extracting role and experience
+    s1, out1 = chat(new_state("Priya"), "I am a mechanical engineer with 5 years experience")
+    d1 = out1["profile_draft"]
+    assert d1["current_role"] == "Mechanical Engineer"
+    assert d1["experience_years"] == 5
+
+    # 2. Free text with skills in passing
+    s2, out2 = chat(new_state("Rahul"), "I am a mechanical engineer with 5 years experience in SolidWorks, AutoCAD and Python")
+    d2 = out2["profile_draft"]
+    assert d2["current_role"] == "Mechanical Engineer"
+    assert d2["experience_years"] == 5
+    assert "SolidWorks" in d2["skills_raw"]
+    assert "AutoCAD" in d2["skills_raw"]
+    assert "Python" in d2["skills_raw"]
+
+    # 3. Answering out-of-order when pending_slot is not current_role
+    s3 = new_state("Neha")
+    s3["pending_slot"] = "city"
+    s3, out3 = chat(s3, "I am a mechanical engineer with 5 years experience in Pune")
+    d3 = out3["profile_draft"]
+    assert d3["current_role"] == "Mechanical Engineer"
+    assert d3["experience_years"] == 5
+    assert d3["city"] == "Pune"

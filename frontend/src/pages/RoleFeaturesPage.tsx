@@ -6,6 +6,7 @@ import {
   SlidersHorizontal,
   Sparkles,
 } from 'lucide-react'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { useProfileStore } from '@/store/profileStore'
 import { ARCHETYPES } from '@/components/dashboard/RoleSelectorModal'
 import RoleSelectorModal from '@/components/dashboard/RoleSelectorModal'
@@ -110,7 +111,7 @@ export const ROLE_FEATURES: Record<string, FeatureDefinition[]> = {
       component: (p) => (
         <CareerGapAnalyzer
           role={p?.current_role || 'Java Developer'}
-          gapYears={p?.career_gap_years || 3}
+          gapYears={p?.career_gap_years || 4}
           skills={p?.skills_raw || ['Java', 'SQL', 'Spring 4']}
         />
       ),
@@ -358,10 +359,12 @@ export const ROLE_FEATURES: Record<string, FeatureDefinition[]> = {
 
 export default function RoleFeaturesPage() {
   const { featureKey } = useParams<{ featureKey?: string }>()
-  const profile = useProfileStore((s) => s.profile)
+  const { profile } = useActiveProfile()
+  const storeProfile = useProfileStore((s) => s.profile)
   const [roleModalOpen, setRoleModalOpen] = useState<boolean>(false)
 
-  const userType = profile?.user_type || 'returner'
+  const activeProfile = profile || storeProfile
+  const userType = activeProfile?.user_type || 'returner'
   const currentArchetype = ARCHETYPES.find((a) => a.type === userType) || ARCHETYPES[0]
   const features = ROLE_FEATURES[userType] || ROLE_FEATURES.returner
 

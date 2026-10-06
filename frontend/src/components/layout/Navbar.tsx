@@ -20,6 +20,8 @@ import HealthBadge from '@/components/common/HealthBadge'
 import ThemeToggle from '@/components/common/ThemeToggle'
 import AuthModal from '@/components/auth/AuthModal'
 import { useProfileStore } from '@/store/profileStore'
+import { useAuthStore } from '@/store/authStore'
+import { useDemoStore } from '@/store/demoStore'
 
 interface NavLinkItem {
   to: string
@@ -66,7 +68,10 @@ export default function Navbar() {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
 
   const profile = useProfileStore((s) => s.profile)
-  const setProfile = useProfileStore((s) => s.setProfile)
+  const token = useAuthStore((s) => s.token)
+  const user = useAuthStore((s) => s.user)
+  const isDemo = useDemoStore((s) => s.isDemo)
+  const isAuthenticated = !!token && !isDemo
 
   const mainNavLinks = getMainNavLinks(t)
 
@@ -78,7 +83,9 @@ export default function Navbar() {
   }
 
   const handleLogout = () => {
-    setProfile(null)
+    useAuthStore.getState().clearAuth()
+    useDemoStore.getState().clearDemo()
+    useProfileStore.getState().clearProfile()
     setProfileDropdownOpen(false)
     navigate('/')
   }
@@ -154,7 +161,7 @@ export default function Navbar() {
             <ThemeToggle />
 
             {/* User Account / Sign In */}
-            {profile ? (
+            {isAuthenticated && user && profile ? (
               /* Logged-In User Profile Dropdown */
               <div className="relative">
                 <button
@@ -294,11 +301,15 @@ export default function Navbar() {
                   type="button"
                   onClick={() => {
                     setMobileOpen(false)
-                    setAuthOpen(true)
+                    if (isAuthenticated) {
+                      navigate('/home')
+                    } else {
+                      navigate('/login')
+                    }
                   }}
                   className="px-3 py-1.5 text-xs font-bold rounded-xl bg-[#0B4F9C] text-white"
                 >
-                  {profile ? 'Switch Persona' : 'Sign In'}
+                  {isAuthenticated ? 'My Dashboard' : 'Sign In'}
                 </button>
               </div>
             </motion.div>

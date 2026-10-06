@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { ArrowRight, RefreshCw, Zap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useProfileStore } from '@/store/profileStore'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { assessApi } from '@/lib/api'
 import SkillCategorizationCards from '@/components/skillgap/SkillCategorizationCards'
 import HiddenStrengthsCard from '@/components/skillgap/HiddenStrengthsCard'
@@ -20,15 +20,17 @@ const benchmarkRoles = [
 
 export default function SkillsPage() {
   const { t } = useTranslation()
-  const profile = useProfileStore((s) => s.profile)
+  const { profile } = useActiveProfile()
   const [selectedRole, setSelectedRole] = useState<string>(
     profile?.target_role || 'GenAI Engineer'
   )
 
+  const profileId = profile?.id || 'demo-priya'
+
   const { data: gapData, isLoading, refetch, isFetching } = useQuery({
-    queryKey: ['gap', profile?.id, selectedRole],
-    queryFn: () => (profile?.id ? assessApi.gap(profile.id, selectedRole) : null),
-    enabled: !!profile?.id,
+    queryKey: ['gap', profileId, selectedRole],
+    queryFn: () => (profileId ? assessApi.gap(profileId, selectedRole) : null),
+    enabled: !!profileId,
     staleTime: 60_000,
   })
 

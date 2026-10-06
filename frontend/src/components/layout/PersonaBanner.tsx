@@ -1,8 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 import { Sparkles, User, RefreshCw } from 'lucide-react'
 import { useProfileStore } from '@/store/profileStore'
-import { demoApi, profileApi } from '@/lib/api'
-import type { UserType } from '@/types'
+import { useDemoStore } from '@/store/demoStore'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
+import { demoApi } from '@/lib/api'
+import { DEMO_PERSONAS } from '@/components/demo/DemoModal'
+import type { UserType, Profile } from '@/types'
 
 const personas = [
   { key: 'priya', name: 'Priya (Returner)' },
@@ -14,32 +17,44 @@ const personas = [
 
 export default function PersonaBanner() {
   const navigate = useNavigate()
-  const profile = useProfileStore((s) => s.profile)
+  const { profile } = useActiveProfile()
   const setProfile = useProfileStore((s) => s.setProfile)
+  const setDemo = useDemoStore((s) => s.setDemo)
   const isLoading = useProfileStore((s) => s.isLoading)
   const setLoading = useProfileStore((s) => s.setLoading)
 
   const handleSwitch = async (key: string) => {
     try {
       setLoading(true)
+      const personaItem = DEMO_PERSONAS.find((p) => p.key === key)
+      if (personaItem) {
+        setDemo(personaItem.key, personaItem.name, {
+          role: personaItem.current_role,
+          city: personaItem.city,
+        })
+      }
       const data = await demoApi.loadPersona(key)
-      const created = await profileApi.create({
-        name: String(data.name || 'Demo'),
-        email: `${key}@demo.punarshuru.in`,
-        user_type: data.user_type as UserType,
-        city: String(data.city || 'Bengaluru'),
-        current_role: String(data.current_role || 'Professional'),
-        target_role: String(data.target_role || 'Software Engineer'),
-        experience_years: Number(data.experience_years || 0),
-        career_gap_years: Number(data.career_gap_years || 0),
-        current_salary_lpa: data.current_salary_lpa ? Number(data.current_salary_lpa) : null,
-        skills_raw: Array.isArray(data.skills_raw) ? (data.skills_raw as string[]) : [],
-        skills_taxonomy_ids: Array.isArray(data.skills_taxonomy_ids)
-          ? (data.skills_taxonomy_ids as number[])
-          : [],
-      })
-      setProfile(created)
-      navigate('/dashboard')
+      if (data) {
+        const enriched: Profile = {
+          id: `demo-${key}`,
+          name: String(data.name || personaItem?.name || 'Demo'),
+          email: `${key}@demo.punarshuru.in`,
+          user_type: (data.user_type || personaItem?.user_type || 'returner') as UserType,
+          city: String(data.city || personaItem?.city || 'Bengaluru'),
+          current_role: String(data.current_role || personaItem?.current_role || 'Professional'),
+          target_role: String(data.target_role || personaItem?.target_role || 'Software Engineer'),
+          experience_years: Number(data.experience_years || 0),
+          career_gap_years: Number(data.career_gap_years || 0),
+          current_salary_lpa: data.current_salary_lpa ? Number(data.current_salary_lpa) : null,
+          skills_raw: Array.isArray(data.skills_raw) ? (data.skills_raw as string[]) : (personaItem?.skills || []),
+          skills_taxonomy_ids: [1, 2, 3],
+          disruption_score: Number(data.disruption_score || personaItem?.disruption || 70),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        setProfile(enriched)
+      }
+      navigate('/home')
     } catch {
       // Keep existing profile
     } finally {

@@ -1,4 +1,5 @@
 import { Sparkles, CheckCircle2, ArrowRight, RefreshCw, RotateCcw, Award } from 'lucide-react'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { ARCHETYPE_BADGES, ARCHETYPE_LABELS, ARCHETYPE_DESCRIPTIONS } from './types'
 
 interface LiveProfileCardProps {
@@ -16,7 +17,9 @@ export default function LiveProfileCard({
   isConfirming,
   onStartOver,
 }: LiveProfileCardProps) {
-  const userType = profileDraft.user_type as string | undefined
+  const { profile: activeProfile, isDemo } = useActiveProfile()
+
+  const userType = (profileDraft.user_type as string | undefined) || (isDemo ? activeProfile?.user_type : undefined)
   const isClassified = !!userType && userType !== 'detecting'
   const badgeClass = isClassified
     ? (ARCHETYPE_BADGES[userType!] || 'bg-slate-100 text-slate-700 border-slate-200')
@@ -25,17 +28,20 @@ export default function LiveProfileCard({
   const archetypeTitle = isClassified ? (ARCHETYPE_LABELS[userType!] || userType!.toUpperCase()) : 'Detecting…'
   const archetypeDesc = isClassified ? ARCHETYPE_DESCRIPTIONS[userType!] : null
 
-  const skillsRaw = (profileDraft.skills_raw as string[]) || []
+  const skillsRaw = ((profileDraft.skills_raw as string[])?.length ? (profileDraft.skills_raw as string[]) : (isDemo ? activeProfile?.skills_raw : [])) || []
   const skillsCount = skillsRaw.length
 
-  const gapVal = profileDraft.career_gap_years !== undefined && profileDraft.career_gap_years !== null
-    ? Number(profileDraft.career_gap_years)
-    : null
+  // Canonical career gap years from single source of truth (demoStore / profileStore)
+  const gapVal = isDemo
+    ? (activeProfile?.career_gap_years ?? 4)
+    : (profileDraft.career_gap_years !== undefined && profileDraft.career_gap_years !== null
+        ? Number(profileDraft.career_gap_years)
+        : (activeProfile?.career_gap_years ?? null))
 
-  const currentCity = (profileDraft.current_city || profileDraft.city) as string | undefined
-  const preferredCity = profileDraft.preferred_city as string | undefined
-  const gapReason = profileDraft.gap_reason as string | undefined
-  const achievements = (profileDraft.achievements as string[]) || []
+  const currentCity = ((profileDraft.current_city || profileDraft.city) as string | undefined) || (isDemo ? activeProfile?.city : undefined)
+  const preferredCity = (profileDraft.preferred_city as string | undefined) || (isDemo ? activeProfile?.city : undefined)
+  const gapReason = (profileDraft.gap_reason as string | undefined) || (isDemo && activeProfile?.user_type === 'returner' ? 'Maternity & Childcare Career Break' : undefined)
+  const achievements = ((profileDraft.achievements as string[])?.length ? (profileDraft.achievements as string[]) : (isDemo ? activeProfile?.achievements : [])) || []
 
   const isFilled = Boolean(
     profileDraft.current_role &&
@@ -70,11 +76,11 @@ export default function LiveProfileCard({
         {/* Profile Fields */}
         <div className="space-y-2.5">
           {[
-            { label: 'Current Role', value: profileDraft.current_role },
-            { label: 'Target Role', value: profileDraft.target_role },
+            { label: 'Current Role', value: profileDraft.current_role || (isDemo ? activeProfile?.current_role : null) },
+            { label: 'Target Role', value: profileDraft.target_role || (isDemo ? activeProfile?.target_role : null) },
             { label: 'Current City (Residence)', value: currentCity },
             { label: 'Preferred Work City', value: preferredCity },
-            { label: 'Experience', value: profileDraft.experience_years ? `${profileDraft.experience_years} yrs` : null },
+            { label: 'Experience', value: (profileDraft.experience_years !== undefined && profileDraft.experience_years !== null) ? `${profileDraft.experience_years} yrs` : (isDemo && activeProfile?.experience_years !== undefined ? `${activeProfile.experience_years} yrs` : null) },
           ].map(({ label, value }) => {
             const display = value !== undefined && value !== '' && value !== null ? String(value) : null
             return (
@@ -104,7 +110,7 @@ export default function LiveProfileCard({
                 <div className="space-y-1 mt-0.5">
                   <div className="flex items-center gap-1.5">
                     <span className="text-sm font-bold text-slate-800 dark:text-white">
-                      {gapVal > 0 ? `${gapVal} yrs` : 'No gap (Continuous)'}
+                      {gapVal > 0 ? `${gapVal} ${gapVal === 1 ? 'yr' : 'yrs'}` : 'No gap (Continuous)'}
                     </span>
                     {gapVal > 0 && (
                       <span className="text-[10px] px-2 py-0.2 rounded-md bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 font-bold">

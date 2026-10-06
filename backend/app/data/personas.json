@@ -9,18 +9,39 @@
     "experience_years": 5,
     "career_gap_years": 4.0,
     "current_salary_lpa": null,
-    "skills_raw": ["Java", "Spring Boot", "MySQL", "REST APIs", "Hibernate", "Maven", "Git"],
-    "skills_taxonomy_ids": [2, 11, 12, 41, 21],
+    "skills_raw": [
+      "Java",
+      "Spring Boot",
+      "MySQL",
+      "REST APIs",
+      "Hibernate",
+      "Maven",
+      "Git"
+    ],
+    "skills_taxonomy_ids": [
+      2,
+      11,
+      12,
+      41,
+      21
+    ],
     "description": "Ex-Java developer from Pune with 4-year career break post maternity. Returning to tech and targeting GenAI roles.",
     "disruption_score": 72,
     "disruption_breakdown": {
-      "skill_decay": 25,
-      "automation_risk": 15,
-      "career_gap": 20,
+      "skill_decay": 20,
+      "automation_risk": 22,
+      "career_gap": 12,
       "stagnation": 8,
-      "market_mismatch": 4,
-      "top_risks": ["4-year gap has led to skill decay in Java ecosystem", "Java demand stable but GenAI gap is wide"],
-      "strengths": ["Strong Java foundation", "Spring Boot still relevant", "High motivation"]
+      "market_mismatch": 10,
+      "top_risks": [
+        "4-year gap has led to skill decay in Java ecosystem",
+        "Java demand stable but GenAI gap is wide"
+      ],
+      "strengths": [
+        "Strong Java foundation",
+        "Spring Boot still relevant",
+        "High motivation"
+      ]
     }
   },
   {
@@ -33,18 +54,38 @@
     "experience_years": 3,
     "career_gap_years": 0.0,
     "current_salary_lpa": 2.4,
-    "skills_raw": ["Delivery Operations", "Gig Platforms", "Communication Skills", "Hindi", "Customer Service", "Route Optimization"],
-    "skills_taxonomy_ids": [202, 203, 54, 108, 52],
+    "skills_raw": [
+      "Delivery Operations",
+      "Gig Platforms",
+      "Communication Skills",
+      "Hindi",
+      "Customer Service",
+      "Route Optimization"
+    ],
+    "skills_taxonomy_ids": [
+      202,
+      203,
+      54,
+      108,
+      52
+    ],
     "description": "Gig delivery worker from Lucknow with 3 years on app-based platforms. Wants to transition into tech operations or logistics analytics.",
     "disruption_score": 85,
     "disruption_breakdown": {
-      "skill_decay": 5,
-      "automation_risk": 35,
+      "skill_decay": 25,
+      "automation_risk": 30,
       "career_gap": 0,
-      "stagnation": 25,
-      "market_mismatch": 20,
-      "top_risks": ["Gig delivery highly susceptible to drone/autonomous vehicle automation", "No formal tech skills"],
-      "strengths": ["Deep operational knowledge", "Strong Hindi communication", "Work ethic"]
+      "stagnation": 15,
+      "market_mismatch": 15,
+      "top_risks": [
+        "Gig delivery highly susceptible to drone/autonomous vehicle automation",
+        "No formal tech skills"
+      ],
+      "strengths": [
+        "Deep operational knowledge",
+        "Strong Hindi communication",
+        "Work ethic"
+      ]
     }
   },
   {
@@ -57,18 +98,40 @@
     "experience_years": 6,
     "career_gap_years": 0.5,
     "current_salary_lpa": 8.0,
-    "skills_raw": ["Manual Testing", "JIRA", "Agile", "Test Case Writing", "Bug Reporting", "Selenium (basic)", "SQL"],
-    "skills_taxonomy_ids": [35, 39, 40, 36, 30],
+    "skills_raw": [
+      "Manual Testing",
+      "JIRA",
+      "Agile",
+      "Test Case Writing",
+      "Bug Reporting",
+      "Selenium (basic)",
+      "SQL"
+    ],
+    "skills_taxonomy_ids": [
+      35,
+      39,
+      40,
+      36,
+      30
+    ],
     "description": "Laid-off manual QA professional from Bengaluru after company downsizing. 6 years experience but manual QA is rapidly declining due to AI automation.",
     "disruption_score": 78,
     "disruption_breakdown": {
-      "skill_decay": 10,
-      "automation_risk": 35,
-      "career_gap": 5,
-      "stagnation": 20,
-      "market_mismatch": 8,
-      "top_risks": ["Manual QA declining rapidly", "AI test tools replacing manual work", "Limited automation skills"],
-      "strengths": ["Strong SDLC knowledge", "Good SQL skills", "Agile experience"]
+      "skill_decay": 15,
+      "automation_risk": 30,
+      "career_gap": 3,
+      "stagnation": 15,
+      "market_mismatch": 15,
+      "top_risks": [
+        "Manual QA declining rapidly",
+        "AI test tools replacing manual work",
+        "Limited automation skills"
+      ],
+      "strengths": [
+        "Strong SDLC knowledge",
+        "Good SQL skills",
+        "Agile experience"
+      ]
     }
   },
   {
@@ -81,18 +144,41 @@
     "experience_years": 5,
     "career_gap_years": 0.0,
     "current_salary_lpa": 4.5,
-    "skills_raw": ["Customer Support", "Communication Skills", "CRM", "English", "Hindi", "MS Excel", "Zendesk"],
-    "skills_taxonomy_ids": [52, 54, 109, 108, 34, 39],
+    "skills_raw": [
+      "Customer Support",
+      "Communication Skills",
+      "CRM",
+      "English",
+      "Hindi",
+      "MS Excel",
+      "Zendesk"
+    ],
+    "skills_taxonomy_ids": [
+      52,
+      54,
+      109,
+      108,
+      34,
+      39
+    ],
     "description": "Customer support executive from Noida, 3 years stagnant in the same role with no salary growth. Wants to transition into AI/product roles.",
     "disruption_score": 68,
     "disruption_breakdown": {
-      "skill_decay": 5,
-      "automation_risk": 30,
+      "skill_decay": 10,
+      "automation_risk": 28,
       "career_gap": 0,
-      "stagnation": 25,
-      "market_mismatch": 8,
-      "top_risks": ["Customer support heavily automated by AI chatbots", "No growth in current role", "Market mismatch for higher roles"],
-      "strengths": ["Excellent communication", "Deep domain knowledge of user pain points", "Bilingual (EN/HI)"]
+      "stagnation": 15,
+      "market_mismatch": 15,
+      "top_risks": [
+        "Customer support heavily automated by AI chatbots",
+        "No growth in current role",
+        "Market mismatch for higher roles"
+      ],
+      "strengths": [
+        "Excellent communication",
+        "Deep domain knowledge of user pain points",
+        "Bilingual (EN/HI)"
+      ]
     }
   },
   {
@@ -105,8 +191,25 @@
     "experience_years": 0,
     "career_gap_years": 0.0,
     "current_salary_lpa": null,
-    "skills_raw": ["Python", "C++", "Java", "Data Structures", "Algorithms", "Machine Learning (basic)", "SQL", "Git"],
-    "skills_taxonomy_ids": [1, 75, 2, 55, 23, 30, 21],
+    "skills_raw": [
+      "Python",
+      "C++",
+      "Java",
+      "Data Structures",
+      "Algorithms",
+      "Machine Learning (basic)",
+      "SQL",
+      "Git"
+    ],
+    "skills_taxonomy_ids": [
+      1,
+      75,
+      2,
+      55,
+      23,
+      30,
+      21
+    ],
     "description": "Final year BTech CSE student from Mohali (Punjab) targeting software or ML engineering roles at startups or MNCs.",
     "disruption_score": 22,
     "disruption_breakdown": {
@@ -115,8 +218,15 @@
       "career_gap": 0,
       "stagnation": 5,
       "market_mismatch": 7,
-      "top_risks": ["No industry experience yet", "Strong competition from tier-1 colleges"],
-      "strengths": ["Fresh skills", "Strong CS fundamentals", "High energy and adaptability"]
+      "top_risks": [
+        "No industry experience yet",
+        "Strong competition from tier-1 colleges"
+      ],
+      "strengths": [
+        "Fresh skills",
+        "Strong CS fundamentals",
+        "High energy and adaptability"
+      ]
     }
   }
 ]

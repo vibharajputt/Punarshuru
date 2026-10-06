@@ -13,7 +13,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useProfileStore } from '@/store/profileStore'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { pathwayApi } from '@/lib/api'
 import PathCardsGrid from '@/components/pathways/PathCardsGrid'
 import RoadmapTimeline from '@/components/pathways/RoadmapTimeline'
@@ -24,7 +24,7 @@ import type { PathwayOption } from '@/types'
 
 export default function PathPage() {
   const { t } = useTranslation()
-  const profile = useProfileStore((s) => s.profile)
+  const { profile } = useActiveProfile()
   const userType = profile?.user_type || 'returner'
 
   const isStudent = userType === 'student'
