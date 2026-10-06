@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft,
@@ -358,7 +358,6 @@ export const ROLE_FEATURES: Record<string, FeatureDefinition[]> = {
 
 export default function RoleFeaturesPage() {
   const { featureKey } = useParams<{ featureKey?: string }>()
-  const navigate = useNavigate()
   const profile = useProfileStore((s) => s.profile)
   const [roleModalOpen, setRoleModalOpen] = useState<boolean>(false)
 
