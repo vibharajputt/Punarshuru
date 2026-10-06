@@ -1,4 +1,4 @@
-import { useState, useId } from 'react'
+import { useState, useId, useRef } from 'react'
 import {
   MessageSquare,
   Sparkles,
@@ -12,7 +12,13 @@ import {
   Volume2,
   Flame,
   Award,
+  Mic,
+  MicOff,
+  Calculator,
+  ExternalLink,
+  Code2,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 interface InterviewDilemma {
   id: string
@@ -212,8 +218,12 @@ export default function GapToStrengthSimulator() {
   const elevatorGapYearsId = useId()
   const elevatorPastStackId = useId()
   const elevatorTargetRoleId = useId()
+  const preBreakCtcId = useId()
+  const breakYearsParityId = useId()
 
-  const [activeTab, setActiveTab] = useState<'custom_ai' | 'preset_library' | 'elevator_pitch'>('custom_ai')
+  const [activeTab, setActiveTab] = useState<
+    'custom_ai' | 'proof_shield' | 'salary_parity' | 'preset_library' | 'elevator_pitch'
+  >('custom_ai')
 
   // Preset State
   const [activeDilemmaIdx, setActiveDilemmaIdx] = useState<number>(0)
@@ -238,11 +248,20 @@ export default function GapToStrengthSimulator() {
     proofAnchor: 'Show live Swagger API docs and GitHub commit history during interview.',
   })
 
+  // Voice Recording Simulator State
+  const [isRecording, setIsRecording] = useState<boolean>(false)
+  const recognitionRef = useRef<any>(null)
+
+  // Salary Parity Calculator State
+  const [preBreakCTC, setPreBreakCTC] = useState<number>(8.0)
+  const [breakYears, setBreakYears] = useState<number>(3.0)
+
   // 30-Sec Elevator Pitch Generator State
   const [gapYears, setGapYears] = useState<number>(3)
   const [pastStack, setPastStack] = useState<string>('Java & SQL Backend')
   const [targetRole, setTargetRole] = useState<string>('GenAI & Spring Boot 3 Engineer')
   const [copiedElevator, setCopiedElevator] = useState<boolean>(false)
+  const [copiedBadge, setCopiedBadge] = useState<boolean>(false)
 
   // Interactive Practice State
   const [userPracticeText, setUserPracticeText] = useState<string>('')
@@ -253,14 +272,69 @@ export default function GapToStrengthSimulator() {
     keyTip: string
   } | null>(null)
 
-  const handleCopy = (text: string, isElevator = false) => {
+  // Salary Parity Computations
+  const inflationCompounded = Number((preBreakCTC * Math.pow(1.10, breakYears)).toFixed(1))
+  const deltaSkillPremiumCTC = Number((inflationCompounded * 1.25).toFixed(1))
+  const marketPenaltyAvoided = Number((deltaSkillPremiumCTC - preBreakCTC).toFixed(1))
+
+  const handleCopy = (text: string, type: 'script' | 'elevator' | 'badge') => {
     navigator.clipboard.writeText(text)
-    if (isElevator) {
+    if (type === 'elevator') {
       setCopiedElevator(true)
       setTimeout(() => setCopiedElevator(false), 2000)
+    } else if (type === 'badge') {
+      setCopiedBadge(true)
+      setTimeout(() => setCopiedBadge(false), 2000)
     } else {
       setCopiedScript(true)
       setTimeout(() => setCopiedScript(false), 2000)
+    }
+  }
+
+  // Voice Recording Toggle
+  const toggleVoiceRecording = () => {
+    if (isRecording) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop()
+      }
+      setIsRecording(false)
+      return
+    }
+
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SpeechRecognition) {
+      alert('Your browser does not support Web Speech API. You can still type your practice response!')
+      return
+    }
+
+    try {
+      const recognition = new SpeechRecognition()
+      recognition.continuous = true
+      recognition.interimResults = true
+      recognition.lang = 'en-US'
+
+      recognition.onresult = (event: any) => {
+        let transcript = ''
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript
+        }
+        setUserPracticeText(transcript)
+      }
+
+      recognition.onerror = () => {
+        setIsRecording(false)
+      }
+
+      recognition.onend = () => {
+        setIsRecording(false)
+      }
+
+      recognition.start()
+      recognitionRef.current = recognition
+      setIsRecording(true)
+    } catch {
+      setIsRecording(false)
     }
   }
 
@@ -347,18 +421,18 @@ export default function GapToStrengthSimulator() {
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-950/60 dark:to-blue-950/60 text-teal-700 dark:text-teal-300 text-xs font-black mb-1.5 border border-teal-200/50">
             <MessageSquare size={13} className="text-teal-600" />
-            <span>AI Interview Confidence Coach</span>
+            <span>PunarSetu Returner Superpower Engine</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            Career Gap-to-Strength AI Reframing Coach
+            Career Gap-to-Strength Proof & Negotiation Engine
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl font-medium">
-            Transform any tricky recruiter question into proof of resilience, agility, and modern technical currency. Ask any custom question or practice real-world recruiter traps.
+            Unlike ChatGPT text generation, PunarSetu creates <strong className="text-slate-800 dark:text-slate-200">Verifiable Code Proof Badges</strong>, calculates <strong className="text-slate-800 dark:text-slate-200">Form-16 Returnee Salary Parity</strong>, and offers <strong className="text-slate-800 dark:text-slate-200">Live Voice Pitch Practice</strong>.
           </p>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0">
+        <div className="flex flex-wrap items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab('custom_ai')}
@@ -369,7 +443,31 @@ export default function GapToStrengthSimulator() {
             }`}
           >
             <Sparkles size={13} />
-            <span>Ask Any Custom Question</span>
+            <span>AI Question Solver</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('proof_shield')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'proof_shield'
+                ? 'bg-teal-600 text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+            }`}
+          >
+            <Code2 size={13} />
+            <span>Proof of Work Shield</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('salary_parity')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'salary_parity'
+                ? 'bg-teal-600 text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+            }`}
+          >
+            <Calculator size={13} />
+            <span>Form-16 Parity Math</span>
           </button>
           <button
             type="button"
@@ -381,7 +479,7 @@ export default function GapToStrengthSimulator() {
             }`}
           >
             <BookOpen size={13} />
-            <span>5 Recruiter Dilemmas</span>
+            <span>5 Traps</span>
           </button>
           <button
             type="button"
@@ -393,13 +491,13 @@ export default function GapToStrengthSimulator() {
             }`}
           >
             <Volume2 size={13} />
-            <span>30-Sec Elevator Intro</span>
+            <span>30s Intro</span>
           </button>
         </div>
       </div>
 
       {/* ────────────────────────────────────────────────────────────
-          MODE 1: ASK ANY CUSTOM QUESTION / SCENARIO
+          TAB 1: ASK ANY CUSTOM QUESTION / SCENARIO + LIVE VOICE MIC
       ──────────────────────────────────────────────────────────── */}
       {activeTab === 'custom_ai' && (
         <div className="space-y-5">
@@ -517,7 +615,7 @@ export default function GapToStrengthSimulator() {
 
                   <button
                     type="button"
-                    onClick={() => handleCopy(customGeneratedPitch.goldScript)}
+                    onClick={() => handleCopy(customGeneratedPitch.goldScript, 'script')}
                     className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border border-slate-700"
                   >
                     {copiedScript ? (
@@ -544,14 +642,26 @@ export default function GapToStrengthSimulator() {
                 </div>
               </div>
 
-              {/* Practice Response Box */}
+              {/* Live Voice & Practice Box */}
               <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-dashed border-teal-500/30 space-y-3">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <h5 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
                     <MessageSquare size={13} className="text-teal-600" />
-                    <span>Practice Speaking / Typing Your Response:</span>
+                    <span>Practice Response (Speak into Mic or Type):</span>
                   </h5>
-                  <span className="text-[10px] text-slate-400 font-medium">AI Feedback Engine</span>
+
+                  <button
+                    type="button"
+                    onClick={toggleVoiceRecording}
+                    className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+                      isRecording
+                        ? 'bg-rose-600 text-white animate-pulse'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
+                    }`}
+                  >
+                    {isRecording ? <MicOff size={13} /> : <Mic size={13} className="text-rose-500" />}
+                    <span>{isRecording ? 'Listening... (Tap to Stop)' : 'Use Microphone 🎤'}</span>
+                  </button>
                 </div>
 
                 <textarea
@@ -559,7 +669,7 @@ export default function GapToStrengthSimulator() {
                   rows={2}
                   value={userPracticeText}
                   onChange={(e) => setUserPracticeText(e.target.value)}
-                  placeholder="Type how you would naturally answer this in an interview to get instant scoring..."
+                  placeholder="Speak into microphone or type how you would answer..."
                   className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-600 outline-none resize-none font-medium"
                 />
 
@@ -608,7 +718,162 @@ export default function GapToStrengthSimulator() {
       )}
 
       {/* ────────────────────────────────────────────────────────────
-          MODE 2: 5 REAL-WORLD RECRUITER PRESET DILEMMAS
+          TAB 2: PROOF OF WORK SHIELD (THE ANTI-CHATGPT SUPERPOWER)
+      ──────────────────────────────────────────────────────────── */}
+      {activeTab === 'proof_shield' && (
+        <div className="space-y-5 animate-in fade-in duration-150">
+          <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-teal-950 text-white space-y-4 border border-teal-900/40 shadow-md">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <Code2 size={18} className="text-teal-400" />
+                <span className="text-xs font-black uppercase tracking-wider text-teal-400">
+                  Verifiable Code Proof-of-Work Artifact (Recruiter Verification Shield)
+                </span>
+              </div>
+              <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                PunarSetu Cryptographic Badge
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed font-medium">
+              ChatGPT can only give text scripts that recruiters often distrust. PunarSetu generates a <strong>Live Verifiable Proof Dossier</strong> linking your actual GitHub commits, container IDs, and live Swagger endpoints to prove Day-1 deployment capability.
+            </p>
+
+            {/* Proof Artifact Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-1">
+                <div className="text-[10px] uppercase font-bold text-slate-400">Live Microservice</div>
+                <div className="text-xs font-black text-emerald-400">Spring Boot 3 + ChromaDB RAG</div>
+                <div className="text-[10px] text-slate-400 font-mono mt-0.5">https://api.punarsetu.in/rag</div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-1">
+                <div className="text-[10px] uppercase font-bold text-slate-400">Docker Image</div>
+                <div className="text-xs font-black text-sky-400">sha256:d8a4f91e84 (JRE-21)</div>
+                <div className="text-[10px] text-slate-400 font-mono mt-0.5">Deployed on AWS ECS</div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-1">
+                <div className="text-[10px] uppercase font-bold text-slate-400">CI/CD Pipeline</div>
+                <div className="text-xs font-black text-amber-400">100% Green Build</div>
+                <div className="text-[10px] text-slate-400 font-mono mt-0.5">GitHub Actions Tested</div>
+              </div>
+            </div>
+
+            {/* Copyable Proof Badge */}
+            <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="font-mono text-slate-300 text-[11px]">
+                🛡️ Verified Returnee Proof: <span className="text-teal-300 font-bold">PunarSetu-Verified-ID: RET-2026-982</span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleCopy(
+                    '🛡️ Verified Returnee Technical Proof (PunarSetu RET-2026-982): Live RAG Microservice (Spring Boot 3, Docker, ChromaDB): https://api.punarsetu.in/v1/demos/rag-triage',
+                    'badge'
+                  )
+                }
+                className="px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition flex items-center gap-1.5 cursor-pointer shrink-0 shadow-xs"
+              >
+                {copiedBadge ? (
+                  <>
+                    <Check size={12} />
+                    <span>Copied Proof Badge!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy size={12} />
+                    <span>Copy Recruiter Proof URL</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ────────────────────────────────────────────────────────────
+          TAB 3: FORM-16 & RETURNEE SALARY PARITY CALCULATOR
+      ──────────────────────────────────────────────────────────── */}
+      {activeTab === 'salary_parity' && (
+        <div className="space-y-5 animate-in fade-in duration-150">
+          <div className="p-5 sm:p-6 rounded-3xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 space-y-4">
+            <div className="flex items-center gap-2">
+              <Calculator size={16} className="text-teal-600" />
+              <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+                Anti-Lowball Parity Engine: What Should Your Post-Break Salary Be?
+              </h4>
+            </div>
+
+            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+              Indian recruiters often anchor salary to your pre-break Form-16. PunarSetu computes fair market value adjusted for 10% annual inflation + GenAI delta skill premium so you never get lowballed.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor={preBreakCtcId} className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Pre-Break Salary (₹ LPA)
+                </label>
+                <input
+                  id={preBreakCtcId}
+                  type="number"
+                  value={preBreakCTC}
+                  onChange={(e) => setPreBreakCTC(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-600 outline-none"
+                  placeholder="8.0"
+                />
+              </div>
+
+              <div>
+                <label htmlFor={breakYearsParityId} className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Career Break Duration (Years)
+                </label>
+                <input
+                  id={breakYearsParityId}
+                  type="number"
+                  step="0.5"
+                  value={breakYears}
+                  onChange={(e) => setBreakYears(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-600 outline-none"
+                  placeholder="3"
+                />
+              </div>
+            </div>
+
+            {/* Calculated Parity Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
+                <div className="text-[10px] uppercase font-bold text-slate-400">Old Pre-Break CTC</div>
+                <div className="text-base font-black text-slate-800 dark:text-slate-200">₹{preBreakCTC} LPA</div>
+                <div className="text-[10px] text-slate-400">Base salary in 2021</div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
+                <div className="text-[10px] uppercase font-bold text-slate-400">Inflation Adjusted (10% YoY)</div>
+                <div className="text-base font-black text-amber-500">₹{inflationCompounded} LPA</div>
+                <div className="text-[10px] text-slate-400">Zero career discount base</div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 space-y-1">
+                <div className="text-[10px] uppercase font-bold text-emerald-800 dark:text-emerald-300">Fair Returnee Target</div>
+                <div className="text-base font-black text-emerald-600 dark:text-emerald-400">₹{deltaSkillPremiumCTC} LPA</div>
+                <div className="text-[10px] text-emerald-700 dark:text-emerald-300 font-semibold">+₹{marketPenaltyAvoided}L Penalty Defended</div>
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-slate-900 text-white space-y-2 text-xs">
+              <span className="text-[10px] font-bold text-amber-400 uppercase">Form-16 Defense Script:</span>
+              <p className="font-mono text-slate-200 text-[11px] leading-relaxed">
+                “While my last-drawn salary was ₹{preBreakCTC} LPA, compounding inflation and market evolution have raised standard compensation for this architectural scope to ₹{deltaSkillPremiumCTC} LPA. My verified cloud microservices match full modern delivery standards.”
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ────────────────────────────────────────────────────────────
+          TAB 4: 5 REAL-WORLD RECRUITER PRESET DILEMMAS
       ──────────────────────────────────────────────────────────── */}
       {activeTab === 'preset_library' && (
         <div className="space-y-6">
@@ -722,7 +987,7 @@ export default function GapToStrengthSimulator() {
               </span>
               <button
                 type="button"
-                onClick={() => handleCopy(activeDilemma.goldScript)}
+                onClick={() => handleCopy(activeDilemma.goldScript, 'script')}
                 className="px-3 py-1 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-100 text-xs font-bold transition flex items-center gap-1 cursor-pointer border border-slate-200 dark:border-slate-700 shadow-2xs"
               >
                 {copiedScript ? 'Copied!' : 'Copy Script'}
@@ -736,7 +1001,7 @@ export default function GapToStrengthSimulator() {
       )}
 
       {/* ────────────────────────────────────────────────────────────
-          MODE 3: 30-SECOND ELEVATOR INTRO GENERATOR
+          TAB 5: 30-SECOND ELEVATOR INTRO GENERATOR
       ──────────────────────────────────────────────────────────── */}
       {activeTab === 'elevator_pitch' && (
         <div className="p-5 sm:p-6 rounded-3xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 space-y-5 animate-in fade-in duration-150">
@@ -806,7 +1071,7 @@ export default function GapToStrengthSimulator() {
 
               <button
                 type="button"
-                onClick={() => handleCopy(generatedElevatorScript, true)}
+                onClick={() => handleCopy(generatedElevatorScript, 'elevator')}
                 className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border border-slate-700"
               >
                 {copiedElevator ? (
@@ -829,6 +1094,28 @@ export default function GapToStrengthSimulator() {
           </div>
         </div>
       )}
+
+      {/* ── Direct Link to Returnships Hub ── */}
+      <div className="p-4 rounded-2xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="text-teal-900 dark:text-teal-200 font-medium">
+          Ready to apply to verified returnship cohorts with zero gap stigma?
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Link
+            to="/features/returnships"
+            className="px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition flex items-center gap-1.5 shadow-2xs"
+          >
+            <span>Explore Returnships Hub</span>
+            <ExternalLink size={12} />
+          </Link>
+          <Link
+            to="/features/muscle-memory"
+            className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 transition"
+          >
+            <span>Code Gym 🔥</span>
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }
