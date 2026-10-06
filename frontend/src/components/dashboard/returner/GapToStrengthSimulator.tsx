@@ -505,119 +505,171 @@ export default function GapToStrengthSimulator() {
 
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-7 shadow-xs space-y-6">
-      {/* ── 1. Top Header & Mode Selector (Clean Responsive Layout) ── */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-950/60 dark:to-blue-950/60 text-teal-700 dark:text-teal-300 text-xs font-black border border-teal-200/50">
-            <Radio size={13} className="text-teal-600 animate-pulse" />
-            <span>AI Voice Mock Interviewer & Superpower Engine</span>
-          </div>
-          <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            Career Gap-to-Strength Proof & 1:1 Voice Simulator
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl font-medium">
-            AI interviewer speaks out loud, listens to your microphone response, and gives real-time vocal feedback.
-          </p>
+      {/* ── 1. Top Header (Career Gap to Strength) ── */}
+      <div className="space-y-1 pb-1">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-950/60 dark:to-blue-950/60 text-teal-700 dark:text-teal-300 text-xs font-black border border-teal-200/50">
+          <Radio size={13} className="text-teal-600 animate-pulse" />
+          <span>AI Voice Mock Interviewer & Superpower Engine</span>
         </div>
+        <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+          Career Gap-to-Strength Proof & 1:1 Voice Simulator
+        </h3>
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-3xl font-medium">
+          AI interviewer speaks out loud, listens to your microphone response, and gives real-time vocal feedback.
+        </p>
+      </div>
 
-        {/* Clean Filter Tabs Bar */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab('voice_1on1')
-              stopSpeaking()
-            }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+      {/* ── 2. Full-Width Horizontal Tabs Bar (Career Gap to Strength ke neeche) ── */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 border-b border-slate-100 dark:border-slate-800 scrollbar-none">
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('voice_1on1')
+            stopSpeaking()
+          }}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+            activeTab === 'voice_1on1'
+              ? 'bg-teal-600 text-white shadow-md shadow-teal-900/15'
+              : 'bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+          }`}
+        >
+          <Mic size={14} className={activeTab === 'voice_1on1' ? 'text-white' : 'text-teal-600'} />
+          <span>1:1 Voice Mock Room</span>
+          <span
+            className={`text-[9px] px-1.5 py-0.5 rounded-md font-black uppercase tracking-wider ${
               activeTab === 'voice_1on1'
-                ? 'bg-teal-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                ? 'bg-white/20 text-white'
+                : 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300'
             }`}
           >
-            <Mic size={13} />
-            <span>1:1 Voice Mock Room</span>
-          </button>
+            Live AI
+          </span>
+        </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab('custom_ai')
-              stopSpeaking()
-            }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('custom_ai')
+            stopSpeaking()
+          }}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+            activeTab === 'custom_ai'
+              ? 'bg-teal-600 text-white shadow-md shadow-teal-900/15'
+              : 'bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+          }`}
+        >
+          <Sparkles size={14} className={activeTab === 'custom_ai' ? 'text-white' : 'text-teal-600'} />
+          <span>AI Question Solver</span>
+          <span
+            className={`text-[9px] px-1.5 py-0.5 rounded-md font-black uppercase tracking-wider ${
               activeTab === 'custom_ai'
-                ? 'bg-teal-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                ? 'bg-white/20 text-white'
+                : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
             }`}
           >
-            <Sparkles size={13} />
-            <span>AI Question Solver</span>
-          </button>
+            Custom
+          </span>
+        </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab('proof_shield')
-              stopSpeaking()
-            }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('proof_shield')
+            stopSpeaking()
+          }}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+            activeTab === 'proof_shield'
+              ? 'bg-teal-600 text-white shadow-md shadow-teal-900/15'
+              : 'bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+          }`}
+        >
+          <Code2 size={14} className={activeTab === 'proof_shield' ? 'text-white' : 'text-teal-600'} />
+          <span>Proof Shield</span>
+          <span
+            className={`text-[9px] px-1.5 py-0.5 rounded-md font-black uppercase tracking-wider ${
               activeTab === 'proof_shield'
-                ? 'bg-teal-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                ? 'bg-white/20 text-white'
+                : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
             }`}
           >
-            <Code2 size={13} />
-            <span>Proof Shield</span>
-          </button>
+            Verified Code
+          </span>
+        </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab('salary_parity')
-              stopSpeaking()
-            }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('salary_parity')
+            stopSpeaking()
+          }}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+            activeTab === 'salary_parity'
+              ? 'bg-teal-600 text-white shadow-md shadow-teal-900/15'
+              : 'bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+          }`}
+        >
+          <Calculator size={14} className={activeTab === 'salary_parity' ? 'text-white' : 'text-teal-600'} />
+          <span>Form-16 Parity</span>
+          <span
+            className={`text-[9px] px-1.5 py-0.5 rounded-md font-black uppercase tracking-wider ${
               activeTab === 'salary_parity'
-                ? 'bg-teal-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                ? 'bg-white/20 text-white'
+                : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
             }`}
           >
-            <Calculator size={13} />
-            <span>Form-16 Parity</span>
-          </button>
+            Anti-Lowball
+          </span>
+        </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab('preset_library')
-              stopSpeaking()
-            }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('preset_library')
+            stopSpeaking()
+          }}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+            activeTab === 'preset_library'
+              ? 'bg-teal-600 text-white shadow-md shadow-teal-900/15'
+              : 'bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+          }`}
+        >
+          <BookOpen size={14} className={activeTab === 'preset_library' ? 'text-white' : 'text-teal-600'} />
+          <span>Preset Traps</span>
+          <span
+            className={`text-[9px] px-1.5 py-0.5 rounded-md font-black uppercase tracking-wider ${
               activeTab === 'preset_library'
-                ? 'bg-teal-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                ? 'bg-white/20 text-white'
+                : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
             }`}
           >
-            <BookOpen size={13} />
-            <span>Preset Traps</span>
-          </button>
+            Top Scenarios
+          </span>
+        </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab('elevator_pitch')
-              stopSpeaking()
-            }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('elevator_pitch')
+            stopSpeaking()
+          }}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
+            activeTab === 'elevator_pitch'
+              ? 'bg-teal-600 text-white shadow-md shadow-teal-900/15'
+              : 'bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+          }`}
+        >
+          <Volume2 size={14} className={activeTab === 'elevator_pitch' ? 'text-white' : 'text-teal-600'} />
+          <span>30s Intro</span>
+          <span
+            className={`text-[9px] px-1.5 py-0.5 rounded-md font-black uppercase tracking-wider ${
               activeTab === 'elevator_pitch'
-                ? 'bg-teal-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+                ? 'bg-white/20 text-white'
+                : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
             }`}
           >
-            <Volume2 size={13} />
-            <span>30s Intro</span>
-          </button>
-        </div>
+            Elevator Pitch
+          </span>
+        </button>
       </div>
 
       {/* ────────────────────────────────────────────────────────────
