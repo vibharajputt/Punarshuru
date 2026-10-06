@@ -15,11 +15,21 @@ def _load_json(filename: str) -> Any:
     return []
 
 
+DISRUPTION_FACTOR_MAXES: dict[str, float] = {
+    "skill_decay": 25.0,
+    "automation_risk": 30.0,
+    "career_gap": 15.0,
+    "stagnation": 15.0,
+    "market_mismatch": 15.0,
+}
+
+
 def calculate_disruption_score(profile: Profile | dict) -> DisruptionResponse:
     """
     Calculate Disruption Score (0-100) per SPEC:
     score = skill_decay + automation_risk + career_gap + stagnation + market_mismatch
     Returns breakdown with 1-line reason each, top risks, strengths.
+    All 5 factors are strictly capped at their stated maximums which sum to 100.
     """
     if isinstance(profile, dict):
         user_type = profile.get("user_type", "stagnant")
@@ -54,8 +64,9 @@ def calculate_disruption_score(profile: Profile | dict) -> DisruptionResponse:
         if s_lower in tax_by_name and tax_by_name[s_lower] not in matched_skills:
             matched_skills.append(tax_by_name[s_lower])
 
-    # 1. Career Gap Score (0-20)
-    gap_score = min(20.0, career_gap_years * 5.0)
+    # 1. Career Gap Score (0-15)
+    raw_gap = career_gap_years * 5.0
+    gap_score = max(0.0, min(DISRUPTION_FACTOR_MAXES["career_gap"], raw_gap))
     if gap_score > 0:
         gap_reason = f"{career_gap_years:.1f} year career gap creates hiring friction and potential skill disconnect"
     else:
@@ -68,9 +79,9 @@ def calculate_disruption_score(profile: Profile | dict) -> DisruptionResponse:
     rising_count = sum(1 for s in matched_skills if s.get("demand_trend") == "rising")
     
     decay_base = (career_gap_years * 4.0) + (declining_count * 5.0) + (stable_count * 1.5) - (rising_count * 2.0)
-    decay_score = max(0.0, min(25.0, decay_base))
+    decay_score = max(0.0, min(DISRUPTION_FACTOR_MAXES["skill_decay"], decay_base))
     if user_type == "returner" and decay_score < 15:
-        decay_score = min(25.0, decay_score + 10.0)
+        decay_score = min(DISRUPTION_FACTOR_MAXES["skill_decay"], decay_score + 10.0)
     if decay_score >= 15:
         decay_reason = "Older frameworks and tools have evolved significantly during inactive periods"
     elif decay_score >= 5:
@@ -78,7 +89,7 @@ def calculate_disruption_score(profile: Profile | dict) -> DisruptionResponse:
     else:
         decay_reason = "Active, modern skills with minimal technological obsolescence"
 
-    # 3. Automation Risk (0-35)
+    # 3. Automation Risk (0-30)
     role_lower = current_role.lower()
     high_auto_roles = ["manual qa", "qa tester", "delivery", "driver", "data entry", "customer support", "bpo", "telecaller"]
     role_auto_risk = 0.0
@@ -89,12 +100,14 @@ def calculate_disruption_score(profile: Profile | dict) -> DisruptionResponse:
     
     if matched_skills:
         avg_skill_auto = sum(s.get("automation_risk", 20) for s in matched_skills) / len(matched_skills)
-        auto_score = min(35.0, max(role_auto_risk, (avg_skill_auto * 0.7) + (role_auto_risk * 0.3)))
+        raw_auto = max(role_auto_risk, (avg_skill_auto * 0.7) + (role_auto_risk * 0.3))
     else:
-        auto_score = min(35.0, role_auto_risk if role_auto_risk > 0 else 15.0)
+        raw_auto = role_auto_risk if role_auto_risk > 0 else 15.0
 
-    if user_type in ["laid_off", "gig"] and auto_score < 25:
-        auto_score = 35.0 if "qa" in role_lower or "delivery" in role_lower else 28.0
+    if user_type in ["laid_off", "gig"] and raw_auto < 25:
+        raw_auto = 30.0 if "qa" in role_lower or "delivery" in role_lower else 28.0
+
+    auto_score = max(0.0, min(DISRUPTION_FACTOR_MAXES["automation_risk"], raw_auto))
 
     if auto_score >= 25:
         auto_reason = f"High exposure to GenAI / autonomous automation in '{current_role or 'current role'}'"
@@ -103,32 +116,35 @@ def calculate_disruption_score(profile: Profile | dict) -> DisruptionResponse:
     else:
         auto_reason = "Low automation vulnerability with high cognitive or creative demands"
 
-    # 4. Stagnation (0-25)
+    # 4. Stagnation (0-15)
     if user_type == "stagnant":
-        stag_score = 25.0
+        raw_stag = 15.0
         stag_reason = "Extended tenure in identical role without promotion or salary trajectory upgrade"
     elif user_type == "gig":
-        stag_score = 25.0
+        raw_stag = 15.0
         stag_reason = "Platform algorithm caps income with limited career ladder progression"
     elif user_type == "laid_off":
-        stag_score = 20.0
+        raw_stag = 15.0
         stag_reason = "Abrupt role termination highlights urgent need to diversify capabilities"
     elif user_type == "student":
-        stag_score = 5.0
+        raw_stag = 5.0
         stag_reason = "Fresher profile with zero industry lock-in"
     else:
-        stag_score = min(20.0, max(0.0, (experience_years - 2) * 2.0))
+        raw_stag = max(0.0, (experience_years - 2) * 2.0)
         stag_reason = f"{experience_years} years in current domain; upward mobility requires skill refresh"
 
-    # 5. Market Mismatch (0-20)
-    mismatch_score = 5.0
+    stag_score = max(0.0, min(DISRUPTION_FACTOR_MAXES["stagnation"], raw_stag))
+
+    # 5. Market Mismatch (0-15)
+    raw_mismatch = 5.0
     if target_role and target_role.lower() != current_role.lower():
-        mismatch_score = 12.0
+        raw_mismatch = 12.0
         if "genai" in target_role.lower() or "ml" in target_role.lower() or "ai" in target_role.lower():
             if not any("ai" in s.get("category", "").lower() or "ml" in s.get("name", "").lower() for s in matched_skills):
-                mismatch_score = 18.0
+                raw_mismatch = 15.0
     if user_type == "gig":
-        mismatch_score = 20.0
+        raw_mismatch = 15.0
+    mismatch_score = max(0.0, min(DISRUPTION_FACTOR_MAXES["market_mismatch"], raw_mismatch))
     mismatch_reason = f"Gap between current background ({current_role or 'General'}) and target domain ({target_role or 'Modern Tech'})"
 
     total_score = round(min(100.0, decay_score + auto_score + gap_score + stag_score + mismatch_score), 1)

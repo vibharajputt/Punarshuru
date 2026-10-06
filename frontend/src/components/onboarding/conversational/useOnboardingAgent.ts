@@ -7,6 +7,117 @@ import type { Message } from './types'
 import { useSessionRestore, createInitMsg } from './useSessionRestore'
 import { useResumeUpload } from './useResumeUpload'
 
+const COMMON_ROLE_NOUNS = [
+  'engineer', 'developer', 'analyst', 'consultant', 'manager', 'designer', 'tester',
+  'lead', 'architect', 'partner', 'executive', 'intern', 'specialist', 'technician',
+  'officer', 'scientist', 'administrator', 'associate', 'operator', 'mechanic',
+  'driver', 'teacher', 'professor', 'educator', 'rider', 'agent', 'representative',
+  'coordinator', 'recruiter', 'accountant', 'auditor', 'writer', 'marketer',
+  'freelancer', 'fresher', 'student', 'trainee', 'programmer', 'coder', 'sdet', 'devops',
+]
+
+const CITIES = [
+  'Bengaluru', 'Bangalore', 'Hyderabad', 'Pune', 'Mumbai', 'Delhi', 'New Delhi', 'Noida',
+  'Gurugram', 'Gurgaon', 'Chennai', 'Kolkata', 'Ahmedabad', 'Jaipur', 'Lucknow', 'Indore',
+  'Kochi', 'Mohali', 'Chandigarh', 'Bhopal', 'Nagpur', 'Patna', 'Surat', 'Remote',
+]
+
+const POPULAR_SKILLS = [
+  'Python', 'Java', 'JavaScript', 'TypeScript', 'React', 'Angular', 'Vue.js', 'Node.js',
+  'FastAPI', 'Django', 'Spring Boot', 'SQL', 'PostgreSQL', 'MySQL', 'MongoDB', 'Docker',
+  'Kubernetes', 'AWS', 'Azure', 'GCP', 'Git', 'Machine Learning', 'Deep Learning',
+  'SolidWorks', 'AutoCAD', 'ANSYS', 'MATLAB', 'Embedded Systems', 'IoT', 'Excel',
+  'Selenium', 'Manual Testing', 'Power BI', 'Tableau', 'Linux',
+]
+
+function formatRoleTitle(text: string): string {
+  const acronyms = new Set(['qa', 'sdet', 'ai', 'ml', 'ui', 'ux', 'devops', 'aws', 'sre', 'dba', 'iot', 'api', 'rpa', 'hr', 'it'])
+  return text
+    .split(/\s+/)
+    .map((w) => {
+      const low = w.toLowerCase().replace(/[^a-z0-9]/g, '')
+      if (acronyms.has(low)) {
+        if (low === 'ui') return 'UI'
+        if (low === 'ux') return 'UX'
+        if (low === 'ai') return 'AI'
+        if (low === 'ml') return 'ML'
+        if (low === 'devops') return 'DevOps'
+        if (low === 'iot') return 'IoT'
+        return low.toUpperCase()
+      }
+      return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+    })
+    .join(' ')
+}
+
+function parseFreeTextDraft(text: string): Record<string, any> {
+  const patch: Record<string, any> = {}
+
+  // 1. Experience
+  const expMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:\+)?\s*(?:years?|yrs?|saal|sal)\s*(?:of\s*)?(?:exp|experience|anubhav|work\s*experience)?/i)
+  if (expMatch) {
+    patch.experience_years = Number(expMatch[1])
+  }
+
+  // 2. Current Role
+  const roleDecl = text.match(
+    /\b(?:i\s*am\s*(?:currently\s*)?(?:a|an)?|i'm\s*(?:currently\s*)?(?:a|an)?|currently\s*(?:working\s*as\s*(?:a|an)?|a|an)?|(?:i\s*)?work\s*as\s*(?:a|an)?|working\s*as\s*(?:a|an)?|worked\s*as\s*(?:a|an)?|as\s*(?:a|an)?|my\s*(?:current\s*)?(?:role|job|designation|title)\s*(?:is)?(?:\s*(?:a|an))?|main\s*(?:ek)?|mai\s*(?:ek)?|role\s*:|current\s*role\s*:)\s*([a-zA-Z0-9\+\#\.\s\/\-\&]+?)(?=(?:\s+\b(?:with|having|for|at|in|experiencing|holding|possessing|and|\baur\b|\,|\.|\;|\!)|\s*$))/i,
+  )
+  if (roleDecl) {
+    let raw = roleDecl[1].trim()
+    raw = raw.replace(/^(?:a|an)\s+/i, '').trim()
+    if (raw.length >= 2 && raw.split(/\s+/).length <= 5) {
+      patch.current_role = formatRoleTitle(raw)
+    }
+  } else {
+    let cleaned = text
+      .split(',')[0]
+      .replace(/\s+\b(with|having|for|experiencing)\s+\d+.*$/i, '')
+      .replace(/\s+\b(with\s*skills|skilled\s*in|skills|in|tools?)\b.*$/i, '')
+      .replace(/^(?:i\s*am\s*(?:currently\s*)?(?:a|an)?|i'm\s*(?:currently\s*)?(?:a|an)?|currently\s*(?:working\s*as\s*(?:a|an)?|a|an)?|(?:i\s*)?work\s*as\s*(?:a|an)?|working\s*as\s*(?:a|an)?|worked\s*as\s*(?:a|an)?|as\s*(?:a|an)?|my\s*(?:current\s*)?(?:role|job|designation|title)\s*(?:is)?(?:\s*(?:a|an))?|main\s*(?:ek)?|mai\s*(?:ek)?|role\s*:|current\s*role\s*:)\s+/i, '')
+      .replace(/^(?:a|an)\s+/i, '')
+      .trim()
+    const words = cleaned.toLowerCase().split(/\s+/)
+    if (COMMON_ROLE_NOUNS.some((r) => words.includes(r)) && words.length <= 4) {
+      patch.current_role = formatRoleTitle(cleaned)
+    }
+  }
+
+  // 3. Target Role
+  const tgtDecl = text.match(
+    /\b(?:i\s*want\s*to\s*(?:be|become)\s*(?:a|an)?|want\s*to\s*be\s*(?:a|an)?|target\s*(?:role|job|position)\s*(?:is)?\s*(?:a|an)?|aiming\s*(?:for|to\s*be)\s*(?:a|an)?|looking\s*for\s*(?:a|an)?|interested\s*in\s*(?:a|an)?|future\s*role\s*(?:is)?\s*(?:a|an)?|dream\s*(?:role|job)\s*(?:is)?\s*(?:a|an)?|banna\s*(?:chahta|chahti|hai)\s*(?:ek)?)\s*([a-zA-Z0-9\+\#\.\s\/\-\&]+?)(?=(?:\s+\b(?:with|having|for|at|in|and|\baur\b|\,|\.|\;|\!)|\s*$))/i,
+  )
+  if (tgtDecl) {
+    let raw = tgtDecl[1].trim()
+    raw = raw.replace(/^(?:a|an)\s+/i, '').trim()
+    if (raw.length >= 2 && raw.split(/\s+/).length <= 5) {
+      patch.target_role = formatRoleTitle(raw)
+    }
+  }
+
+  // 4. City
+  for (const c of CITIES) {
+    if (new RegExp(`\\b${c}\\b`, 'i').test(text)) {
+      patch.current_city = c === 'Bangalore' ? 'Bengaluru' : c === 'Gurgaon' ? 'Gurugram' : c
+      patch.city = patch.current_city
+      break
+    }
+  }
+
+  // 5. Skills
+  const foundSkills: string[] = []
+  for (const s of POPULAR_SKILLS) {
+    if (new RegExp(`\\b${s}\\b`, 'i').test(text)) {
+      foundSkills.push(s)
+    }
+  }
+  if (foundSkills.length > 0) {
+    patch.skills_raw = foundSkills
+  }
+
+  return patch
+}
+
 export function useOnboardingAgent() {
   const navigate = useNavigate()
   const authUser = useAuthStore((s) => s.user)
@@ -53,6 +164,12 @@ export function useOnboardingAgent() {
       setMessages((prev) => [...prev, userMsg])
       setInputMessage('')
       setIsTyping(true)
+
+      // Optimistic extraction of free text entities
+      const patch = parseFreeTextDraft(trimmed)
+      if (Object.keys(patch).length > 0) {
+        setProfileDraft((prev) => ({ ...prev, ...patch }))
+      }
     }
 
     try {

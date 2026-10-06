@@ -39,3 +39,44 @@ def test_disruption_specific_cases(personas_data):
     res_ramesh = calculate_disruption_score(ramesh)
     assert res_ramesh.breakdown.automation_risk >= 25
     assert res_ramesh.score >= 60
+
+
+def test_disruption_factor_maxes_and_caps(personas_data):
+    """
+    Unit test asserting:
+    1. Sum of all factor maxes == 100.
+    2. For each persona and edge-case profile, each factor's value <= its max.
+    """
+    from app.services.disruption import DISRUPTION_FACTOR_MAXES, calculate_disruption_score
+
+    # 1. Assert sum of all factor maxes == 100
+    assert sum(DISRUPTION_FACTOR_MAXES.values()) == 100.0
+
+    # 2. Assert each factor's value <= its max for all personas
+    for p in personas_data:
+        res = calculate_disruption_score(p)
+        assert res.breakdown.skill_decay <= DISRUPTION_FACTOR_MAXES["skill_decay"]
+        assert res.breakdown.automation_risk <= DISRUPTION_FACTOR_MAXES["automation_risk"]
+        assert res.breakdown.career_gap <= DISRUPTION_FACTOR_MAXES["career_gap"]
+        assert res.breakdown.stagnation <= DISRUPTION_FACTOR_MAXES["stagnation"]
+        assert res.breakdown.market_mismatch <= DISRUPTION_FACTOR_MAXES["market_mismatch"]
+        assert res.score <= 100.0
+
+    # 3. Test extreme edge case profile with high numbers
+    extreme_profile = {
+        "user_type": "gig",
+        "career_gap_years": 20.0,
+        "experience_years": 30,
+        "current_role": "Manual QA Tester / Delivery Partner",
+        "target_role": "GenAI Architect / Senior ML Lead",
+        "skills_raw": ["Legacy Tool 1", "Legacy Tool 2"],
+        "skills_taxonomy_ids": [],
+    }
+    extreme_res = calculate_disruption_score(extreme_profile)
+    assert extreme_res.breakdown.skill_decay <= DISRUPTION_FACTOR_MAXES["skill_decay"]
+    assert extreme_res.breakdown.automation_risk <= DISRUPTION_FACTOR_MAXES["automation_risk"]
+    assert extreme_res.breakdown.career_gap <= DISRUPTION_FACTOR_MAXES["career_gap"]
+    assert extreme_res.breakdown.stagnation <= DISRUPTION_FACTOR_MAXES["stagnation"]
+    assert extreme_res.breakdown.market_mismatch <= DISRUPTION_FACTOR_MAXES["market_mismatch"]
+    assert extreme_res.score <= 100.0
+

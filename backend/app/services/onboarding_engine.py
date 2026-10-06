@@ -111,9 +111,15 @@ def detect_lang(text: str) -> str:
 # ── normalisers ───────────────────────────────────────────────────────────────
 
 _ROLE_PREFIX = re.compile(
-    r"^(i\s*am\s*(a|an)?|i'm\s*(a|an)?|currently\s*(a|an)?|working\s*as\s*(a|an)?|worked\s*as\s*(a|an)?|"
-    r"my\s*role\s*is|i\s*want\s*to\s*(be|become)\s*(a|an)?|i\s*want\s*(a|an)?|want\s*to\s*be\s*(a|an)?|"
-    r"my\s*(goal|aim|target)\s*is\s*(to\s*be(come)?)?\s*(a|an)?|mujhe|main|mai|mera\s*role)\s+",
+    r"^(?:i\s*am\s*(?:currently\s*)?(?:a|an)?|i'm\s*(?:currently\s*)?(?:a|an)?|"
+    r"currently\s*(?:working\s*as\s*(?:a|an)?|a|an)?|"
+    r"(?:i\s*)?work\s*as\s*(?:a|an)?|working\s*as\s*(?:a|an)?|worked\s*as\s*(?:a|an)?|"
+    r"as\s*(?:a|an)?|"
+    r"i\s*have\s*been\s*(?:working\s*as\s*(?:a|an)?)?|"
+    r"my\s*(?:current\s*)?(?:role|job|designation|title)\s*(?:is)?(?:\s*(?:a|an))?|"
+    r"current\s*role\s*:?|role\s*:?|"
+    r"i\s*want\s*to\s*(?:be|become)\s*(?:a|an)?|i\s*want\s*(?:a|an)?|want\s*to\s*be\s*(?:a|an)?|"
+    r"my\s*(?:goal|aim|target)\s*is\s*(?:to\s*be(?:come)?)?\s*(?:a|an)?|mujhe|main|mai|mera\s*role(?:\s*hai)?)\s+",
     re.I,
 )
 _ROLE_SUFFIX = re.compile(
@@ -121,6 +127,84 @@ _ROLE_SUFFIX = re.compile(
     r"banna\s*chahta\s*hun|banna\s*chahti\s*hun)\.?$",
     re.I,
 )
+_ROLE_TRAILING_EXP = re.compile(
+    r"\s+\b(with|having|for|experiencing)\s+\d+(?:\.\d+)?\s*(?:\+)?\s*(?:years?|yrs?|yr|saal|sal)?\s*(?:of\s*)?(?:exp|experience|anubhav|work\s*experience)?\b.*$",
+    re.I,
+)
+_ROLE_TRAILING_SKILLS = re.compile(
+    r"\s+\b(with\s*skills\s*(?:in|like)?|skilled\s*in|skills\s*(?:in|like)?|having\s*skills\s*(?:in|like)?|proficient\s*in|expert\s*in|tools?\s*(?:in|like)?)\s+.*$",
+    re.I,
+)
+
+COMMON_ROLE_NOUNS = {
+    "engineer", "developer", "analyst", "consultant", "manager", "designer", "tester",
+    "lead", "architect", "partner", "executive", "intern", "specialist", "technician",
+    "officer", "scientist", "administrator", "associate", "operator", "mechanic",
+    "driver", "teacher", "professor", "educator", "rider", "agent", "representative",
+    "coordinator", "recruiter", "accountant", "auditor", "writer", "marketer", "director",
+    "vp", "head", "freelancer", "fresher", "student", "trainee", "programmer", "coder",
+    "sdet", "devops", "sysadmin", "dba", "sre"
+}
+
+ROLE_DECL_RE = re.compile(
+    r"\b(?:i\s*am\s*(?:currently\s*)?(?:a|an)?|i'm\s*(?:currently\s*)?(?:a|an)?|"
+    r"currently\s*(?:working\s*as\s*(?:a|an)?|a|an)?|"
+    r"(?:i\s*)?work\s*as\s*(?:a|an)?|working\s*as\s*(?:a|an)?|worked\s*as\s*(?:a|an)?|"
+    r"as\s*(?:a|an)?|"
+    r"i\s*have\s*been\s*(?:working\s*as\s*(?:a|an)?)?|"
+    r"my\s*(?:current\s*)?(?:role|job|designation|title)\s*(?:is)?(?:\s*(?:a|an))?|"
+    r"main\s*(?:ek)?|mai\s*(?:ek)?|role\s*:|current\s*role\s*:)\s*"
+    r"([a-zA-Z0-9\+\#\.\s\/\-\&]+?)"
+    r"(?=(?:\s+\b(?:with|having|for|at|in|experiencing|holding|possessing|and|\baur\b|\,|\.|\;|\!)|\s*$))",
+    re.I,
+)
+
+TARGET_ROLE_DECL_RE = re.compile(
+    r"\b(?:i\s*want\s*to\s*(?:be|become)\s*(?:a|an)?|"
+    r"want\s*to\s*be\s*(?:a|an)?|"
+    r"target\s*(?:role|job|position)\s*(?:is)?\s*(?:a|an)?|"
+    r"aiming\s*(?:for|to\s*be)\s*(?:a|an)?|"
+    r"looking\s*for\s*(?:a|an)?|"
+    r"interested\s*in\s*(?:a|an)?|"
+    r"future\s*role\s*(?:is)?\s*(?:a|an)?|"
+    r"dream\s*(?:role|job)\s*(?:is)?\s*(?:a|an)?|"
+    r"banna\s*(?:chahta|chahti|hai)\s*(?:ek)?)\s*"
+    r"([a-zA-Z0-9\+\#\.\s\/\-\&]+?)"
+    r"(?=(?:\s+\b(?:with|having|for|at|in|and|\baur\b|\,|\.|\;|\!)|\s*$))",
+    re.I,
+)
+
+ACRONYMS = {"qa", "sdet", "ai", "ml", "ui", "ux", "devops", "aws", "sre", "dba", "iot", "api", "rpa", "hld", "lld", "hr", "it", "bpo", "genai"}
+
+
+def format_role_title(text: str) -> str:
+    words = text.split()
+    out = []
+    for w in words:
+        low = w.lower().strip(".,/-")
+        if low in ACRONYMS:
+            if low == "ui":
+                out.append("UI")
+            elif low == "ux":
+                out.append("UX")
+            elif low == "ai":
+                out.append("AI")
+            elif low == "ml":
+                out.append("ML")
+            elif low == "devops":
+                out.append("DevOps")
+            elif low == "iot":
+                out.append("IoT")
+            elif low == "genai":
+                out.append("GenAI")
+            else:
+                out.append(low.upper())
+        elif "/" in w:
+            parts = [format_role_title(p) for p in w.split("/")]
+            out.append("/".join(parts))
+        else:
+            out.append(w.capitalize())
+    return " ".join(out)
 
 
 def find_city(text: str) -> str | None:
@@ -137,16 +221,107 @@ def find_city(text: str) -> str | None:
 def clean_role(text: str) -> str:
     t = text.strip().split(",")[0]
     t = LAID_OFF_RE.sub("", t)
+    # Strip experience clauses first (e.g. "with 5 years experience")
+    t = _ROLE_TRAILING_EXP.sub("", t).strip()
+    # Strip skills clauses (e.g. "skilled in solidworks and autocad")
+    t = _ROLE_TRAILING_SKILLS.sub("", t).strip()
     city = find_city(t)
     if city:
         names = [c for c in CITIES if c.lower() == city.lower()] + [a for a, c in CITY_ALIASES.items() if c == city]
         for n in names + [city]:
             t = re.sub(rf"\b(in|at|from)?\s*{re.escape(n)}\s*(me|mein|se)?\b", " ", t, flags=re.I)
-    for _ in range(2):
+    for _ in range(3):
         t = _ROLE_PREFIX.sub("", t).strip()
         t = _ROLE_SUFFIX.sub("", t).strip()
+        t = re.sub(r"^(?:a|an)\s+", "", t, flags=re.I).strip()
     t = re.sub(r"\s+", " ", t).strip(" .,!")
-    return t.title() if t.islower() or t.isupper() else t
+    return format_role_title(t) if t else ""
+
+
+def extract_roles_from_text(text: str) -> tuple[str | None, str | None]:
+    """
+    NLU role extraction: extracts (current_role, target_role) from unstructured message.
+    """
+    curr_role = None
+    tgt_role = None
+
+    # 1. Target role check
+    tm = TARGET_ROLE_DECL_RE.search(text)
+    if tm:
+        cand = clean_role(tm.group(1))
+        if cand and len(cand) >= 2 and len(cand.split()) <= 6:
+            tgt_role = cand
+
+    # 2. Current role explicit declaration check
+    cm = ROLE_DECL_RE.search(text)
+    if cm:
+        cand = clean_role(cm.group(1))
+        if cand and len(cand) >= 2 and len(cand.split()) <= 6:
+            curr_role = cand
+
+    # 3. If no explicit prefix matched, check if text head before experience/city is a role
+    if not curr_role:
+        cleaned = clean_role(text)
+        words = [w.lower().strip(".,/-") for w in cleaned.split()]
+        if any(w in COMMON_ROLE_NOUNS for w in words):
+            if 1 <= len(cleaned.split()) <= 5:
+                curr_role = cleaned
+
+    return curr_role, tgt_role
+
+
+def extract_skills_from_text(text: str) -> list[str]:
+    """
+    Extracts canonical skills from free text using taxonomy matching & explicit skill clauses.
+    """
+    idx = _skill_index()
+    found: list[str] = []
+
+    # 1. Check explicit skills clauses (e.g. "skills: python, sql", "in solidworks and autocad")
+    m = re.search(
+        r"\b(?:skills?\s*(?:are|is|include|like|in|such\s*as)?|"
+        r"skilled\s*in|technologies|tools?|proficient\s*in|know|knowing|experience\s*in|"
+        r"worked\s*on|working\s*on|hands-on\s*with)\s*[:\-]?\s*([^\.\n;!]+)",
+        text,
+        re.I,
+    )
+    if m:
+        candidates = split_items(m.group(1))
+        for cand in candidates:
+            if re.search(r"\b\d+\s*(?:years?|yrs?|saal)\b", cand, re.I):
+                continue
+            c_skill = match_skill(cand)
+            if c_skill and c_skill not in found:
+                found.append(c_skill)
+            elif 2 <= len(cand.strip()) <= 30 and not re.search(r"\b(year|years|saal|exp|experience|engineer|developer|role)\b", cand, re.I):
+                raw = cand.strip().title()
+                if raw not in found:
+                    found.append(raw)
+
+    # 2. General taxonomy scan across n-grams (up to 3 words)
+    clean_txt = re.sub(r"[^\w\s\+\#\.\/]", " ", text.lower())
+    words = clean_txt.split()
+    n = len(words)
+
+    i = 0
+    while i < n:
+        matched = False
+        for k in (3, 2, 1):
+            if i + k <= n:
+                phrase = " ".join(words[i : i + k]).strip()
+                if phrase in ("me", "in", "it", "at", "as", "is", "or", "and", "c", "to", "of", "on", "am", "ml", "ai", "qa", "hr", "pm", "ui", "ux", "lead", "engineer", "developer", "tester", "analyst"):
+                    continue
+                if phrase in idx:
+                    canonical = idx[phrase]
+                    if canonical not in found:
+                        found.append(canonical)
+                    matched = True
+                    i += k
+                    break
+        if not matched:
+            i += 1
+
+    return found
 
 
 def parse_years(text: str) -> float | None:
@@ -420,42 +595,60 @@ def _fill(state: dict[str, Any], slot: str, msg: str) -> bool:
 
 
 def _opportunistic(state: dict[str, Any], msg: str) -> None:
-    """Pick up extra info mentioned in passing (never skills)."""
+    """Pick up extra info mentioned in passing (roles, skills, experience, city, gaps)."""
     d = state["draft"]
     current_year = datetime.now().year
 
+    # 1. Role extraction in passing (current & target roles)
+    curr_role, tgt_role = extract_roles_from_text(msg)
+    if curr_role and (not d.get("current_role") or ROLE_DECL_RE.search(msg) or len(msg.split()) >= 3):
+        d["current_role"] = curr_role
+    if tgt_role:
+        d["target_role"] = tgt_role
+
+    # 2. Skills extraction in passing
+    found_skills = extract_skills_from_text(msg)
+    if found_skills:
+        _add_skills(d, found_skills, allow_raw=True)
+
+    # 3. City in passing
     if not d.get("current_city") and not d.get("city"):
         c = find_city(msg)
         if c:
             d["current_city"] = c
             d["city"] = c
 
+    # 4. Laid off in passing
     if LAID_OFF_RE.search(msg):
         d["laid_off"] = True
         d["user_type"] = "laid_off"
 
-    # Check for gig roles mentioned in passing
+    # 5. Check for gig roles mentioned in passing
     if re.search(r"\b(swiggy|zomato|uber|ola|zepto|blinkit|dunzo|porter|delivery|rider|driver|courier)\b", msg, re.I):
         if not d.get("user_type") or d["user_type"] in ("detecting", "stagnant"):
             d["user_type"] = "gig"
 
-    # Check for student keywords in passing
+    # 6. Check for student keywords in passing
     if re.search(r"\b(student|fresher|final\s*year|b\.?tech\s*student|college\s*student|intern)\b", msg, re.I):
         if not d.get("user_type") or d["user_type"] in ("detecting", "stagnant"):
             d["user_type"] = "student"
 
-    # Achievements mentioned in passing (e.g. Smart India Hackathon, hackathon winner)
+    # 7. Achievements mentioned in passing (e.g. Smart India Hackathon, hackathon winner)
     if re.search(r"\b(hackathon\s*(?:winner|winner\s*of|finalist)|smart\s*india\s*hackathon|sih)\b", msg, re.I):
         cand = "Hackathon Winner"
         if cand not in d["achievements"]:
             d["achievements"].append(cand)
 
-    # Experience in passing: "5 years exp", "5 saal experience"
-    m_exp = re.search(r"(\d+(?:\.\d+)?)\s*(?:years?|yrs?|saal)\s*(?:of\s*)?(?:exp|experience|anubhav)", msg, re.I)
+    # 8. Experience in passing: "5 years exp", "5 saal experience", "5 years experience", "5+ yrs experience"
+    m_exp = re.search(
+        r"(\d+(?:\.\d+)?)\s*(?:\+)?\s*(?:years?|yrs?|saal|sal)\s*(?:of\s*)?(?:exp|experience|anubhav|work\s*experience)?\b",
+        msg,
+        re.I,
+    )
     if m_exp:
         d["experience_years"] = int(float(m_exp.group(1)))
 
-    # Calendar year in passing: e.g. "2023 tak", "2023 se", "last job 2023", "graduated in 2023", "2023 passout"
+    # 9. Calendar year in passing: e.g. "2023 tak", "2023 se", "last job 2023", "graduated in 2023", "2023 passout"
     cal_m = re.search(r"\b(19\d{2}|20\d{2})\b", msg)
     if cal_m and not re.search(r"\b(present|current|now|till\s*date|ongoing)\b", msg, re.I):
         past_year = int(cal_m.group(1))
@@ -469,7 +662,8 @@ def _opportunistic(state: dict[str, Any], msg: str) -> None:
                     d["career_gap_years"] = gap
                     d["user_type"] = "returner"
 
-    m_gap = re.search(r"(\d+(?:\.\d+)?)\s*(?:years?|yrs?|saal)\s*(?:ka\s*)?(?:gap|break)", msg, re.I)
+    # 10. Gap in passing
+    m_gap = re.search(r"(\d+(?:\.\d+)?)\s*(?:\+)?\s*(?:years?|yrs?|saal)\s*(?:ka\s*)?(?:gap|break)", msg, re.I)
     if m_gap:
         gap = float(m_gap.group(1))
         d["career_gap_years"] = gap

@@ -1,10 +1,13 @@
 import type { Profile } from '@/types'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
 
 interface ProfileFieldsGridProps {
   profileDraft: Partial<Profile>
 }
 
 export default function ProfileFieldsGrid({ profileDraft }: ProfileFieldsGridProps) {
+  const { profile: activeProfile, isDemo } = useActiveProfile()
+  const gapVal = isDemo ? (activeProfile?.career_gap_years ?? 4) : profileDraft.career_gap_years
   return (
     <div className="space-y-3 text-xs">
       <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-100 dark:border-slate-800 space-y-1">
@@ -72,7 +75,7 @@ export default function ProfileFieldsGrid({ profileDraft }: ProfileFieldsGridPro
         <div className="p-2 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-100 dark:border-slate-800 space-y-0.5">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Gap (yrs)</span>
           <div className="font-bold text-slate-800 dark:text-slate-200 text-xs">
-            {profileDraft.career_gap_years ? `${profileDraft.career_gap_years} yrs` : '0 yrs'}
+            {gapVal ? `${gapVal} yrs` : '0 yrs'}
           </div>
         </div>
       </div>

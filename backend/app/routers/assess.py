@@ -5,7 +5,7 @@ from app.core.database import get_db
 from app.models.profile import Profile
 from app.schemas.disruption import DisruptionResponse
 from app.schemas.gap import SkillGapResponse
-from app.services.disruption import calculate_disruption_score
+from app.services.disruption import calculate_disruption_score, _load_json
 from app.services.gap import analyze_skill_gap
 
 router = APIRouter(prefix="/assess", tags=["Assessment"])
@@ -21,6 +21,11 @@ async def get_disruption_assessment(
     res = await db.execute(stmt)
     profile = res.scalars().first()
     if not profile:
+        key = profile_id.replace("demo-", "")
+        personas = _load_json("personas.json")
+        demo_persona = next((p for p in personas if p.get("key") == key or p.get("id") == profile_id), None)
+        if demo_persona:
+            return calculate_disruption_score(demo_persona)
         raise HTTPException(status_code=404, detail=f"Profile '{profile_id}' not found")
 
     assessment = calculate_disruption_score(profile)
@@ -44,6 +49,12 @@ async def get_skill_gap_assessment(
     res = await db.execute(stmt)
     profile = res.scalars().first()
     if not profile:
+        key = profile_id.replace("demo-", "")
+        personas = _load_json("personas.json")
+        demo_persona = next((p for p in personas if p.get("key") == key or p.get("id") == profile_id), None)
+        if demo_persona:
+            target_role = role or demo_persona.get("target_role") or "Software Engineer"
+            return analyze_skill_gap(demo_persona, target_role=target_role)
         raise HTTPException(status_code=404, detail=f"Profile '{profile_id}' not found")
 
     target_role = role or profile.target_role or "Software Engineer"

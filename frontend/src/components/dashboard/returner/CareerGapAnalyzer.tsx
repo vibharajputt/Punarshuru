@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Sparkles, Clock } from 'lucide-react'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
 
 export interface GapTimelineItem {
   year: string
@@ -11,17 +12,37 @@ export interface GapTimelineItem {
 }
 
 export default function CareerGapAnalyzer({
-  role = 'Java Developer',
-  gapYears = 3,
+  role,
+  gapYears,
   skills = ['Java', 'SQL', 'Spring 4', 'JSP'],
 }: {
   role?: string
   gapYears?: number
   skills?: string[]
 }) {
-  const [previousRole, setPreviousRole] = useState(role)
-  const [gapDuration, setGapDuration] = useState(gapYears)
+  const { profile } = useActiveProfile()
+  const canonicalRole = role || profile?.current_role || 'Java Developer'
+  const canonicalGapYears = gapYears !== undefined ? gapYears : (profile?.career_gap_years ?? 4)
+
+  const [previousRole, setPreviousRole] = useState(canonicalRole)
+  const [gapDuration, setGapDuration] = useState(canonicalGapYears)
   const [industry, setIndustry] = useState('IT & Software Services')
+
+  useEffect(() => {
+    if (gapYears !== undefined) {
+      setGapDuration(gapYears)
+    } else if (profile?.career_gap_years !== undefined) {
+      setGapDuration(profile.career_gap_years)
+    }
+  }, [gapYears, profile?.career_gap_years])
+
+  useEffect(() => {
+    if (role) {
+      setPreviousRole(role)
+    } else if (profile?.current_role) {
+      setPreviousRole(profile.current_role)
+    }
+  }, [role, profile?.current_role])
 
   const timelineData: GapTimelineItem[] = [
     {

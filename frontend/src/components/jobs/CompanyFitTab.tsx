@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { CheckCircle2, Building2, Briefcase } from 'lucide-react'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { useProfileStore } from '@/store/profileStore'
 import { companyCategoriesList, type CompanyCategory, type RoleData } from './CompanyCategoriesData'
 import CompanyCategoryCard from './CompanyCategoryCard'
@@ -9,16 +10,18 @@ import CompanySalaryProjection from './CompanySalaryProjection'
 const categoryFilters = ['All', 'IT Services', 'GCCs', 'Product SaaS', 'FinTech', 'AI & Cloud']
 
 export default function CompanyFitTab() {
-  const profile = useProfileStore((s) => s.profile)
+  const { profile } = useActiveProfile()
   const setProfile = useProfileStore((s) => s.setProfile)
 
   const [selectedCategory, setSelectedCategory] = useState<CompanyCategory>(companyCategoriesList[0])
   const [selectedRole, setSelectedRole] = useState<RoleData>(companyCategoriesList[0].roles[0])
   const [filter, setFilter] = useState<string>('All')
 
-  // Pull skills from saved profile
+  // Pull skills from active profile (respects demo mode first)
   const userSkills = useMemo(() => {
-    return profile?.skills_raw?.length ? profile.skills_raw : ['Java', 'Spring Boot', 'MySQL', 'REST APIs', 'Git']
+    return profile?.skills_raw?.length
+      ? profile.skills_raw
+      : ['Java', 'Spring Boot', 'MySQL', 'REST APIs', 'Git']
   }, [profile?.skills_raw])
 
   const filteredCategories = useMemo(() => {

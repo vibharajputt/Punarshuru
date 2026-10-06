@@ -8,6 +8,8 @@ import Skeleton from '@/components/common/Skeleton'
 import EmptyState from '@/components/common/EmptyState'
 import type { PassportResponse } from '@/types'
 
+import { DEMO_PERSONAS } from '@/components/demo/DemoModal'
+
 export default function PublicPassportPage() {
   const { slug } = useParams<{ slug: string }>()
 
@@ -18,36 +20,44 @@ export default function PublicPassportPage() {
     staleTime: 60_000,
   })
 
-  // Fallback demo passport for previewing slugs directly
+  // Match demo persona from slug if viewing a demo URL
+  const matchedPersona = DEMO_PERSONAS.find((p) => {
+    if (!slug) return false
+    const s = slug.toLowerCase()
+    return s.includes(p.key) || s.includes(p.name.toLowerCase().replace(/\s+/g, '-'))
+  })
+
   const fallbackPassport: PassportResponse = {
-    id: 'public-demo',
-    profile_id: 'demo-slug',
-    slug: slug || 'priya-sharma-genai-pune',
+    id: `public-${slug || 'demo'}`,
+    profile_id: matchedPersona ? `demo-${matchedPersona.key}` : 'demo-slug',
+    slug: slug || 'priya-sharma-genai-engineer-pune',
     is_public: true,
-    profile_name: slug ? slug.split('-').slice(0, 2).map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ') : 'Priya Sharma',
-    user_type: 'returner',
-    city: 'Pune',
-    current_role: 'Java Developer',
-    target_role: 'GenAI Engineer',
-    disruption_score: 72,
-    verified_skills: ['Java', 'Spring Boot', 'MySQL', 'REST APIs', 'Git', 'Python (Fundamentals)'],
+    profile_name: matchedPersona
+      ? matchedPersona.name
+      : (slug ? slug.split('-').slice(0, 2).map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ') : 'Candidate'),
+    user_type: matchedPersona?.user_type || 'returner',
+    city: matchedPersona?.city || 'India',
+    current_role: matchedPersona?.current_role || 'Professional',
+    target_role: matchedPersona?.target_role || 'Modern Software Professional',
+    disruption_score: matchedPersona?.disruption || 70,
+    verified_skills: matchedPersona?.skills || ['Communication', 'Problem Solving', 'Technical Agility'],
     evidence: [
       {
         type: 'Skill Validation',
-        title: 'Core Java & Backend Architecture Proof',
+        title: `${matchedPersona?.current_role || 'Technical'} Architecture Proof`,
         issuer: 'Punarshuru AI Talent Registry',
         verified: true,
         date: '2026-09-15',
       },
       {
         type: 'Disruption Audit',
-        title: 'Verified 4-Year Career Break Re-entry Program',
+        title: `Disruption Resilience Verified: ${matchedPersona?.disruption || 70}/100`,
         issuer: 'Punarshuru Intelligence',
         verified: true,
         date: '2026-09-15',
       },
     ],
-    qr_data: `https://punarshuru.in/p/${slug}`,
+    qr_data: `https://punarshuru.in/p/${slug || 'priya-sharma-genai-engineer-pune'}`,
     created_at: '2026-09-15',
   }
 

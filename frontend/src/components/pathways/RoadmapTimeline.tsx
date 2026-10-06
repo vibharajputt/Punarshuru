@@ -4,6 +4,7 @@ import { BookOpen, Sparkles, RotateCcw, Trophy, ArrowDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { PathwayOption } from '@/types'
 import { useProfileStore } from '@/store/profileStore'
+import { useActiveProfile } from '@/hooks/useActiveProfile'
 import RoadmapStepItem from '@/components/pathways/RoadmapStepItem'
 
 interface RoadmapTimelineProps {
@@ -14,7 +15,7 @@ export default function RoadmapTimeline({ pathway }: RoadmapTimelineProps) {
   const { t, i18n } = useTranslation()
   const isHi = (i18n.resolvedLanguage || i18n.language || 'en').startsWith('hi')
 
-  const profile = useProfileStore((s) => s.profile)
+  const { profile } = useActiveProfile()
   const completedMilestones = useProfileStore((s) => s.completedMilestones)
   const baselineScore = useProfileStore((s) => s.baselineDisruptionScore) ?? profile?.disruption_score ?? 72
   const toggleMilestone = useProfileStore((s) => s.toggleMilestone)

@@ -2,65 +2,16 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Briefcase, MapPin, Users, RefreshCw } from 'lucide-react'
-import { demoApi, profileApi } from '@/lib/api'
-import { useProfileStore } from '@/store/profileStore'
-import { useDemoStore } from '@/store/demoStore'
-import { DEMO_PERSONAS, type DemoPersonaItem } from '@/components/demo/DemoModal'
-import type { Profile } from '@/types'
+import { DEMO_PERSONAS, activateDemoPersona, type DemoPersonaItem } from '@/components/demo/DemoModal'
 
 export default function PersonaCardsSection() {
   const navigate = useNavigate()
-  const setProfile = useProfileStore((s) => s.setProfile)
-  const setDemo = useDemoStore((s) => s.setDemo)
   const [loadingKey, setLoadingKey] = useState<string | null>(null)
 
-  const handleSelectPersona = async (p: DemoPersonaItem) => {
-    try {
-      setLoadingKey(p.key)
-      const data = await demoApi.loadPersona(p.key)
-
-      const created = await profileApi.create({
-        name: String(data.name || p.name),
-        email: `${p.key}@demo.punarshuru.in`,
-        user_type: p.user_type,
-        city: String(data.city || p.city),
-        current_role: String(data.current_role || p.current_role),
-        target_role: String(data.target_role || p.target_role),
-        experience_years: Number(data.experience_years || 0),
-        career_gap_years: Number(data.career_gap_years || 0),
-        current_salary_lpa: data.current_salary_lpa ? Number(data.current_salary_lpa) : null,
-        skills_raw: Array.isArray(data.skills_raw) ? (data.skills_raw as string[]) : p.skills,
-        skills_taxonomy_ids: Array.isArray(data.skills_taxonomy_ids)
-          ? (data.skills_taxonomy_ids as number[])
-          : [1, 2, 3],
-      })
-
-      setProfile(created)
-      setDemo(p.key, p.name)
-      navigate('/home')
-    } catch {
-      // Graceful fallback
-      const fallbackProfile: Profile = {
-        id: `demo-${p.key}`,
-        name: p.name,
-        user_type: p.user_type,
-        city: p.city,
-        current_role: p.current_role,
-        target_role: p.target_role,
-        experience_years: p.user_type === 'student' ? 0 : 4,
-        career_gap_years: p.user_type === 'returner' ? 4 : 0,
-        skills_raw: p.skills,
-        skills_taxonomy_ids: [1, 2, 3],
-        disruption_score: p.disruption,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-      setProfile(fallbackProfile)
-      setDemo(p.key, p.name)
-      navigate('/home')
-    } finally {
-      setLoadingKey(null)
-    }
+  const handleSelectPersona = (p: DemoPersonaItem) => {
+    setLoadingKey(p.key)
+    activateDemoPersona(p, navigate)
+    setLoadingKey(null)
   }
 
   return (
@@ -146,14 +97,23 @@ export default function PersonaCardsSection() {
                 </div>
 
                 {/* Bottom Action */}
-                <div className="pt-5 mt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-[#0B4F9C] dark:text-sky-400 group-hover:translate-x-1 transition-transform">
+                <button
+                  type="button"
+                  id={`try-demo-${p.key}`}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (!isLoading) handleSelectPersona(p)
+                  }}
+                  disabled={isLoading}
+                  className="w-full pt-4 mt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-[#0B4F9C] dark:text-sky-400 group-hover:text-[#F26B1D] transition-colors cursor-pointer text-left focus:outline-none"
+                >
                   <span>{isLoading ? 'Loading demo persona…' : 'Try this demo profile'}</span>
                   {isLoading ? (
                     <RefreshCw size={14} className="animate-spin text-[#0B4F9C]" />
                   ) : (
-                    <ArrowRight size={15} />
+                    <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
                   )}
-                </div>
+                </button>
               </motion.div>
             )
           })}

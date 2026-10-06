@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Loader2, UserPlus, AlertCircle } from 'lucide-react'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
+import { useProfileStore } from '@/store/profileStore'
+import { useDemoStore } from '@/store/demoStore'
 
 export default function SignupPage() {
   const navigate = useNavigate()
@@ -15,8 +17,6 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
@@ -28,6 +28,8 @@ export default function SignupPage() {
     try {
       const { access_token } = await authApi.signup({ name: name.trim(), email: email.trim(), password })
       const me = await authApi.me(access_token)
+      useDemoStore.getState().clearDemo()
+      useProfileStore.getState().clearProfile()
       setAuth(access_token, me)
       navigate('/onboarding', { replace: true })
     } catch (err) {

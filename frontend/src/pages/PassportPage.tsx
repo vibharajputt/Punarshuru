@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { RefreshCw, Eye, EyeOff } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useProfileStore } from '@/store/profileStore'
+import { useActiveProfile, generatePassportSlug } from '@/hooks/useActiveProfile'
 import { passportApi } from '@/lib/api'
 import PassportCard from '@/components/passport/PassportCard'
 import ShareActions from '@/components/passport/ShareActions'
@@ -11,20 +11,33 @@ import type { PassportResponse } from '@/types'
 
 export default function PassportPage() {
   const { t } = useTranslation()
-  const profile = useProfileStore((s) => s.profile)
+  const { profile, isDemo, personaKey } = useActiveProfile()
   const [isPublic, setIsPublic] = useState(true)
 
+  const activeProfileId = profile?.id || (isDemo ? `demo-${personaKey || 'priya'}` : '')
+
   const { data, isLoading, refetch, isFetching } = useQuery({
-    queryKey: ['passport', profile?.id, isPublic],
-    queryFn: () => (profile?.id ? passportApi.create(profile.id, { is_public: isPublic }) : null),
-    enabled: !!profile?.id,
+    queryKey: ['passport', activeProfileId, isPublic],
+    queryFn: () => (activeProfileId ? passportApi.create(activeProfileId, { is_public: isPublic }) : null),
+    enabled: !!activeProfileId,
     staleTime: 60_000,
   })
 
+  // Dynamic slug regenerated from currently active persona (demo or real)
+  const dynamicSlug = useMemo(() => {
+    return generatePassportSlug(
+      profile?.name || (isDemo ? 'Priya Sharma' : 'Candidate'),
+      profile?.target_role || undefined,
+      profile?.city || undefined
+    )
+  }, [profile?.name, profile?.target_role, profile?.city, isDemo])
+
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://punarshuru.in'
+
   const fallbackPassport: PassportResponse = {
-    id: 'pass-demo',
-    profile_id: profile?.id || 'demo-priya',
-    slug: 'priya-sharma-genai-pune',
+    id: `pass-${activeProfileId || 'active'}`,
+    profile_id: activeProfileId || 'demo-priya',
+    slug: data?.slug || dynamicSlug,
     is_public: isPublic,
     profile_name: profile?.name || 'Priya Sharma',
     user_type: profile?.user_type || 'returner',
@@ -32,28 +45,45 @@ export default function PassportPage() {
     current_role: profile?.current_role || 'Java Developer',
     target_role: profile?.target_role || 'GenAI Engineer',
     disruption_score: profile?.disruption_score || 72,
-    verified_skills: profile?.skills_raw || ['Java', 'Spring Boot', 'MySQL', 'REST APIs', 'Git'],
+    verified_skills: profile?.skills_raw?.length
+      ? profile.skills_raw
+      : ['Java', 'Spring Boot', 'MySQL', 'REST APIs', 'Git'],
     evidence: [
       {
         type: 'Skill Validation',
-        title: 'Core Java & REST API Architecture',
+        title: `${profile?.current_role || 'Technical'} Architecture Proof`,
         issuer: 'Punarshuru AI Talent Engine',
         verified: true,
         date: new Date().toISOString().slice(0, 10),
       },
       {
         type: 'Disruption Audit',
-        title: 'Disruption Resilience Verified: 72/100',
+        title: `Disruption Resilience Verified: ${Math.round(profile?.disruption_score || 72)}/100`,
         issuer: 'Punarshuru Intelligence',
         verified: true,
         date: new Date().toISOString().slice(0, 10),
       },
     ],
-    qr_data: 'https://punarshuru.in/p/priya-sharma-genai-pune',
+    qr_data: `${origin}/p/${data?.slug || dynamicSlug}`,
     created_at: new Date().toISOString().slice(0, 10),
   }
 
-  const passport = data || fallbackPassport
+  // Ensure passport always respects the active persona
+  const passport = useMemo(() => {
+    if (data && (!isDemo || data.profile_id?.startsWith('demo-') || data.profile_name === profile?.name)) {
+      return {
+        ...data,
+        profile_name: profile?.name || data.profile_name,
+        city: profile?.city || data.city,
+        current_role: profile?.current_role || data.current_role,
+        target_role: profile?.target_role || data.target_role,
+        verified_skills: profile?.skills_raw?.length ? profile.skills_raw : data.verified_skills,
+        slug: data.slug || dynamicSlug,
+        qr_data: `${origin}/p/${data.slug || dynamicSlug}`,
+      }
+    }
+    return fallbackPassport
+  }, [data, isDemo, profile, dynamicSlug, origin, fallbackPassport])
 
   return (
     <div className="space-y-8 pb-12">

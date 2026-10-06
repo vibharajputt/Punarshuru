@@ -1,15 +1,16 @@
 import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { Eye, EyeOff, Loader2, LogIn, AlertCircle } from 'lucide-react'
-import { authApi } from '@/lib/api'
+import { authApi, profileApi } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 import { useProfileStore } from '@/store/profileStore'
+import { useDemoStore } from '@/store/demoStore'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams] = useSearchParams()
   const setAuth = useAuthStore((s) => s.setAuth)
-  const profile = useProfileStore((s) => s.profile)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -27,14 +28,30 @@ export default function LoginPage() {
     try {
       const { access_token } = await authApi.login({ email: email.trim(), password })
       const me = await authApi.me(access_token)
+      useDemoStore.getState().clearDemo()
+      useProfileStore.getState().clearProfile()
       setAuth(access_token, me)
+
+      // Fetch user's own profile from server
+      let userProfile = null
+      try {
+        userProfile = await profileApi.getMyProfile(access_token)
+        if (userProfile) {
+          useProfileStore.getState().setProfile(userProfile)
+        }
+      } catch {
+        userProfile = null
+      }
+
       // Profile complete = all required onboarding slots filled
       const isComplete =
-        !!profile?.current_role &&
-        (profile?.skills_raw?.length ?? 0) >= 1 &&
-        !!profile?.target_role &&
-        !!profile?.city
-      const next = searchParams.get('next')
+        !!userProfile?.current_role &&
+        (userProfile?.skills_raw?.length ?? 0) >= 1 &&
+        !!userProfile?.target_role &&
+        !!userProfile?.city
+      const locationState = location.state as { from?: { pathname?: string; search?: string } } | null
+      const targetFrom = locationState?.from?.pathname ? `${locationState.from.pathname}${locationState.from.search || ''}` : null
+      const next = searchParams.get('next') || targetFrom
       navigate(next || (isComplete ? '/home' : '/onboarding'), { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed. Check your email and password.')

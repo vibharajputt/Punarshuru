@@ -5,6 +5,101 @@ import { useTranslation } from 'react-i18next'
 import ScoreRing from '@/components/charts/ScoreRing'
 import type { DisruptionBreakdown } from '@/types'
 
+export const FACTOR_MAXES = {
+  skill_decay: 25,
+  automation_risk: 30,
+  career_gap: 15,
+  stagnation: 15,
+  market_mismatch: 15,
+} as const
+
+export const FACTOR_CONFIG = [
+  { key: 'skill_decay', labelKey: 'dashboard.factors.skill_decay', defaultLabel: 'Outdated skills', max: FACTOR_MAXES.skill_decay },
+  { key: 'automation_risk', labelKey: 'dashboard.factors.automation', defaultLabel: 'Automation risk', max: FACTOR_MAXES.automation_risk },
+  { key: 'career_gap', labelKey: 'dashboard.factors.career_gap', defaultLabel: 'Career break', max: FACTOR_MAXES.career_gap },
+  { key: 'stagnation', labelKey: 'dashboard.factors.stagnation', defaultLabel: 'Role stagnation', max: FACTOR_MAXES.stagnation },
+  { key: 'market_mismatch', labelKey: 'dashboard.factors.market_shift', defaultLabel: 'Market demand shift', max: FACTOR_MAXES.market_mismatch },
+] as const
+
+export const PERSONA_FACTOR_DEFAULTS: Record<number, Record<string, number>> = {
+  72: { skill_decay: 20, automation_risk: 22, career_gap: 12, stagnation: 8, market_mismatch: 10 },
+  85: { skill_decay: 25, automation_risk: 30, career_gap: 0, stagnation: 15, market_mismatch: 15 },
+  78: { skill_decay: 15, automation_risk: 30, career_gap: 3, stagnation: 15, market_mismatch: 15 },
+  68: { skill_decay: 10, automation_risk: 28, career_gap: 0, stagnation: 15, market_mismatch: 15 },
+  22: { skill_decay: 0, automation_risk: 10, career_gap: 0, stagnation: 5, market_mismatch: 7 },
+}
+
+export function computeCappedFactors(breakdown?: DisruptionBreakdown, targetScore?: number) {
+  const hasValidBreakdown =
+    breakdown &&
+    FACTOR_CONFIG.some((f) => typeof breakdown[f.key as keyof DisruptionBreakdown] === 'number')
+
+  if (hasValidBreakdown) {
+    return FACTOR_CONFIG.map((f) => {
+      const rawVal = breakdown[f.key as keyof DisruptionBreakdown]
+      const numericVal = typeof rawVal === 'number' ? rawVal : 0
+      const cappedScore = Math.min(f.max, Math.max(0, Math.round(numericVal)))
+
+      return {
+        key: f.key,
+        labelKey: f.labelKey,
+        defaultLabel: f.defaultLabel,
+        score: cappedScore,
+        max: f.max,
+      }
+    })
+  }
+
+  // Fallback when breakdown is not provided:
+  // If targetScore matches a known persona, use canonical values that sum exactly to targetScore
+  const roundedTarget = typeof targetScore === 'number' ? Math.round(targetScore) : 72
+  const personaDefault = PERSONA_FACTOR_DEFAULTS[roundedTarget]
+
+  if (personaDefault) {
+    return FACTOR_CONFIG.map((f) => ({
+      key: f.key,
+      labelKey: f.labelKey,
+      defaultLabel: f.defaultLabel,
+      score: Math.min(f.max, Math.max(0, personaDefault[f.key] ?? 0)),
+      max: f.max,
+    }))
+  }
+
+  // For arbitrary targetScore, distribute proportionally based on factor weights (25%, 30%, 15%, 15%, 15%)
+  // so the sum of the 5 factors literally equals roundedTarget
+  const target = Math.min(100, Math.max(0, roundedTarget))
+  const weights: Record<string, number> = {
+    skill_decay: 0.25,
+    automation_risk: 0.30,
+    career_gap: 0.15,
+    stagnation: 0.15,
+    market_mismatch: 0.15,
+  }
+
+  let distributedSum = 0
+  return FACTOR_CONFIG.map((f, idx) => {
+    if (idx === FACTOR_CONFIG.length - 1) {
+      const remainder = Math.min(f.max, Math.max(0, target - distributedSum))
+      return {
+        key: f.key,
+        labelKey: f.labelKey,
+        defaultLabel: f.defaultLabel,
+        score: remainder,
+        max: f.max,
+      }
+    }
+    const val = Math.min(f.max, Math.max(0, Math.round(target * weights[f.key])))
+    distributedSum += val
+    return {
+      key: f.key,
+      labelKey: f.labelKey,
+      defaultLabel: f.defaultLabel,
+      score: val,
+      max: f.max,
+    }
+  })
+}
+
 interface CareerRiskCardProps {
   score: number
   breakdown?: DisruptionBreakdown
@@ -14,27 +109,27 @@ export default function CareerRiskCard({ score, breakdown }: CareerRiskCardProps
   const { t } = useTranslation()
   const [expanded, setExpanded] = useState(false)
 
+  const factors = computeCappedFactors(breakdown, score).map((f) => ({
+    ...f,
+    label: t(f.labelKey, f.defaultLabel),
+  }))
+
+  // Career Risk Score is literally the sum of the 5 displayed sub-scores
+  const finalScore = factors.reduce((sum, f) => sum + f.score, 0)
+
   const meaning =
-    score >= 70
+    finalScore >= 70
       ? t('dashboard.risk_high', 'High risk: Your target role requires GenAI and modern skills that are not yet reflected in your profile.')
-      : score >= 40
+      : finalScore >= 40
       ? t('dashboard.risk_mod', 'Moderate risk: You have solid core foundations, but automation and emerging tech create skill gaps.')
       : t('dashboard.risk_low', 'Low risk: Your skills and profile align well with current market demand.')
 
   const badgeText =
-    score >= 70
+    finalScore >= 70
       ? t('dashboard.risk_high_badge', 'High Risk')
-      : score >= 40
+      : finalScore >= 40
       ? t('dashboard.risk_mod_badge', 'Moderate Risk')
       : t('dashboard.risk_low_badge', 'Low Risk')
-
-  const factors = [
-    { label: t('dashboard.factors.skill_decay', 'Outdated skills'), score: breakdown?.skill_decay ?? 26, max: 35 },
-    { label: t('dashboard.factors.automation', 'Automation risk'), score: breakdown?.automation_risk ?? 22, max: 30 },
-    { label: t('dashboard.factors.career_gap', 'Career break'), score: breakdown?.career_gap ?? 14, max: 20 },
-    { label: t('dashboard.factors.stagnation', 'Role stagnation'), score: breakdown?.stagnation ?? 8, max: 15 },
-    { label: t('dashboard.factors.market_shift', 'Market demand shift'), score: breakdown?.market_mismatch ?? 6, max: 15 },
-  ]
 
   return (
     <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between">
@@ -45,20 +140,20 @@ export default function CareerRiskCard({ score, breakdown }: CareerRiskCardProps
           </span>
           <span
             className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${
-              score >= 70
+              finalScore >= 70
                 ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300'
-                : score >= 40
+                : finalScore >= 40
                 ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300'
                 : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
             }`}
           >
-            {score >= 70 ? <AlertTriangle size={12} /> : <ShieldCheck size={12} />}
+            {finalScore >= 70 ? <AlertTriangle size={12} /> : <ShieldCheck size={12} />}
             {badgeText}
           </span>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-5 py-4">
-          <ScoreRing score={score} size={115} strokeWidth={11} showRiskBadge={false} />
+          <ScoreRing score={finalScore} size={115} strokeWidth={11} showRiskBadge={false} />
           <div className="space-y-1 text-center sm:text-left flex-1">
             <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
               {meaning}

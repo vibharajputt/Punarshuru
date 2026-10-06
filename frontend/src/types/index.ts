@@ -2,6 +2,7 @@ export type UserType = 'returner' | 'gig' | 'laid_off' | 'stagnant' | 'student' 
 
 export interface Profile {
   id: string
+  user_id?: string | null
   name: string
   email?: string | null
   user_type: UserType

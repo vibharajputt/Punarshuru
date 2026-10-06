@@ -91,27 +91,29 @@ async def create_or_upsert_profile(
 
     existing: Profile | None = None
 
-    # Upsert strictly by authenticated user.id (no email linking)
-    if user:
-        res = await db.execute(select(Profile).where(Profile.user_id == user.id))
-        existing = res.scalars().first()
-    elif is_demo:
-        # Demo personas: allow upsert by demo email so reloading demo persona updates it
+    if is_demo:
+        # Demo personas: keyed ONLY by demo email, NEVER tied to user_id
         res = await db.execute(select(Profile).where(Profile.email == profile_in.email))
+        existing = res.scalars().first()
+    elif user:
+        # Real authenticated user profile: strictly keyed by user.id
+        res = await db.execute(select(Profile).where(Profile.user_id == user.id))
         existing = res.scalars().first()
 
     if existing:
         update_data = profile_in.model_dump()
         for field, value in update_data.items():
             setattr(existing, field, value)
-        if user and not existing.user_id:
+        if is_demo:
+            existing.user_id = None
+        elif user and not existing.user_id:
             existing.user_id = user.id
         _apply_disruption(existing)
         await db.commit()
         await db.refresh(existing)
         return ProfileRead.model_validate(existing)
 
-    user_id = user.id if user else None
+    user_id = None if is_demo else (user.id if user else None)
     profile = Profile(**profile_in.model_dump(), user_id=user_id)
     _apply_disruption(profile)
     db.add(profile)

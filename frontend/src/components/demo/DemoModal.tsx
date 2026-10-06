@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Sparkles, MapPin, Briefcase, ArrowRight, RefreshCw, ShieldCheck } from 'lucide-react'
-import { demoApi, profileApi } from '@/lib/api'
+import { demoApi } from '@/lib/api'
 import { useProfileStore } from '@/store/profileStore'
 import { useDemoStore } from '@/store/demoStore'
 import type { Profile, UserType } from '@/types'
@@ -19,6 +19,7 @@ export interface DemoPersonaItem {
   disruption: number
   skills: string[]
   quote: string
+  career_gap_years: number
 }
 
 export const DEMO_PERSONAS: DemoPersonaItem[] = [
@@ -34,6 +35,7 @@ export const DEMO_PERSONAS: DemoPersonaItem[] = [
     disruption: 72,
     skills: ['Java', 'Spring Boot', 'MySQL', 'REST APIs'],
     quote: 'Returning to tech post-maternity break; need to bridge the GenAI and modern cloud gap.',
+    career_gap_years: 4,
   },
   {
     key: 'ramesh',
@@ -47,6 +49,7 @@ export const DEMO_PERSONAS: DemoPersonaItem[] = [
     disruption: 85,
     skills: ['Operations', 'Route Optimization', 'Customer Service'],
     quote: 'Algorithms cap delivery earnings; transitioning high-grit logistics intuition into tech ops.',
+    career_gap_years: 0,
   },
   {
     key: 'arjun',
@@ -60,6 +63,7 @@ export const DEMO_PERSONAS: DemoPersonaItem[] = [
     disruption: 78,
     skills: ['Manual QA', 'JIRA', 'Agile', 'SQL Basics'],
     quote: 'Manual QA roles shrinking fast; urgent need to master Playwright, Python & CI/CD automation.',
+    career_gap_years: 0.5,
   },
   {
     key: 'sneha',
@@ -73,6 +77,7 @@ export const DEMO_PERSONAS: DemoPersonaItem[] = [
     disruption: 68,
     skills: ['Support Ops', 'CRM', 'Zendesk', 'Bilingual EN/HI'],
     quote: '3 years in the same support band; moving into prompt evaluation and product ops.',
+    career_gap_years: 0,
   },
   {
     key: 'rohit',
@@ -86,8 +91,102 @@ export const DEMO_PERSONAS: DemoPersonaItem[] = [
     disruption: 22,
     skills: ['Python', 'C++', 'Data Structures', 'SQL'],
     quote: 'Fresher targeting high-ROI Tier-2/Tier-1 software roles with verified GitHub proofs.',
+    career_gap_years: 0,
   },
 ]
+
+export function activateDemoPersona(
+  persona: DemoPersonaItem,
+  navigate?: (path: string) => void
+) {
+  const fallbackProfile: Profile = {
+    id: `demo-${persona.key}`,
+    user_id: null,
+    name: persona.name,
+    email: `${persona.key}@demo.punarshuru.in`,
+    user_type: persona.user_type,
+    city: persona.city,
+    current_city: persona.city,
+    preferred_city: null,
+    gap_reason: null,
+    achievements: [],
+    current_role: persona.current_role,
+    target_role: persona.target_role,
+    experience_years:
+      persona.user_type === 'student'
+        ? 0
+        : persona.user_type === 'returner'
+        ? 5
+        : persona.user_type === 'gig'
+        ? 3
+        : persona.user_type === 'laid_off'
+        ? 6
+        : 5,
+    career_gap_years:
+      persona.career_gap_years !== undefined
+        ? persona.career_gap_years
+        : (persona.user_type === 'returner' ? 4 : persona.user_type === 'laid_off' ? 0.5 : 0),
+    current_salary_lpa:
+      persona.user_type === 'student'
+        ? 0
+        : persona.user_type === 'returner'
+        ? 8
+        : persona.user_type === 'gig'
+        ? 2.4
+        : persona.user_type === 'laid_off'
+        ? 8.0
+        : 4.5,
+    skills_raw: persona.skills,
+    skills_taxonomy_ids: [1, 2, 3],
+    disruption_score: persona.disruption,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+
+  // 1. Immediately update demoStore and profileStore
+  useDemoStore.getState().setDemo(persona.key, persona.name, {
+    role: persona.current_role,
+    city: persona.city,
+    career_gap_years: fallbackProfile.career_gap_years,
+  })
+  useProfileStore.getState().setProfile(fallbackProfile)
+
+  // 2. Immediately navigate to /home (instant responsive UI)
+  if (navigate) {
+    navigate('/home')
+  }
+
+  // 3. Background enrichment from demo API without blocking UI or navigation
+  demoApi
+    .loadPersona(persona.key)
+    .then((data) => {
+      if (data) {
+        const enriched: Profile = {
+          ...fallbackProfile,
+          id: String(data.id || fallbackProfile.id),
+          name: String(data.name || fallbackProfile.name),
+          city: String(data.city || fallbackProfile.city),
+          current_city: String(data.city || fallbackProfile.city),
+          current_role: String(data.current_role || fallbackProfile.current_role),
+          target_role: String(data.target_role || fallbackProfile.target_role),
+          experience_years: Number(data.experience_years ?? fallbackProfile.experience_years),
+          career_gap_years: Number(data.career_gap_years ?? fallbackProfile.career_gap_years),
+          current_salary_lpa:
+            data.current_salary_lpa != null
+              ? Number(data.current_salary_lpa)
+              : fallbackProfile.current_salary_lpa,
+          skills_raw: Array.isArray(data.skills_raw)
+            ? (data.skills_raw as string[])
+            : fallbackProfile.skills_raw,
+          disruption_score: Number(data.disruption_score ?? fallbackProfile.disruption_score),
+        }
+        useProfileStore.getState().setProfile(enriched)
+      }
+    })
+    .catch(() => {
+      // Fallback is already active
+    })
+}
 
 interface DemoModalProps {
   isOpen: boolean
@@ -96,59 +195,13 @@ interface DemoModalProps {
 
 export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
   const navigate = useNavigate()
-  const setProfile = useProfileStore((s) => s.setProfile)
-  const setDemo = useDemoStore((s) => s.setDemo)
   const [loadingKey, setLoadingKey] = useState<string | null>(null)
 
-  const handleSelect = async (persona: DemoPersonaItem) => {
-    try {
-      setLoadingKey(persona.key)
-      const data = await demoApi.loadPersona(persona.key)
-
-      const created = await profileApi.create({
-        name: String(data.name || persona.name),
-        email: `${persona.key}@demo.punarshuru.in`,
-        user_type: persona.user_type,
-        city: String(data.city || persona.city),
-        current_role: String(data.current_role || persona.current_role),
-        target_role: String(data.target_role || persona.target_role),
-        experience_years: Number(data.experience_years || 0),
-        career_gap_years: Number(data.career_gap_years || 0),
-        current_salary_lpa: data.current_salary_lpa ? Number(data.current_salary_lpa) : null,
-        skills_raw: Array.isArray(data.skills_raw) ? (data.skills_raw as string[]) : persona.skills,
-        skills_taxonomy_ids: Array.isArray(data.skills_taxonomy_ids)
-          ? (data.skills_taxonomy_ids as number[])
-          : [1, 2, 3],
-      })
-
-      setProfile(created)
-      setDemo(persona.key, persona.name)
-      onClose()
-      navigate('/home')
-    } catch {
-      // Graceful fallback to guarantee smooth demo load even if API is slow
-      const fallbackProfile: Profile = {
-        id: `demo-${persona.key}`,
-        name: persona.name,
-        user_type: persona.user_type,
-        city: persona.city,
-        current_role: persona.current_role,
-        target_role: persona.target_role,
-        experience_years: persona.user_type === 'student' ? 0 : 4,
-        career_gap_years: persona.user_type === 'returner' ? 4 : 0,
-        skills_raw: persona.skills,
-        skills_taxonomy_ids: [1, 2, 3],
-        disruption_score: persona.disruption,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-      setProfile(fallbackProfile)
-      setDemo(persona.key, persona.name)
-      onClose()
-      navigate('/home')
-    } finally {
-      setLoadingKey(null)
-    }
+  const handleSelect = (persona: DemoPersonaItem) => {
+    setLoadingKey(persona.key)
+    onClose()
+    activateDemoPersona(persona, navigate)
+    setLoadingKey(null)
   }
 
   return (

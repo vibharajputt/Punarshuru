@@ -96,6 +96,35 @@ async def get_passport_by_slug(slug: str, db: AsyncSession) -> PassportResponse 
     result = await db.execute(stmt)
     passport_obj = result.scalars().first()
     if not passport_obj:
+        # Check if slug matches a demo persona
+        from app.routers.demo import _load
+        personas = _load("personas.json")
+        matched_persona = None
+        for p in personas:
+            p_name_slug = re.sub(r"[^a-zA-Z0-9]+", "-", p["name"].strip().lower()).strip("-")
+            if p["key"] in slug.lower() or p_name_slug in slug.lower():
+                matched_persona = p
+                break
+        if matched_persona:
+            return await create_or_update_passport(
+                Profile(
+                    id=f"demo-{matched_persona['key']}",
+                    name=matched_persona["name"],
+                    email=f"{matched_persona['key']}@demo.punarshuru.in",
+                    user_type=matched_persona["user_type"],
+                    city=matched_persona["city"],
+                    current_role=matched_persona["current_role"],
+                    target_role=matched_persona["target_role"],
+                    experience_years=matched_persona.get("experience_years", 3),
+                    career_gap_years=matched_persona.get("career_gap_years", 0),
+                    current_salary_lpa=matched_persona.get("current_salary_lpa", 8.0),
+                    skills_raw=matched_persona.get("skills", []),
+                    skills_taxonomy_ids=[1, 2, 3],
+                    disruption_score=matched_persona.get("disruption_score", 70.0),
+                ),
+                db,
+                PassportCreate(slug=slug, is_public=True),
+            )
         return None
 
     # Fetch corresponding profile
