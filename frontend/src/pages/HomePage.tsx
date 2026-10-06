@@ -907,6 +907,125 @@ export default function HomePage() {
           }
           city={activeProfile?.city || 'Bengaluru'}
         />
+
+        {/* ── 3.5 Persona-Specific Innovation Spotlight ── */}
+        {userType === 'returner' && (
+          <div className="p-5 rounded-3xl bg-gradient-to-r from-teal-500/10 via-blue-600/10 to-emerald-600/5 dark:from-teal-950/40 dark:via-blue-950/30 dark:to-slate-900 border border-teal-200/80 dark:border-teal-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-teal-600 dark:text-teal-400 shrink-0 shadow-xs border border-teal-100 dark:border-teal-800">
+                <GraduationCap size={24} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-teal-700 dark:text-teal-300">
+                    Returner Innovation Suite
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200">
+                    Amazon, Google & Microsoft
+                  </span>
+                </div>
+                <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight mt-0.5">
+                  India Tech Returnships Hub & 5-Min Code Muscle Gym
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  Explore verified paid returnships (₹60k–₹1.25L/mo stipend) and practice 5-minute daily syntax warm-ups.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                to="/features/returnships"
+                className="px-4 py-2.5 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5"
+              >
+                <span>View Returnships</span>
+                <ArrowRight size={13} />
+              </Link>
+              <Link
+                to="/features/muscle-memory"
+                className="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-200 text-xs font-bold transition border border-slate-200 dark:border-slate-700 shadow-2xs"
+              >
+                <span>Code Gym 🔥</span>
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {userType === 'stagnant' && (
+          <div className="p-5 rounded-3xl bg-gradient-to-r from-amber-500/10 via-blue-600/10 to-purple-600/5 dark:from-amber-950/40 dark:via-blue-950/30 dark:to-slate-900 border border-amber-200/80 dark:border-amber-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0 shadow-xs border border-amber-100 dark:border-amber-800">
+                <Clock size={24} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
+                    Stagnation Breakout Suite
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200">
+                    Notice Trap Breaker
+                  </span>
+                </div>
+                <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight mt-0.5">
+                  90-Day Notice Buyout Simulator & Manager 1:1 Negotiation
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  Calculate buyout ROI (+₹8.4L net profit), view buyout-friendly employers, and practice appraisal counter-offers.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                to="/features/notice-buyout"
+                className="px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5"
+              >
+                <span>Notice Buyout ROI</span>
+                <ArrowRight size={13} />
+              </Link>
+              <Link
+                to="/features/manager-1on1"
+                className="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-200 text-xs font-bold transition border border-slate-200 dark:border-slate-700 shadow-2xs"
+              >
+                <span>Manager 1:1 Roleplay</span>
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {userType === 'student' && (
+          <div className="p-5 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-blue-600/10 to-purple-600/5 dark:from-emerald-950/40 dark:via-blue-950/30 dark:to-slate-900 border border-emerald-200/80 dark:border-emerald-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0 shadow-xs border border-emerald-100 dark:border-emerald-800">
+                <GraduationCap size={24} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+                    Senior Mentorship Network
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200">
+                    18 Online
+                  </span>
+                </div>
+                <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight mt-0.5">
+                  Talk Directly with Recently Placed Seniors at Amazon & Razorpay
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  Book free 15-minute 1-on-1 resume reviews and simulated placement technical mock rounds.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              to="/features/senior-mentorship"
+              className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5 shrink-0"
+            >
+              <span>Connect with Seniors</span>
+              <ArrowRight size={13} />
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* ── 4. Dynamic Milestone Progress Strip for ALL 5 Personas ── */}
