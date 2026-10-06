@@ -1,4 +1,5 @@
 import { useState, useId } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Copy,
   Check,
@@ -17,6 +18,9 @@ import {
   Wand2,
   RefreshCw,
   ChevronDown,
+  Mic,
+  ArrowRight,
+  ExternalLink,
 } from 'lucide-react'
 
 interface ExperienceItem {
@@ -1064,6 +1068,38 @@ ${certifications.map((c) => `     $\\bullet$ ${c} \\\ `).join('\n')}
           <p className="text-emerald-700 dark:text-emerald-400">
             Copy the raw LaTeX code into <strong className="underline">Overleaf.com</strong> or export directly to PDF. Every section follows FAANG recruiter standards, strictly separating historical tenure from recent containerized modernization sprints.
           </p>
+        </div>
+      </div>
+
+      {/* ── Interconnected Next Action in Returnee Journey ── */}
+      <div className="p-5 rounded-3xl bg-gradient-to-r from-teal-50 via-blue-50 to-indigo-50 dark:from-slate-800/90 dark:via-teal-950/30 dark:to-slate-900 border border-teal-200/80 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+            <Sparkles size={14} className="text-teal-600 dark:text-teal-400" />
+            <span>Resume Ready? Practice Speaking These Points Aloud</span>
+          </div>
+          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+            Test how confidently you speak about your modernization sprint with the 1:1 Voice AI mock interviewer.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Link
+            to="/features/returnships"
+            className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 transition"
+          >
+            <span>Returnships Hub</span>
+            <ExternalLink size={12} />
+          </Link>
+
+          <Link
+            to="/features/gap-to-strength"
+            className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-black flex items-center gap-1.5 transition shadow-sm"
+          >
+            <Mic size={13} />
+            <span>Start 1:1 Voice Mock</span>
+            <ArrowRight size={13} />
+          </Link>
         </div>
       </div>
     </div>

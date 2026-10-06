@@ -1,10 +1,15 @@
 import { useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Calendar,
   IndianRupee,
   Search,
   ExternalLink,
   GraduationCap,
+  Sparkles,
+  Mic,
+  FileText,
+  ArrowRight,
 } from 'lucide-react'
 
 export interface ReturnshipProgram {
@@ -322,6 +327,38 @@ export default function ReturnshipDirectory() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* ── 4. Interconnected Re-Entry Next Steps ── */}
+      <div className="p-5 rounded-3xl bg-gradient-to-r from-blue-50 via-teal-50 to-indigo-50 dark:from-slate-800/90 dark:via-teal-950/30 dark:to-slate-900 border border-blue-200/80 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+            <Sparkles size={14} className="text-teal-600 dark:text-teal-400" />
+            <span>Ready to Apply to Amazon Rekindle or Microsoft Springboard?</span>
+          </div>
+          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+            Make sure your resume is tailored for these cohorts and practice realistic voice questions before applying.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Link
+            to="/features/resume-rebuilder"
+            className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 transition"
+          >
+            <FileText size={13} className="text-purple-500" />
+            <span>AI Resume Studio</span>
+          </Link>
+
+          <Link
+            to="/features/gap-to-strength"
+            className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-black flex items-center gap-1.5 transition shadow-sm"
+          >
+            <Mic size={13} />
+            <span>1:1 Voice Pitch</span>
+            <ArrowRight size={13} />
+          </Link>
+        </div>
       </div>
     </div>
   )

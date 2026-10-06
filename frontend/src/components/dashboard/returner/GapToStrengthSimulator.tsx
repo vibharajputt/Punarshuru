@@ -1441,19 +1441,25 @@ export default function GapToStrengthSimulator() {
         <div className="text-teal-900 dark:text-teal-200 font-medium">
           Ready to apply to verified returnship cohorts with zero gap stigma?
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <Link
-            to="/features/returnships"
-            className="px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition flex items-center gap-1.5 shadow-2xs"
+            to="/features/resume-rebuilder"
+            className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 transition"
           >
-            <span>Explore Returnships Hub</span>
-            <ExternalLink size={12} />
+            <span>AI Resume Studio 📑</span>
           </Link>
           <Link
             to="/features/muscle-memory"
             className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-700 hover:bg-slate-100 transition"
           >
             <span>Code Gym 🔥</span>
+          </Link>
+          <Link
+            to="/features/returnships"
+            className="px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition flex items-center gap-1.5 shadow-2xs"
+          >
+            <span>Returnships Hub</span>
+            <ExternalLink size={12} />
           </Link>
         </div>
       </div>

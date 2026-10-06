@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Flame,
   CheckCircle2,
@@ -11,6 +12,8 @@ import {
   Award,
   Zap,
   Check,
+  FileText,
+  Mic,
 } from 'lucide-react'
 
 interface DrillTrack {
@@ -491,6 +494,38 @@ export default function MuscleMemoryGym() {
           <p className="text-teal-800 dark:text-teal-300">
             Each completed challenge proves your technical currency to recruiters and adds verified streak score to your returnee profile.
           </p>
+        </div>
+      </div>
+
+      {/* ── 6. Interconnected Re-Entry Next Steps ── */}
+      <div className="p-5 rounded-3xl bg-gradient-to-r from-orange-50 via-amber-50 to-blue-50 dark:from-slate-800/90 dark:via-orange-950/20 dark:to-slate-900 border border-orange-200/80 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+            <Sparkles size={14} className="text-orange-600 dark:text-orange-400" />
+            <span>Refreshed Your Code Intuition? Next Step:</span>
+          </div>
+          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+            Lock these modern skills into your resume or practice answering technical interview dilemmas aloud.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Link
+            to="/features/resume-rebuilder"
+            className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 transition"
+          >
+            <FileText size={13} className="text-purple-500" />
+            <span>Inject Into Resume</span>
+          </Link>
+
+          <Link
+            to="/features/gap-to-strength"
+            className="px-4 py-2 rounded-xl bg-[#0B4F9C] hover:bg-blue-800 text-white text-xs font-black flex items-center gap-1.5 transition shadow-sm"
+          >
+            <Mic size={13} />
+            <span>Practice 1:1 Voice AI</span>
+            <ArrowRight size={13} />
+          </Link>
         </div>
       </div>
     </div>

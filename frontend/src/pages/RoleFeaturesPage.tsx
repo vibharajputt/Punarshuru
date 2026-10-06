@@ -406,19 +406,87 @@ export default function RoleFeaturesPage() {
         </div>
       </div>
 
+      {/* ── Returner Persona Step-by-Step Pathway Navigator ── */}
+      {userType === 'returner' && (
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-teal-50 via-blue-50 to-indigo-50 dark:from-slate-800/90 dark:via-teal-950/40 dark:to-slate-900 border border-teal-200/80 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs shadow-xs">
+          <div className="flex items-center gap-2 font-black text-slate-900 dark:text-white">
+            <Sparkles size={14} className="text-teal-600 dark:text-teal-400" />
+            <span>Returnee 5-Step Launchpad:</span>
+          </div>
+          <div className="flex items-center gap-1.5 sm:gap-2.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 flex-wrap">
+            <Link
+              to="/features/gap-analyzer"
+              className={`hover:text-teal-600 transition ${activeFeature.key === 'gap-analyzer' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
+            >
+              1. Gap Audit
+            </Link>
+            <span className="text-slate-300 dark:text-slate-600">→</span>
+            <Link
+              to="/features/muscle-memory"
+              className={`hover:text-teal-600 transition ${activeFeature.key === 'muscle-memory' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
+            >
+              2. Code Gym Drills
+            </Link>
+            <span className="text-slate-300 dark:text-slate-600">→</span>
+            <Link
+              to="/features/resume-rebuilder"
+              className={`hover:text-teal-600 transition ${activeFeature.key === 'resume-rebuilder' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
+            >
+              3. ATS Resume Studio
+            </Link>
+            <span className="text-slate-300 dark:text-slate-600">→</span>
+            <Link
+              to="/features/gap-to-strength"
+              className={`hover:text-teal-600 transition ${activeFeature.key === 'gap-to-strength' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
+            >
+              4. 1:1 Voice AI Pitch
+            </Link>
+            <span className="text-slate-300 dark:text-slate-600">→</span>
+            <Link
+              to="/features/returnships"
+              className={`hover:text-teal-600 transition ${activeFeature.key === 'returnships' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
+            >
+              5. Returnships Hub
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* ── Stagnant Persona Step-by-Step Pathway Navigator ── */}
       {userType === 'stagnant' && (
-        <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 via-amber-50 to-emerald-50 dark:from-slate-800/80 dark:via-blue-950/40 dark:to-slate-900 border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 via-amber-50 to-emerald-50 dark:from-slate-800/80 dark:via-blue-950/40 dark:to-slate-900 border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs shadow-xs">
           <div className="flex items-center gap-2 font-black text-slate-900 dark:text-white">
             <Sparkles size={14} className="text-[#0B4F9C]" />
             <span>Stagnation Breakout Blueprint:</span>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2.5 text-[11px] font-bold text-slate-600 dark:text-slate-300">
-            <span className={activeFeature.key === 'career-growth' ? 'text-[#0B4F9C] font-black underline' : ''}>Audit</span>
+          <div className="flex items-center gap-1.5 sm:gap-2.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 flex-wrap">
+            <Link
+              to="/features/career-growth"
+              className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'career-growth' ? 'text-[#0B4F9C] font-black underline' : ''}`}
+            >
+              1. Growth Audit
+            </Link>
             <span className="text-slate-300 dark:text-slate-600">→</span>
-            <span className={activeFeature.key === 'stay-or-switch' ? 'text-[#0B4F9C] font-black underline' : ''}>Stay vs Switch</span>
+            <Link
+              to="/features/stay-or-switch"
+              className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'stay-or-switch' ? 'text-[#0B4F9C] font-black underline' : ''}`}
+            >
+              2. Stay vs Switch
+            </Link>
             <span className="text-slate-300 dark:text-slate-600">→</span>
-            <span className={activeFeature.key === 'manager-1on1' || activeFeature.key === 'notice-buyout' ? 'text-[#0B4F9C] font-black underline' : ''}>Execution (Manager 1:1 / Buyout)</span>
+            <Link
+              to="/features/manager-1on1"
+              className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'manager-1on1' ? 'text-[#0B4F9C] font-black underline' : ''}`}
+            >
+              3. Manager 1:1
+            </Link>
+            <span className="text-slate-300 dark:text-slate-600">→</span>
+            <Link
+              to="/features/notice-buyout"
+              className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'notice-buyout' ? 'text-[#0B4F9C] font-black underline' : ''}`}
+            >
+              4. Buyout Calculator
+            </Link>
           </div>
         </div>
       )}
