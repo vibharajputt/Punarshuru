@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft,
@@ -358,7 +358,6 @@ export const ROLE_FEATURES: Record<string, FeatureDefinition[]> = {
 
 export default function RoleFeaturesPage() {
   const { featureKey } = useParams<{ featureKey?: string }>()
-  const navigate = useNavigate()
   const profile = useProfileStore((s) => s.profile)
   const [roleModalOpen, setRoleModalOpen] = useState<boolean>(false)
 
@@ -369,10 +368,6 @@ export default function RoleFeaturesPage() {
   // Determine active feature
   const activeFeature =
     features.find((f) => f.key === featureKey) || features[0]
-
-  const handleSelectFeature = (key: string) => {
-    navigate(`/features/${key}`)
-  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12">
@@ -411,54 +406,92 @@ export default function RoleFeaturesPage() {
         </div>
       </div>
 
-      {/* ── Stagnant Persona Step-by-Step Pathway Navigator ── */}
-      {userType === 'stagnant' && (
-        <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 via-amber-50 to-emerald-50 dark:from-slate-800/80 dark:via-blue-950/40 dark:to-slate-900 border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs">
+      {/* ── Returner Persona Step-by-Step Pathway Navigator ── */}
+      {userType === 'returner' && (
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-teal-50 via-blue-50 to-indigo-50 dark:from-slate-800/90 dark:via-teal-950/40 dark:to-slate-900 border border-teal-200/80 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs shadow-xs">
           <div className="flex items-center gap-2 font-black text-slate-900 dark:text-white">
-            <Sparkles size={14} className="text-[#0B4F9C]" />
-            <span>Stagnation Breakout Blueprint:</span>
+            <Sparkles size={14} className="text-teal-600 dark:text-teal-400" />
+            <span>Returnee 5-Step Launchpad:</span>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2.5 text-[11px] font-bold text-slate-600 dark:text-slate-300">
-            <span className={activeFeature.key === 'career-growth' ? 'text-[#0B4F9C] font-black underline' : ''}>Audit</span>
+          <div className="flex items-center gap-1.5 sm:gap-2.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 flex-wrap">
+            <Link
+              to="/features/gap-analyzer"
+              className={`hover:text-teal-600 transition ${activeFeature.key === 'gap-analyzer' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
+            >
+              1. Gap Audit
+            </Link>
             <span className="text-slate-300 dark:text-slate-600">→</span>
-            <span className={activeFeature.key === 'stay-or-switch' ? 'text-[#0B4F9C] font-black underline' : ''}>Stay vs Switch</span>
+            <Link
+              to="/features/muscle-memory"
+              className={`hover:text-teal-600 transition ${activeFeature.key === 'muscle-memory' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
+            >
+              2. Code Gym Drills
+            </Link>
             <span className="text-slate-300 dark:text-slate-600">→</span>
-            <span className={activeFeature.key === 'manager-1on1' || activeFeature.key === 'notice-buyout' ? 'text-[#0B4F9C] font-black underline' : ''}>Execution (Manager 1:1 / Buyout)</span>
+            <Link
+              to="/features/resume-rebuilder"
+              className={`hover:text-teal-600 transition ${activeFeature.key === 'resume-rebuilder' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
+            >
+              3. ATS Resume Studio
+            </Link>
+            <span className="text-slate-300 dark:text-slate-600">→</span>
+            <Link
+              to="/features/gap-to-strength"
+              className={`hover:text-teal-600 transition ${activeFeature.key === 'gap-to-strength' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
+            >
+              4. 1:1 Voice AI Pitch
+            </Link>
+            <span className="text-slate-300 dark:text-slate-600">→</span>
+            <Link
+              to="/features/returnships"
+              className={`hover:text-teal-600 transition ${activeFeature.key === 'returnships' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
+            >
+              5. Returnships Hub
+            </Link>
           </div>
         </div>
       )}
 
-      {/* ── 2. Feature Selector Tabs ── */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-2 px-2 scrollbar-none">
-        {features.map((feat) => {
-          const isActive = feat.key === activeFeature.key
-          return (
-            <button
-              key={feat.key}
-              type="button"
-              onClick={() => handleSelectFeature(feat.key)}
-              className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
-                isActive
-                  ? 'bg-[#0B4F9C] text-white shadow-md shadow-blue-900/10'
-                  : 'bg-white dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-              }`}
+      {/* ── Stagnant Persona Step-by-Step Pathway Navigator ── */}
+      {userType === 'stagnant' && (
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 via-amber-50 to-emerald-50 dark:from-slate-800/80 dark:via-blue-950/40 dark:to-slate-900 border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs shadow-xs">
+          <div className="flex items-center gap-2 font-black text-slate-900 dark:text-white">
+            <Sparkles size={14} className="text-[#0B4F9C]" />
+            <span>Stagnation Breakout Blueprint:</span>
+          </div>
+          <div className="flex items-center gap-1.5 sm:gap-2.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 flex-wrap">
+            <Link
+              to="/features/career-growth"
+              className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'career-growth' ? 'text-[#0B4F9C] font-black underline' : ''}`}
             >
-              <span>{feat.shortTitle}</span>
-              <span
-                className={`text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider ${
-                  isActive
-                    ? 'bg-white/20 text-white'
-                    : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
-                }`}
-              >
-                {feat.badge}
-              </span>
-            </button>
-          )
-        })}
-      </div>
+              1. Growth Audit
+            </Link>
+            <span className="text-slate-300 dark:text-slate-600">→</span>
+            <Link
+              to="/features/stay-or-switch"
+              className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'stay-or-switch' ? 'text-[#0B4F9C] font-black underline' : ''}`}
+            >
+              2. Stay vs Switch
+            </Link>
+            <span className="text-slate-300 dark:text-slate-600">→</span>
+            <Link
+              to="/features/manager-1on1"
+              className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'manager-1on1' ? 'text-[#0B4F9C] font-black underline' : ''}`}
+            >
+              3. Manager 1:1
+            </Link>
+            <span className="text-slate-300 dark:text-slate-600">→</span>
+            <Link
+              to="/features/notice-buyout"
+              className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'notice-buyout' ? 'text-[#0B4F9C] font-black underline' : ''}`}
+            >
+              4. Buyout Calculator
+            </Link>
+          </div>
+        </div>
+      )}
 
-      {/* ── 3. Active Feature Container ── */}
+      {/* ── 2. Active Feature Container ── */}
       <motion.div
         key={activeFeature.key}
         initial={{ opacity: 0, y: 10 }}

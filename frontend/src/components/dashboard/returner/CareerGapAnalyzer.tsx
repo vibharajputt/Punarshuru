@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Sparkles, Clock } from 'lucide-react'
+import { Sparkles, Clock, ArrowRight, Flame, FileText } from 'lucide-react'
 
 export interface GapTimelineItem {
   year: string
@@ -168,6 +169,38 @@ export default function CareerGapAnalyzer({
           <p className="text-slate-600 dark:text-slate-300">
             You only need to bridge the tool layer (Spring Boot 3, Cloud, Vector DBs) rather than starting from scratch.
           </p>
+        </div>
+      </div>
+
+      {/* ── Interconnected Re-Entry Next Steps ── */}
+      <div className="p-5 rounded-3xl bg-gradient-to-r from-blue-50 via-teal-50 to-indigo-50 dark:from-slate-800/90 dark:via-teal-950/30 dark:to-slate-900 border border-blue-200/80 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+            <Sparkles size={14} className="text-teal-600 dark:text-teal-400" />
+            <span>Bridge the Gap in 5 Minutes: Next Step</span>
+          </div>
+          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+            Sharpen modern Java/React syntax in Code Gym or rebuild your resume with modernization sprint badges.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Link
+            to="/features/muscle-memory"
+            className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 transition"
+          >
+            <Flame size={13} className="text-orange-500" />
+            <span>Code Gym Drills</span>
+          </Link>
+
+          <Link
+            to="/features/resume-rebuilder"
+            className="px-4 py-2 rounded-xl bg-[#0B4F9C] hover:bg-blue-800 text-white text-xs font-black flex items-center gap-1.5 transition shadow-sm"
+          >
+            <FileText size={13} />
+            <span>Rebuild ATS Resume</span>
+            <ArrowRight size={13} />
+          </Link>
         </div>
       </div>
     </div>

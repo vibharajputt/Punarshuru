@@ -1,10 +1,15 @@
 import { useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Calendar,
   IndianRupee,
   Search,
   ExternalLink,
   GraduationCap,
+  Sparkles,
+  Mic,
+  FileText,
+  ArrowRight,
 } from 'lucide-react'
 
 export interface ReturnshipProgram {
@@ -176,38 +181,38 @@ export default function ReturnshipDirectory() {
       </div>
 
       {/* ── 2. Filters & Search Bar ── */}
-      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 space-y-3">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {/* Search Box */}
-          <div className="relative">
-            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search companies, programs, domains..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:border-teal-500 transition"
-            />
-          </div>
+      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        {/* Search Box */}
+        <div className="relative flex-1 min-w-[220px]">
+          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search companies, programs, domains..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:border-teal-500 transition"
+          />
+        </div>
 
+        <div className="flex flex-wrap items-center gap-3">
           {/* Min Career Gap Filter */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 shrink-0">
             <span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">Min Gap:</span>
-            <div className="flex flex-wrap gap-1 flex-1">
+            <div className="flex items-center gap-1">
               {[
                 { id: 'all', label: 'All' },
-                { id: '12m', label: '12+ Mos' },
-                { id: '18m', label: '18+ Mos' },
-                { id: '24m', label: '24+ Mos' },
+                { id: '12m', label: '12+ Mo' },
+                { id: '18m', label: '18+ Mo' },
+                { id: '24m', label: '24+ Mo' },
               ].map((g) => (
                 <button
                   key={g.id}
                   type="button"
                   onClick={() => setGapFilter(g.id)}
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer whitespace-nowrap ${
                     gapFilter === g.id
                       ? 'bg-teal-600 text-white shadow-xs'
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100'
+                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'
                   }`}
                 >
                   {g.label}
@@ -217,7 +222,7 @@ export default function ReturnshipDirectory() {
           </div>
 
           {/* Location Filter */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 min-w-[190px] shrink-0">
             <span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">City:</span>
             <select
               value={selectedLocation}
@@ -244,28 +249,28 @@ export default function ReturnshipDirectory() {
           >
             {/* Top Bar: Company Badge & Name */}
             <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div
                   className={`w-11 h-11 rounded-2xl ${prog.badgeColor} flex items-center justify-center font-black text-xs shadow-xs shrink-0`}
                 >
                   {prog.logoBadge}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-black text-base text-slate-900 dark:text-white">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <h4 className="font-black text-base text-slate-900 dark:text-white truncate">
                       {prog.company}
                     </h4>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800 whitespace-nowrap shrink-0">
                       {prog.minGapMonths}+ Mo Gap
                     </span>
                   </div>
-                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
+                  <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 truncate">
                     {prog.programName}
                   </div>
                 </div>
               </div>
 
-              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-800 shrink-0">
+              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-800 shrink-0 whitespace-nowrap">
                 {prog.conversionRate}
               </span>
             </div>
@@ -322,6 +327,38 @@ export default function ReturnshipDirectory() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* ── 4. Interconnected Re-Entry Next Steps ── */}
+      <div className="p-5 rounded-3xl bg-gradient-to-r from-blue-50 via-teal-50 to-indigo-50 dark:from-slate-800/90 dark:via-teal-950/30 dark:to-slate-900 border border-blue-200/80 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+            <Sparkles size={14} className="text-teal-600 dark:text-teal-400" />
+            <span>Ready to Apply to Amazon Rekindle or Microsoft Springboard?</span>
+          </div>
+          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+            Make sure your resume is tailored for these cohorts and practice realistic voice questions before applying.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Link
+            to="/features/resume-rebuilder"
+            className="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 transition"
+          >
+            <FileText size={13} className="text-purple-500" />
+            <span>AI Resume Studio</span>
+          </Link>
+
+          <Link
+            to="/features/gap-to-strength"
+            className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-black flex items-center gap-1.5 transition shadow-sm"
+          >
+            <Mic size={13} />
+            <span>1:1 Voice Pitch</span>
+            <ArrowRight size={13} />
+          </Link>
+        </div>
       </div>
     </div>
   )
