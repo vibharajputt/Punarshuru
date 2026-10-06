@@ -17,6 +17,9 @@ import {
   Award,
   Activity,
   Flame,
+  ShieldAlert,
+  IndianRupee,
+  FileCheck,
 } from 'lucide-react'
 import { Navigate, useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -640,6 +643,259 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* ── 2B. GIG WORKER EXCLUSIVE RAPID COCKPIT STRIP ── */}
+      {userType === 'gig' && (
+        <div className="p-6 rounded-3xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-red-500/10 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-slate-900 border border-amber-300/80 dark:border-amber-900/60 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-amber-200/60 dark:border-slate-800 pb-3">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <span>Gig Partner Live Shift Cockpit</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black">
+                  {activeProfile?.city || 'Lucknow'} / Active
+                </span>
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Link
+                to="/features/suraksha"
+                className="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black flex items-center gap-1.5 shadow-sm animate-pulse"
+              >
+                <ShieldAlert size={14} />
+                <span>1-Tap SOS Alert</span>
+              </Link>
+
+              <Link
+                to="/features/earnings"
+                className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold hover:border-amber-500 transition shadow-2xs"
+              >
+                <span>Open Full Cockpit →</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Daily Target Progress Bar */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs font-bold">
+              <span className="text-slate-700 dark:text-slate-300">
+                🎯 Aaj Ka Target: <strong className="text-slate-900 dark:text-white">₹1,260</strong> / ₹1,500 (84% Ho Gaya)
+              </span>
+              <span className="text-orange-600 dark:text-orange-400 font-black flex items-center gap-1">
+                <Flame size={13} className="fill-orange-500 text-orange-500" />
+                14 Din Streak! (₹240 baki)
+              </span>
+            </div>
+            <div className="w-full h-3 rounded-full bg-white dark:bg-slate-800 overflow-hidden p-0.5 border border-amber-200 dark:border-slate-700">
+              <div className="h-full rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-emerald-500 w-[84%]" />
+            </div>
+          </div>
+
+          {/* 4 Quick Launch Tiles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+            <Link
+              to="/features/earnings"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-amber-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Kamai & Asli Bachat</span>
+                  <IndianRupee size={14} className="text-amber-500" />
+                </div>
+                <p className="text-base font-black text-emerald-600 dark:text-emerald-400 mt-1">₹975 Asli Bachat</p>
+                <p className="text-[11px] text-slate-500">Gross ₹1,260 minus petrol & wear</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-[#0B4F9C] dark:text-sky-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>View Breakdown</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/smart-ai"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-orange-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>AI Demand Radar</span>
+                  <Flame size={14} className="text-orange-500 fill-orange-500" />
+                </div>
+                <p className="text-base font-black text-orange-600 mt-1">1.8x Dinner Surge</p>
+                <p className="text-[11px] text-slate-500">Gomti Nagar & Hazratganj hot</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-orange-600 dark:text-orange-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>Check Surge Map</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/suraksha"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-rose-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Suraksha & Docs</span>
+                  <ShieldAlert size={14} className="text-rose-500" />
+                </div>
+                <p className="text-base font-black text-amber-600 mt-1">PUC: 6 Din Baki</p>
+                <p className="text-[11px] text-slate-500">₹5L accident cover active</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-rose-600 dark:text-rose-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>Manage Vault</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/work-proof"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-blue-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Work/Income Proof</span>
+                  <FileCheck size={14} className="text-[#0B4F9C]" />
+                </div>
+                <p className="text-base font-black text-[#0B4F9C] dark:text-sky-400 mt-1">₹28.5k/mo Cert</p>
+                <p className="text-[11px] text-slate-500">Bank loan & Zepto/DL jobs</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-[#0B4F9C] dark:text-sky-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>Get Stamped PDF</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* ── 2C. LAID-OFF EXCLUSIVE IMMEDIATE RE-EMPLOYMENT STRIP ── */}
+      {userType === 'laid_off' && (
+        <div className="p-6 rounded-3xl bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-emerald-500/10 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-slate-900 border border-blue-300/80 dark:border-blue-900/60 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-200/60 dark:border-slate-800 pb-3">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+              <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <span>0-Day Immediate Joiner Advantage</span>
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500 text-white font-black">
+                  Zero Notice Period Priority ⚡
+                </span>
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Link
+                to="/features/runway"
+                className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold hover:border-[#0B4F9C] transition shadow-2xs"
+              >
+                <span>Financial Runway: 5.4 Months →</span>
+              </Link>
+              <Link
+                to="/features/job-tracker"
+                className="px-3.5 py-1.5 rounded-xl bg-[#0B4F9C] hover:bg-blue-800 text-white text-xs font-black shadow-sm transition"
+              >
+                <span>Job Pipeline Kanban →</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Runway & Pipeline Quick Indicators */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
+              <p className="text-[10px] uppercase font-bold text-slate-400">Survival Runway</p>
+              <p className="text-base font-black text-emerald-600 dark:text-emerald-400">5.4 Months (Safe)</p>
+              <p className="text-[11px] text-slate-500">₹8.0L Total Liquid Funds</p>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
+              <p className="text-[10px] uppercase font-bold text-slate-400">Active Interview Loops</p>
+              <p className="text-base font-black text-[#0B4F9C] dark:text-sky-400">3 Companies</p>
+              <p className="text-[11px] text-slate-500">Razorpay, PhonePe & Groww (Offer)</p>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700">
+              <p className="text-[10px] uppercase font-bold text-slate-400">Weekly Activity Target</p>
+              <p className="text-base font-black text-purple-600 dark:text-purple-400">7 / 10 Applied</p>
+              <p className="text-[11px] text-slate-500">🔥 8-Day Re-Employment Streak</p>
+            </div>
+          </div>
+
+          {/* 4 Quick Launch Tiles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+            <Link
+              to="/features/runway"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-blue-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Runway & Expenses</span>
+                  <IndianRupee size={14} className="text-emerald-500" />
+                </div>
+                <p className="text-base font-black text-slate-900 dark:text-white mt-1">Expense Cutter</p>
+                <p className="text-[11px] text-slate-500">Pause subs to gain +1.8 months</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-[#0B4F9C] dark:text-sky-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>View Calculator</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/job-tracker"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-indigo-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Job Pipeline Kanban</span>
+                  <Briefcase size={14} className="text-indigo-500" />
+                </div>
+                <p className="text-base font-black text-slate-900 dark:text-white mt-1">1 Offer In Hand</p>
+                <p className="text-[11px] text-slate-500">₹21 LPA Groww offer review</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>Manage Pipeline</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/ai-tailor"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-purple-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>AI Resume & Pitch</span>
+                  <Sparkles size={14} className="text-purple-500" />
+                </div>
+                <p className="text-base font-black text-slate-900 dark:text-white mt-1">Stigma-Free Narrative</p>
+                <p className="text-[11px] text-slate-500">Restructuring interview script</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-purple-600 dark:text-purple-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>Generate Bullets</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+
+            <Link
+              to="/features/networking"
+              className="p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 hover:border-teal-500 transition shadow-2xs group flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                  <span>Networking & Gigs</span>
+                  <Target size={14} className="text-teal-500" />
+                </div>
+                <p className="text-base font-black text-slate-900 dark:text-white mt-1">4 Warm Referrals</p>
+                <p className="text-[11px] text-slate-500">₹85k/mo contract sprints</p>
+              </div>
+              <div className="pt-2 text-[11px] font-bold text-teal-600 dark:text-teal-400 flex items-center justify-between group-hover:translate-x-0.5 transition-transform">
+                <span>View CRM & Gigs</span>
+                <ArrowRight size={12} />
+              </div>
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* ── 3. Core Career Risk & Immediate Next Step Cards ── */}
       <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
@@ -672,6 +928,125 @@ export default function HomePage() {
           }
           city={activeProfile?.city || 'Bengaluru'}
         />
+
+        {/* ── 3.5 Persona-Specific Innovation Spotlight ── */}
+        {userType === 'returner' && (
+          <div className="p-5 rounded-3xl bg-gradient-to-r from-teal-500/10 via-blue-600/10 to-emerald-600/5 dark:from-teal-950/40 dark:via-blue-950/30 dark:to-slate-900 border border-teal-200/80 dark:border-teal-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-teal-600 dark:text-teal-400 shrink-0 shadow-xs border border-teal-100 dark:border-teal-800">
+                <GraduationCap size={24} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-teal-700 dark:text-teal-300">
+                    Returner Innovation Suite
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200">
+                    Amazon, Google & Microsoft
+                  </span>
+                </div>
+                <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight mt-0.5">
+                  India Tech Returnships Hub & 5-Min Code Muscle Gym
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  Explore verified paid returnships (₹60k–₹1.25L/mo stipend) and practice 5-minute daily syntax warm-ups.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                to="/features/returnships"
+                className="px-4 py-2.5 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5"
+              >
+                <span>View Returnships</span>
+                <ArrowRight size={13} />
+              </Link>
+              <Link
+                to="/features/muscle-memory"
+                className="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-200 text-xs font-bold transition border border-slate-200 dark:border-slate-700 shadow-2xs"
+              >
+                <span>Code Gym 🔥</span>
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {userType === 'stagnant' && (
+          <div className="p-5 rounded-3xl bg-gradient-to-r from-amber-500/10 via-blue-600/10 to-purple-600/5 dark:from-amber-950/40 dark:via-blue-950/30 dark:to-slate-900 border border-amber-200/80 dark:border-amber-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0 shadow-xs border border-amber-100 dark:border-amber-800">
+                <Clock size={24} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
+                    Stagnation Breakout Suite
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200">
+                    Notice Trap Breaker
+                  </span>
+                </div>
+                <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight mt-0.5">
+                  90-Day Notice Buyout Simulator & Manager 1:1 Negotiation
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  Calculate buyout ROI (+₹8.4L net profit), view buyout-friendly employers, and practice appraisal counter-offers.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                to="/features/notice-buyout"
+                className="px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5"
+              >
+                <span>Notice Buyout ROI</span>
+                <ArrowRight size={13} />
+              </Link>
+              <Link
+                to="/features/manager-1on1"
+                className="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-200 text-xs font-bold transition border border-slate-200 dark:border-slate-700 shadow-2xs"
+              >
+                <span>Manager 1:1 Roleplay</span>
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {userType === 'student' && (
+          <div className="p-5 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-blue-600/10 to-purple-600/5 dark:from-emerald-950/40 dark:via-blue-950/30 dark:to-slate-900 border border-emerald-200/80 dark:border-emerald-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0 shadow-xs border border-emerald-100 dark:border-emerald-800">
+                <GraduationCap size={24} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+                    Senior Mentorship Network
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200">
+                    18 Online
+                  </span>
+                </div>
+                <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight mt-0.5">
+                  Talk Directly with Recently Placed Seniors at Amazon & Razorpay
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  Book free 15-minute 1-on-1 resume reviews and simulated placement technical mock rounds.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              to="/features/senior-mentorship"
+              className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5 shrink-0"
+            >
+              <span>Connect with Seniors</span>
+              <ArrowRight size={13} />
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* ── 4. Dynamic Milestone Progress Strip for ALL 5 Personas ── */}
