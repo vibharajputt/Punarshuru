@@ -370,10 +370,6 @@ export default function RoleFeaturesPage() {
   const activeFeature =
     features.find((f) => f.key === featureKey) || features[0]
 
-  const handleSelectFeature = (key: string) => {
-    navigate(`/features/${key}`)
-  }
-
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12">
       {/* ── 1. Top Header with Active Persona Badge ── */}
@@ -428,37 +424,7 @@ export default function RoleFeaturesPage() {
         </div>
       )}
 
-      {/* ── 2. Feature Selector Tabs ── */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-2 px-2 scrollbar-none">
-        {features.map((feat) => {
-          const isActive = feat.key === activeFeature.key
-          return (
-            <button
-              key={feat.key}
-              type="button"
-              onClick={() => handleSelectFeature(feat.key)}
-              className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer shrink-0 flex items-center gap-2 ${
-                isActive
-                  ? 'bg-[#0B4F9C] text-white shadow-md shadow-blue-900/10'
-                  : 'bg-white dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-              }`}
-            >
-              <span>{feat.shortTitle}</span>
-              <span
-                className={`text-[9px] px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider ${
-                  isActive
-                    ? 'bg-white/20 text-white'
-                    : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
-                }`}
-              >
-                {feat.badge}
-              </span>
-            </button>
-          )
-        })}
-      </div>
-
-      {/* ── 3. Active Feature Container ── */}
+      {/* ── 2. Active Feature Container ── */}
       <motion.div
         key={activeFeature.key}
         initial={{ opacity: 0, y: 10 }}
