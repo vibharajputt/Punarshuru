@@ -1,6 +1,5 @@
-import { useState, useId, useRef } from 'react'
+import { useState, useId, useRef, useEffect } from 'react'
 import {
-  MessageSquare,
   Sparkles,
   CheckCircle2,
   AlertCircle,
@@ -10,6 +9,7 @@ import {
   Send,
   BookOpen,
   Volume2,
+  VolumeX,
   Flame,
   Award,
   Mic,
@@ -17,6 +17,12 @@ import {
   Calculator,
   ExternalLink,
   Code2,
+  Play,
+  RotateCcw,
+  Bot,
+  User,
+  Radio,
+  MessageSquare,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -39,10 +45,53 @@ interface InterviewDilemma {
   proofAnchor: string
 }
 
+interface MockInterviewQuestion {
+  id: number
+  interviewerName: string
+  interviewerRole: string
+  question: string
+  context: string
+  idealKeywords: string[]
+  apologyWordsToAvoid: string[]
+}
+
+const MOCK_INTERVIEW_QUESTIONS: MockInterviewQuestion[] = [
+  {
+    id: 1,
+    interviewerName: 'Priya Nair',
+    interviewerRole: 'Lead Engineering Hiring Manager (Amazon Rekindle / Tech Hub)',
+    question:
+      'Welcome! I see you have 5 years of strong backend foundations, followed by a 3-year career break after 2021. Could you explain what you were focused on during your break and how you prepared for modern cloud deliverables?',
+    context: 'Round 1: Career Break Ownership & Modern Technical Currency',
+    idealKeywords: ['caregiving', 'prioritization', 'Spring Boot 3', 'Docker', 'RAG', 'AWS', 'certifications', 'microservice'],
+    apologyWordsToAvoid: ['sorry', 'lost touch', 'forgot', 'unfortunate', 'struggling', 'family problem'],
+  },
+  {
+    id: 2,
+    interviewerName: 'Priya Nair',
+    interviewerRole: 'Lead Engineering Hiring Manager (Amazon Rekindle / Tech Hub)',
+    question:
+      'Our team deploys containerized microservices daily with CI/CD automation. How do we know you won’t face significant ramp-up delays coming back to hands-on production code?',
+    context: 'Round 2: Practical Muscle Memory & CI/CD Agility',
+    idealKeywords: ['GitHub', 'Docker', 'Compose', 'CI/CD', 'GitHub Actions', 'Swagger', 'PostgreSQL', 'latency', 'production'],
+    apologyWordsToAvoid: ['need training', 'teach me', 'forgot syntax', 'slow learner'],
+  },
+  {
+    id: 3,
+    interviewerName: 'Priya Nair',
+    interviewerRole: 'Lead Engineering Hiring Manager (Amazon Rekindle / Tech Hub)',
+    question:
+      'Since you were away from the market for 3 years, would you be comfortable starting on an associate-level compensation band before moving up?',
+    context: 'Round 3: Lowball Salary Anchor & Seniority Parity Defense',
+    idealKeywords: ['market parity', 'competencies', '90-day review', 'architectural maturity', 'milestone', 'value', 'deliverables'],
+    apologyWordsToAvoid: ['any salary', 'desperate', 'low pay ok', 'junior role is fine'],
+  },
+]
+
 const PRESET_DILEMMAS: InterviewDilemma[] = [
   {
     id: 'why_gap',
-    title: 'The "Why the 3-Year Gap?" Question',
+    title: 'Why the 3-Year Gap?',
     question: '"I see a 3-year gap on your resume after 2021. Why did you take this break, and what have you been doing since?"',
     interviewerTone: 'Skeptical / Assessing Tech Currency',
     context: 'The classic opening interview question designed to test if you feel defensive or apologetic about your career break.',
@@ -85,7 +134,7 @@ const PRESET_DILEMMAS: InterviewDilemma[] = [
   },
   {
     id: 'tech_pace',
-    title: 'The "Tech Stacks Change Fast" Agility Challenge',
+    title: 'Tech Stacks Change Fast',
     question: '"Tech stacks change every 6 months. How do we know you will not struggle to ramp up on our modern cloud pipelines?"',
     interviewerTone: 'Challenging / Assessing Agility',
     context: 'Assessing whether you have hands-on practical muscle memory vs just theoretical book knowledge.',
@@ -118,7 +167,7 @@ const PRESET_DILEMMAS: InterviewDilemma[] = [
   },
   {
     id: 'salary_lowball',
-    title: 'The "Will You Accept a Junior Title / Pay Cut?" Trap',
+    title: 'Junior Title / Pay Cut Trap',
     question: '"Since you have been out of the market for 3 years, are you willing to join at a lower compensation band or associate title to re-prove yourself?"',
     interviewerTone: 'Negotiation Anchor / Cost Cutting',
     context: 'Recruiter testing if you lack confidence and will accept a below-market lowball offer.',
@@ -147,68 +196,6 @@ const PRESET_DILEMMAS: InterviewDilemma[] = [
       'I appreciate the need for performance consistency. Given that my core systems background and recent cloud implementations match full Mid-Senior competencies, I am targeting standard market parity of ₹14–16 LPA. I am confident in my Day-1 delivery and welcome setting objective 90-day milestone deliverables.',
     proofAnchor: 'Cite current market compensation parity for modern cloud developers.',
   },
-  {
-    id: 'workload_reliability',
-    title: 'The "Can You Handle Long Hours & Sprints?" Question',
-    question: '"Our team works on fast-paced sprint release cycles with occasional evening support. How will you manage this with personal responsibilities?"',
-    interviewerTone: 'Operational / Assessing Reliability',
-    context: 'Recruiter subtly probing for absenteeism or lack of commitment due to family duties.',
-    hiddenConcern: 'Will this candidate log off abruptly during production incidents or sprint crunches?',
-    options: [
-      {
-        id: 'opt-4-1',
-        title: '❌ Over-promising 24/7 Availability',
-        script:
-          '"I have zero responsibilities now. I will work 14 hours every single day and on weekends whenever you ask."',
-        verdict: 'flawed',
-        score: 45,
-        critique: 'Sounds unrealistic and raises long-term burnout or reliability flags.',
-      },
-      {
-        id: 'opt-4-2',
-        title: '⭐ Structured Reliability & Time-Blocking (Gold Standard)',
-        script:
-          '"I have established complete, dedicated family support systems precisely so I can focus 100% on professional delivery. In my previous roles, I managed on-call rotations and critical release sprints with 99.8% SLA adherence. My career break actually reinforced my asynchronous communication, strict prioritization, and deep-focus discipline."',
-        verdict: 'gold',
-        score: 97,
-        critique: 'Demonstrates professional maturity, dedicated support infrastructure, and past track record of sprint delivery.',
-      },
-    ],
-    goldScript:
-      'I have established dedicated support systems specifically to ensure full focus on professional deliverables. In my prior 5 years, I consistently managed high-stakes on-call rotations and sprint deadlines. My time away further honed my prioritization, async communication, and focus under pressure.',
-    proofAnchor: 'Mention your prior experience with on-call P1/P2 production support rotations.',
-  },
-  {
-    id: 'legacy_vs_fresher',
-    title: 'The "Why Hire You Over Fresh College Grads?" Question',
-    question: '"Your older background was in monolithic systems. Why should we hire a returner instead of fresh CS graduates who learned modern Python and AI in college?"',
-    interviewerTone: 'Competitive / Assessing ROI',
-    context: 'Assessing what seasoned value you bring that freshers cannot provide.',
-    hiddenConcern: 'Is a returner more expensive than a fresher for the same technical output?',
-    options: [
-      {
-        id: 'opt-5-1',
-        title: '❌ Dismissing Freshers Emotionally',
-        script:
-          '"Freshers know nothing about real life. I have more life experience so I am naturally better."',
-        verdict: 'flawed',
-        score: 35,
-        critique: 'Arrogant tone without addressing the technical comparison constructively.',
-      },
-      {
-        id: 'opt-5-2',
-        title: '⭐ Architectural Maturity + Modern Agility (Gold Standard)',
-        script:
-          '"Fresh graduates bring great enthusiasm, but what I bring is high-stakes production judgment: understanding edge cases, debugging complex concurrency race conditions, designing resilient database schemas, and stakeholder communication developed over years of real client deliveries. Combined with my modern Spring Boot 3 and LangChain RAG certifications, you get zero-drama architectural maturity from Day 1."',
-        verdict: 'gold',
-        score: 99,
-        critique: 'Unbeatable value proposition! Highlights production battle scars, debugging intuition, and reliability that freshers take 3+ years to develop.',
-      },
-    ],
-    goldScript:
-      'Fresh graduates have enthusiasm, but I offer seasoned production judgment: debugging complex concurrency, designing scalable databases, and managing client expectations under pressure. Combined with my modern GenAI and cloud skills, you receive architectural maturity with zero ramp-up drama.',
-    proofAnchor: 'Highlight complex real-world outages or database deadlocks you resolved in past roles.',
-  },
 ]
 
 export default function GapToStrengthSimulator() {
@@ -222,8 +209,25 @@ export default function GapToStrengthSimulator() {
   const breakYearsParityId = useId()
 
   const [activeTab, setActiveTab] = useState<
-    'custom_ai' | 'proof_shield' | 'salary_parity' | 'preset_library' | 'elevator_pitch'
-  >('custom_ai')
+    'voice_1on1' | 'custom_ai' | 'proof_shield' | 'salary_parity' | 'preset_library' | 'elevator_pitch'
+  >('voice_1on1')
+
+  // ── 1:1 Live Voice Mock Interview State ──
+  const [mockRoundIdx, setMockRoundIdx] = useState<number>(0)
+  const [isAiSpeaking, setIsAiSpeaking] = useState<boolean>(false)
+  const [isUserRecording, setIsUserRecording] = useState<boolean>(false)
+  const [userSpokenText, setUserSpokenText] = useState<string>('')
+  const [roundFeedback, setRoundFeedback] = useState<{
+    score: number
+    verdict: string
+    detectedKeywords: string[]
+    detectedApologies: string[]
+    feedbackText: string
+  } | null>(null)
+  const [isInterviewCompleted, setIsInterviewCompleted] = useState<boolean>(false)
+
+  // Voice speech synthesis & recognition refs
+  const recognitionRef = useRef<any>(null)
 
   // Preset State
   const [activeDilemmaIdx, setActiveDilemmaIdx] = useState<number>(0)
@@ -247,10 +251,6 @@ export default function GapToStrengthSimulator() {
       '“I understand compensation guidelines exist to reflect active market recency. However, over the past 4 months, I refreshed my backend architecture into modern Spring Boot 3, deployed a containerized ChromaDB search microservice on AWS, and completed advanced cloud certifications. My prior 5 years give me seasoned system design maturity, while my recent PoCs prove Day-1 currency. Therefore, I am targeting fair market parity for this technical scope (₹14–16 LPA).”',
     proofAnchor: 'Show live Swagger API docs and GitHub commit history during interview.',
   })
-
-  // Voice Recording Simulator State
-  const [isRecording, setIsRecording] = useState<boolean>(false)
-  const recognitionRef = useRef<any>(null)
 
   // Salary Parity Calculator State
   const [preBreakCTC, setPreBreakCTC] = useState<number>(8.0)
@@ -277,34 +277,65 @@ export default function GapToStrengthSimulator() {
   const deltaSkillPremiumCTC = Number((inflationCompounded * 1.25).toFixed(1))
   const marketPenaltyAvoided = Number((deltaSkillPremiumCTC - preBreakCTC).toFixed(1))
 
-  const handleCopy = (text: string, type: 'script' | 'elevator' | 'badge') => {
-    navigator.clipboard.writeText(text)
-    if (type === 'elevator') {
-      setCopiedElevator(true)
-      setTimeout(() => setCopiedElevator(false), 2000)
-    } else if (type === 'badge') {
-      setCopiedBadge(true)
-      setTimeout(() => setCopiedBadge(false), 2000)
-    } else {
-      setCopiedScript(true)
-      setTimeout(() => setCopiedScript(false), 2000)
+  const currentMockQ = MOCK_INTERVIEW_QUESTIONS[mockRoundIdx]
+
+  // Cleanup speech synthesis on unmount
+  useEffect(() => {
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel()
+      }
+    }
+  }, [])
+
+  // Text-To-Speech: AI Interviewer speaks out loud
+  const speakText = (text: string) => {
+    if (!window.speechSynthesis) return
+    window.speechSynthesis.cancel()
+
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.rate = 0.95
+    utterance.pitch = 1.05
+
+    const voices = window.speechSynthesis.getVoices()
+    const femaleVoice = voices.find(
+      (v) =>
+        (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Google UK English Female') || v.name.includes('Samantha')) &&
+        v.lang.startsWith('en')
+    ) || voices.find((v) => v.lang.startsWith('en'))
+
+    if (femaleVoice) {
+      utterance.voice = femaleVoice
+    }
+
+    utterance.onstart = () => setIsAiSpeaking(true)
+    utterance.onend = () => setIsAiSpeaking(false)
+    utterance.onerror = () => setIsAiSpeaking(false)
+
+    window.speechSynthesis.speak(utterance)
+  }
+
+  const stopSpeaking = () => {
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel()
+      setIsAiSpeaking(false)
     }
   }
 
-  // Voice Recording Toggle
-  const toggleVoiceRecording = () => {
-    if (isRecording) {
+  // Toggle Live User Recording
+  const toggleUserMic = () => {
+    if (isUserRecording) {
       if (recognitionRef.current) {
         recognitionRef.current.stop()
       }
-      setIsRecording(false)
+      setIsUserRecording(false)
       return
     }
 
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
     if (!SpeechRecognition) {
-      alert('Your browser does not support Web Speech API. You can still type your practice response!')
+      alert('Your browser does not support Speech Recognition. You can type your answer in the box below!')
       return
     }
 
@@ -319,22 +350,90 @@ export default function GapToStrengthSimulator() {
         for (let i = event.resultIndex; i < event.results.length; i++) {
           transcript += event.results[i][0].transcript
         }
-        setUserPracticeText(transcript)
+        setUserSpokenText(transcript)
       }
 
-      recognition.onerror = () => {
-        setIsRecording(false)
-      }
-
-      recognition.onend = () => {
-        setIsRecording(false)
-      }
+      recognition.onerror = () => setIsUserRecording(false)
+      recognition.onend = () => setIsUserRecording(false)
 
       recognition.start()
       recognitionRef.current = recognition
-      setIsRecording(true)
+      setIsUserRecording(true)
     } catch {
-      setIsRecording(false)
+      setIsUserRecording(false)
+    }
+  }
+
+  // Evaluate Live Mock Answer
+  const evaluateMockAnswer = () => {
+    if (!userSpokenText.trim()) return
+
+    const lower = userSpokenText.toLowerCase()
+    let score = 55
+
+    // Detect Keywords
+    const foundKeywords = currentMockQ.idealKeywords.filter((k) => lower.includes(k.toLowerCase()))
+    const foundApologies = currentMockQ.apologyWordsToAvoid.filter((w) => lower.includes(w.toLowerCase()))
+
+    score += foundKeywords.length * 8
+    score -= foundApologies.length * 15
+
+    if (userSpokenText.length > 100) score += 10
+    score = Math.min(98, Math.max(35, score))
+
+    const verdict =
+      score >= 80
+        ? '⭐ Excellent & Confident Delivery (Pass)'
+        : score >= 60
+        ? '👍 Strong Foundation, Minor Polishing Needed'
+        : '⚠️ Apologetic Tone / Low Technical Keywords'
+
+    const feedback =
+      score >= 80
+        ? `Superb answer! You owned your career milestones with pride and backed up your claims with ${foundKeywords.length} verified technical keywords.`
+        : `Good effort. To impress the interviewer, avoid hesitation and cite concrete project proofs like Docker, Spring Boot 3, and 90-day review agreements.`
+
+    setRoundFeedback({
+      score,
+      verdict,
+      detectedKeywords: foundKeywords,
+      detectedApologies: foundApologies,
+      feedbackText: feedback,
+    })
+  }
+
+  // Next Question in Mock Interview
+  const nextMockQuestion = () => {
+    setUserSpokenText('')
+    setRoundFeedback(null)
+    if (mockRoundIdx < MOCK_INTERVIEW_QUESTIONS.length - 1) {
+      const nextIdx = mockRoundIdx + 1
+      setMockRoundIdx(nextIdx)
+      speakText(MOCK_INTERVIEW_QUESTIONS[nextIdx].question)
+    } else {
+      setIsInterviewCompleted(true)
+    }
+  }
+
+  const resetMockInterview = () => {
+    setMockRoundIdx(0)
+    setUserSpokenText('')
+    setRoundFeedback(null)
+    setIsInterviewCompleted(false)
+    stopSpeaking()
+  }
+
+  const handleCopy = (text: string, type: 'script' | 'elevator' | 'badge') => {
+    navigator.clipboard.writeText(text)
+    if (type === 'elevator') {
+      setCopiedElevator(true)
+      setTimeout(() => setCopiedElevator(false), 2000)
+    } else if (type === 'badge') {
+      setCopiedBadge(true)
+      setTimeout(() => setCopiedBadge(false), 2000)
+    } else {
+      setCopiedScript(true)
+      setTimeout(() => setCopiedScript(false), 2000)
     }
   }
 
@@ -355,10 +454,6 @@ export default function GapToStrengthSimulator() {
       concern = 'Recruiter assessing operational reliability and risk of sudden unplanned absences.'
       trap = 'Do not get emotional or overpromise 16-hour workdays. Focus on structured time-blocking and support systems.'
       proof = 'Cite past P1 on-call rotation track record and async communication discipline.'
-    } else if (q.includes('freelance') || q.includes('idle') || q.includes('doing nothing')) {
-      concern = 'Assessing whether you were actively self-learning or disconnected entirely.'
-      trap = 'Do not claim you were coding 8 hours every day during caregiving if you were not.'
-      proof = 'Emphasize your dedicated 3-4 month intensive sprint before re-entering the market.'
     }
 
     const script = `“I deliberately took time for ${customGapReason || 'planned personal caregiving'}—a milestone that strengthened my prioritization and focus. Over the past 4 months, I executed a dedicated returnee modernization sprint, refreshing my core engineering foundation into modern cloud frameworks, building live containerized PoCs on GitHub, and earning industry certifications. Combined with my prior engineering depth, I bring proven architectural judgment and refreshed technical passion with zero ramp-up delay.”`
@@ -391,11 +486,6 @@ export default function GapToStrengthSimulator() {
       tips.push('Remove apologetic words like "sorry" or "lost touch". Frame your break with confidence.')
     }
 
-    if (text.includes('prioritization') || text.includes('maturity') || text.includes('system design') || text.includes('reliability')) {
-      score += 15
-      tips.push('Great framing linking past experience to seasoned judgment!')
-    }
-
     score = Math.min(98, Math.max(30, score))
 
     setPracticeResult({
@@ -409,33 +499,51 @@ export default function GapToStrengthSimulator() {
     })
   }
 
-  // 30-Sec Elevator Pitch Formula
   const generatedElevatorScript = `“I am a Senior Engineer with a strong foundation in ${pastStack}. Following a planned ${gapYears}-year career break for family milestones, I recently completed an intensive returnee modernization sprint—building and deploying live cloud microservices with Docker, CI/CD, and GenAI workflows. I combine the battle-tested system design judgment of an experienced engineer with the energized, modern agility required for your ${targetRole} opening.”`
 
   const activeDilemma = PRESET_DILEMMAS[activeDilemmaIdx]
 
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 sm:p-7 shadow-xs space-y-6">
-      {/* ── 1. Top Header & Mode Selector ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-950/60 dark:to-blue-950/60 text-teal-700 dark:text-teal-300 text-xs font-black mb-1.5 border border-teal-200/50">
-            <MessageSquare size={13} className="text-teal-600" />
-            <span>PunarSetu Returner Superpower Engine</span>
+      {/* ── 1. Top Header & Mode Selector (Clean Responsive Layout) ── */}
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-teal-50 to-blue-50 dark:from-teal-950/60 dark:to-blue-950/60 text-teal-700 dark:text-teal-300 text-xs font-black border border-teal-200/50">
+            <Radio size={13} className="text-teal-600 animate-pulse" />
+            <span>AI Voice Mock Interviewer & Superpower Engine</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            Career Gap-to-Strength Proof & Negotiation Engine
+            Career Gap-to-Strength Proof & 1:1 Voice Simulator
           </h3>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl font-medium">
-            Unlike ChatGPT text generation, PunarSetu creates <strong className="text-slate-800 dark:text-slate-200">Verifiable Code Proof Badges</strong>, calculates <strong className="text-slate-800 dark:text-slate-200">Form-16 Returnee Salary Parity</strong>, and offers <strong className="text-slate-800 dark:text-slate-200">Live Voice Pitch Practice</strong>.
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl font-medium">
+            AI interviewer speaks out loud, listens to your microphone response, and gives real-time vocal feedback.
           </p>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex flex-wrap items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0">
+        {/* Clean Filter Tabs Bar */}
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
           <button
             type="button"
-            onClick={() => setActiveTab('custom_ai')}
+            onClick={() => {
+              setActiveTab('voice_1on1')
+              stopSpeaking()
+            }}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'voice_1on1'
+                ? 'bg-teal-600 text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900'
+            }`}
+          >
+            <Mic size={13} />
+            <span>1:1 Voice Mock Room</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab('custom_ai')
+              stopSpeaking()
+            }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'custom_ai'
                 ? 'bg-teal-600 text-white shadow-xs'
@@ -445,9 +553,13 @@ export default function GapToStrengthSimulator() {
             <Sparkles size={13} />
             <span>AI Question Solver</span>
           </button>
+
           <button
             type="button"
-            onClick={() => setActiveTab('proof_shield')}
+            onClick={() => {
+              setActiveTab('proof_shield')
+              stopSpeaking()
+            }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'proof_shield'
                 ? 'bg-teal-600 text-white shadow-xs'
@@ -455,11 +567,15 @@ export default function GapToStrengthSimulator() {
             }`}
           >
             <Code2 size={13} />
-            <span>Proof of Work Shield</span>
+            <span>Proof Shield</span>
           </button>
+
           <button
             type="button"
-            onClick={() => setActiveTab('salary_parity')}
+            onClick={() => {
+              setActiveTab('salary_parity')
+              stopSpeaking()
+            }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'salary_parity'
                 ? 'bg-teal-600 text-white shadow-xs'
@@ -467,11 +583,15 @@ export default function GapToStrengthSimulator() {
             }`}
           >
             <Calculator size={13} />
-            <span>Form-16 Parity Math</span>
+            <span>Form-16 Parity</span>
           </button>
+
           <button
             type="button"
-            onClick={() => setActiveTab('preset_library')}
+            onClick={() => {
+              setActiveTab('preset_library')
+              stopSpeaking()
+            }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'preset_library'
                 ? 'bg-teal-600 text-white shadow-xs'
@@ -479,11 +599,15 @@ export default function GapToStrengthSimulator() {
             }`}
           >
             <BookOpen size={13} />
-            <span>5 Traps</span>
+            <span>Preset Traps</span>
           </button>
+
           <button
             type="button"
-            onClick={() => setActiveTab('elevator_pitch')}
+            onClick={() => {
+              setActiveTab('elevator_pitch')
+              stopSpeaking()
+            }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'elevator_pitch'
                 ? 'bg-teal-600 text-white shadow-xs'
@@ -497,11 +621,250 @@ export default function GapToStrengthSimulator() {
       </div>
 
       {/* ────────────────────────────────────────────────────────────
-          TAB 1: ASK ANY CUSTOM QUESTION / SCENARIO + LIVE VOICE MIC
+          MODE 1: 1:1 VOICE AI MOCK INTERVIEW ROOM
+      ──────────────────────────────────────────────────────────── */}
+      {activeTab === 'voice_1on1' && (
+        <div className="space-y-6">
+          {!isInterviewCompleted ? (
+            <div className="space-y-5">
+              {/* Virtual Interviewer Stage */}
+              <div className="p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 text-white border border-slate-800 shadow-xl space-y-5">
+                {/* Interviewer Profile Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                  <div className="flex items-center gap-3.5">
+                    <div className="relative">
+                      <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center text-white font-black text-lg shadow-lg">
+                        <Bot size={26} />
+                      </div>
+                      {isAiSpeaking && (
+                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-slate-900 animate-ping" />
+                      )}
+                    </div>
+
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-black text-base text-white">
+                          {currentMockQ.interviewerName}
+                        </h4>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/40">
+                          AI Hiring Manager
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        {currentMockQ.interviewerRole}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold px-3 py-1 rounded-xl bg-slate-800 border border-slate-700 text-slate-300">
+                      Round {mockRoundIdx + 1} of {MOCK_INTERVIEW_QUESTIONS.length}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => speakText(currentMockQ.question)}
+                      className="px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <Volume2 size={13} />
+                      <span>{isAiSpeaking ? 'Replay Voice' : 'Hear Question 🔊'}</span>
+                    </button>
+                    {isAiSpeaking && (
+                      <button
+                        type="button"
+                        onClick={stopSpeaking}
+                        className="p-1.5 rounded-xl bg-rose-600/80 hover:bg-rose-600 text-white transition"
+                        title="Stop audio"
+                      >
+                        <VolumeX size={14} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Spoken Question Box */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-teal-400 uppercase tracking-wider">
+                    <span>{currentMockQ.context}</span>
+                    {isAiSpeaking && (
+                      <span className="text-emerald-400 flex items-center gap-1 animate-pulse">
+                        <span>● AI is speaking...</span>
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-sm sm:text-base text-slate-100 font-medium leading-relaxed bg-slate-950/90 p-5 rounded-2xl border border-slate-800">
+                    "{currentMockQ.question}"
+                  </p>
+                </div>
+              </div>
+
+              {/* Candidate Response Stage */}
+              <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                  <div className="flex items-center gap-2">
+                    <User size={16} className="text-[#0B4F9C] dark:text-sky-400" />
+                    <h4 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">
+                      Your Turn: Speak Your Answer (Mic or Text)
+                    </h4>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={toggleUserMic}
+                      className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-2 cursor-pointer shadow-xs ${
+                        isUserRecording
+                          ? 'bg-rose-600 text-white animate-pulse'
+                          : 'bg-teal-600 hover:bg-teal-700 text-white'
+                      }`}
+                    >
+                      {isUserRecording ? <MicOff size={14} /> : <Mic size={14} />}
+                      <span>{isUserRecording ? 'Listening... Tap to Stop' : 'Speak into Microphone 🎙️'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Speech Textarea */}
+                <textarea
+                  rows={3}
+                  value={userSpokenText}
+                  onChange={(e) => setUserSpokenText(e.target.value)}
+                  placeholder="Click the microphone button and speak aloud, or type your answer here... (e.g. 'I took planned time for family caregiving, while executing an intensive Spring Boot 3 & Docker RAG sprint...')"
+                  className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-600 outline-none resize-none font-medium"
+                />
+
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-[11px] text-slate-400 font-medium">
+                    {userSpokenText ? `${userSpokenText.split(' ').filter(Boolean).length} words recorded` : 'Ready to record your voice'}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={evaluateMockAnswer}
+                    disabled={!userSpokenText.trim()}
+                    className="px-5 py-2.5 rounded-xl bg-[#0B4F9C] hover:bg-blue-800 disabled:opacity-50 text-white text-xs font-black transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  >
+                    <Send size={13} />
+                    <span>Submit & Get Instant AI Feedback</span>
+                  </button>
+                </div>
+
+                {/* AI Real-Time Feedback Card */}
+                {roundFeedback && (
+                  <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-700 space-y-3 animate-in fade-in duration-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-black text-slate-900 dark:text-white">
+                        {roundFeedback.verdict}
+                      </span>
+                      <span
+                        className={`text-xs font-black px-3 py-1 rounded-full ${
+                          roundFeedback.score >= 80
+                            ? 'bg-emerald-600 text-white'
+                            : roundFeedback.score >= 60
+                            ? 'bg-amber-600 text-white'
+                            : 'bg-rose-600 text-white'
+                        }`}
+                      >
+                        Vocal Score: {roundFeedback.score}/100
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
+                      {roundFeedback.feedbackText}
+                    </p>
+
+                    {/* Detected Keywords */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs">
+                      <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300">
+                        <strong>✓ Power Words Detected ({roundFeedback.detectedKeywords.length}):</strong>{' '}
+                        {roundFeedback.detectedKeywords.length > 0
+                          ? roundFeedback.detectedKeywords.join(', ')
+                          : 'None detected (try citing Docker, Spring Boot, RAG)'}
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300">
+                        <strong>⚠️ Apology Words Found ({roundFeedback.detectedApologies.length}):</strong>{' '}
+                        {roundFeedback.detectedApologies.length > 0
+                          ? roundFeedback.detectedApologies.join(', ')
+                          : 'Zero apologetic words detected! Clean delivery.'}
+                      </div>
+                    </div>
+
+                    <div className="pt-2 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={nextMockQuestion}
+                        className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-black transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                      >
+                        <span>{mockRoundIdx < MOCK_INTERVIEW_QUESTIONS.length - 1 ? 'Proceed to Round ' + (mockRoundIdx + 2) : 'View Final Hiring Scorecard'}</span>
+                        <Play size={13} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* Interview Completion Scorecard */
+            <div className="p-7 rounded-3xl bg-gradient-to-br from-teal-500/10 via-emerald-500/10 to-blue-500/10 dark:from-slate-900 dark:to-teal-950/40 border-2 border-teal-500/30 text-center space-y-5 animate-in zoom-in-95 duration-200">
+              <div className="w-16 h-16 rounded-full bg-teal-600 text-white flex items-center justify-center mx-auto shadow-lg">
+                <Award size={32} />
+              </div>
+
+              <div className="space-y-1">
+                <h4 className="text-xl font-black text-slate-900 dark:text-white">
+                  1:1 Voice Mock Interview Successfully Completed! 🎉
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-lg mx-auto font-medium">
+                  You successfully cleared all 3 interview rounds (Career Gap Ownership, Production Currency, and Salary Parity Defense) with a passing grade.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto text-left">
+                <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-800 space-y-1">
+                  <div className="text-[10px] uppercase font-bold text-slate-400">Confidence Tone</div>
+                  <div className="text-base font-black text-emerald-600">Unshakable Professional</div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-800 space-y-1">
+                  <div className="text-[10px] uppercase font-bold text-slate-400">Ramp-Up Skepticism</div>
+                  <div className="text-base font-black text-teal-600">Eliminated (0 Flags)</div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-800 space-y-1">
+                  <div className="text-[10px] uppercase font-bold text-slate-400">Returnee Readiness</div>
+                  <div className="text-base font-black text-[#0B4F9C] dark:text-sky-400">96% Job-Ready</div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={resetMockInterview}
+                  className="px-4 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold transition flex items-center gap-1.5"
+                >
+                  <RotateCcw size={13} />
+                  <span>Restart Voice Mock</span>
+                </button>
+
+                <Link
+                  to="/features/returnships"
+                  className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-black transition flex items-center gap-1.5 shadow-xs"
+                >
+                  <span>Apply to Corporate Returnships</span>
+                  <ExternalLink size={13} />
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ────────────────────────────────────────────────────────────
+          TAB 2: ASK ANY CUSTOM QUESTION / SCENARIO
       ──────────────────────────────────────────────────────────── */}
       {activeTab === 'custom_ai' && (
         <div className="space-y-5">
-          {/* Custom Question Builder */}
           <div className="p-5 sm:p-6 rounded-3xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 space-y-4">
             <div className="flex items-center gap-2">
               <Sparkles size={16} className="text-teal-600 dark:text-teal-400" />
@@ -540,31 +903,6 @@ export default function GapToStrengthSimulator() {
               </div>
             </div>
 
-            {/* Quick Inspiration Pills */}
-            <div className="space-y-1.5 pt-1">
-              <span className="text-[11px] font-bold text-slate-400">Quick Test Questions:</span>
-              <div className="flex flex-wrap gap-1.5">
-                {[
-                  'Why did you not freelance or work part-time during your gap?',
-                  'How do we know you will not quit again after 6 months?',
-                  'Why should we hire you over young freshers who know Python?',
-                  'Are you comfortable reporting to a tech lead 5 years younger than you?',
-                ].map((q, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      setCustomQuestion(q)
-                      setTimeout(generateCustomAnswer, 50)
-                    }}
-                    className="text-[11px] px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
-                  >
-                    "{q}"
-                  </button>
-                ))}
-              </div>
-            </div>
-
             <div className="flex justify-end pt-1">
               <button
                 type="button"
@@ -577,10 +915,8 @@ export default function GapToStrengthSimulator() {
             </div>
           </div>
 
-          {/* Generated Result Card */}
           {customGeneratedPitch && (
             <div className="space-y-4 animate-in fade-in duration-200">
-              {/* Recruiter Psychology Breakdown */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 space-y-1">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-amber-800 dark:text-amber-300">
@@ -603,7 +939,6 @@ export default function GapToStrengthSimulator() {
                 </div>
               </div>
 
-              {/* Gold Script Box */}
               <div className="p-5 rounded-3xl bg-slate-900 text-white space-y-3 shadow-md border border-slate-800">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -642,26 +977,14 @@ export default function GapToStrengthSimulator() {
                 </div>
               </div>
 
-              {/* Live Voice & Practice Box */}
+              {/* Practice Response Box */}
               <div className="p-5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-dashed border-teal-500/30 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center justify-between">
                   <h5 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
                     <MessageSquare size={13} className="text-teal-600" />
-                    <span>Practice Response (Speak into Mic or Type):</span>
+                    <span>Practice Speaking / Typing Your Response:</span>
                   </h5>
-
-                  <button
-                    type="button"
-                    onClick={toggleVoiceRecording}
-                    className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs ${
-                      isRecording
-                        ? 'bg-rose-600 text-white animate-pulse'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
-                    }`}
-                  >
-                    {isRecording ? <MicOff size={13} /> : <Mic size={13} className="text-rose-500" />}
-                    <span>{isRecording ? 'Listening... (Tap to Stop)' : 'Use Microphone 🎤'}</span>
-                  </button>
+                  <span className="text-[10px] text-slate-400 font-medium">AI Feedback Engine</span>
                 </div>
 
                 <textarea
@@ -669,7 +992,7 @@ export default function GapToStrengthSimulator() {
                   rows={2}
                   value={userPracticeText}
                   onChange={(e) => setUserPracticeText(e.target.value)}
-                  placeholder="Speak into microphone or type how you would answer..."
+                  placeholder="Type how you would naturally answer this in an interview to get instant scoring..."
                   className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-600 outline-none resize-none font-medium"
                 />
 
@@ -718,7 +1041,7 @@ export default function GapToStrengthSimulator() {
       )}
 
       {/* ────────────────────────────────────────────────────────────
-          TAB 2: PROOF OF WORK SHIELD (THE ANTI-CHATGPT SUPERPOWER)
+          TAB 3: PROOF OF WORK SHIELD
       ──────────────────────────────────────────────────────────── */}
       {activeTab === 'proof_shield' && (
         <div className="space-y-5 animate-in fade-in duration-150">
@@ -739,7 +1062,6 @@ export default function GapToStrengthSimulator() {
               ChatGPT can only give text scripts that recruiters often distrust. PunarSetu generates a <strong>Live Verifiable Proof Dossier</strong> linking your actual GitHub commits, container IDs, and live Swagger endpoints to prove Day-1 deployment capability.
             </p>
 
-            {/* Proof Artifact Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
               <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-1">
                 <div className="text-[10px] uppercase font-bold text-slate-400">Live Microservice</div>
@@ -760,7 +1082,6 @@ export default function GapToStrengthSimulator() {
               </div>
             </div>
 
-            {/* Copyable Proof Badge */}
             <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
               <div className="font-mono text-slate-300 text-[11px]">
                 🛡️ Verified Returnee Proof: <span className="text-teal-300 font-bold">PunarSetu-Verified-ID: RET-2026-982</span>
@@ -794,7 +1115,7 @@ export default function GapToStrengthSimulator() {
       )}
 
       {/* ────────────────────────────────────────────────────────────
-          TAB 3: FORM-16 & RETURNEE SALARY PARITY CALCULATOR
+          TAB 4: FORM-16 & RETURNEE SALARY PARITY
       ──────────────────────────────────────────────────────────── */}
       {activeTab === 'salary_parity' && (
         <div className="space-y-5 animate-in fade-in duration-150">
@@ -841,7 +1162,6 @@ export default function GapToStrengthSimulator() {
               </div>
             </div>
 
-            {/* Calculated Parity Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
               <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
                 <div className="text-[10px] uppercase font-bold text-slate-400">Old Pre-Break CTC</div>
@@ -861,23 +1181,15 @@ export default function GapToStrengthSimulator() {
                 <div className="text-[10px] text-emerald-700 dark:text-emerald-300 font-semibold">+₹{marketPenaltyAvoided}L Penalty Defended</div>
               </div>
             </div>
-
-            <div className="p-3.5 rounded-2xl bg-slate-900 text-white space-y-2 text-xs">
-              <span className="text-[10px] font-bold text-amber-400 uppercase">Form-16 Defense Script:</span>
-              <p className="font-mono text-slate-200 text-[11px] leading-relaxed">
-                “While my last-drawn salary was ₹{preBreakCTC} LPA, compounding inflation and market evolution have raised standard compensation for this architectural scope to ₹{deltaSkillPremiumCTC} LPA. My verified cloud microservices match full modern delivery standards.”
-              </p>
-            </div>
           </div>
         </div>
       )}
 
       {/* ────────────────────────────────────────────────────────────
-          TAB 4: 5 REAL-WORLD RECRUITER PRESET DILEMMAS
+          TAB 5: 5 REAL-WORLD RECRUITER PRESET DILEMMAS
       ──────────────────────────────────────────────────────────── */}
       {activeTab === 'preset_library' && (
         <div className="space-y-6">
-          {/* Question Selector Pills */}
           <div className="flex flex-wrap gap-2">
             {PRESET_DILEMMAS.map((d, i) => (
               <button
@@ -898,7 +1210,6 @@ export default function GapToStrengthSimulator() {
             ))}
           </div>
 
-          {/* Question Card */}
           <div className="p-5 rounded-3xl bg-slate-900 text-white space-y-3 shadow-md border border-slate-800">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -922,7 +1233,6 @@ export default function GapToStrengthSimulator() {
             </div>
           </div>
 
-          {/* Interactive Response Options */}
           <div className="space-y-3">
             <h4 className="text-xs font-black uppercase tracking-wider text-slate-500">
               Compare Response Approaches:
@@ -977,31 +1287,11 @@ export default function GapToStrengthSimulator() {
               })}
             </div>
           </div>
-
-          {/* Gold Standard Script Card */}
-          <div className="p-5 rounded-3xl bg-gradient-to-r from-teal-50 to-blue-50 dark:from-slate-800 dark:to-teal-950/40 border border-teal-200 dark:border-teal-900/60 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase text-teal-800 dark:text-teal-300 flex items-center gap-1.5">
-                <Award size={14} />
-                <span>PunarSetu Gold Counter-Script</span>
-              </span>
-              <button
-                type="button"
-                onClick={() => handleCopy(activeDilemma.goldScript, 'script')}
-                className="px-3 py-1 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-100 text-xs font-bold transition flex items-center gap-1 cursor-pointer border border-slate-200 dark:border-slate-700 shadow-2xs"
-              >
-                {copiedScript ? 'Copied!' : 'Copy Script'}
-              </button>
-            </div>
-            <p className="text-xs text-slate-800 dark:text-slate-200 font-mono bg-white/90 dark:bg-slate-950/80 p-3.5 rounded-xl border border-teal-200/60 dark:border-slate-800 leading-relaxed">
-              "{activeDilemma.goldScript}"
-            </p>
-          </div>
         </div>
       )}
 
       {/* ────────────────────────────────────────────────────────────
-          TAB 5: 30-SECOND ELEVATOR INTRO GENERATOR
+          TAB 6: 30-SECOND ELEVATOR INTRO GENERATOR
       ──────────────────────────────────────────────────────────── */}
       {activeTab === 'elevator_pitch' && (
         <div className="p-5 sm:p-6 rounded-3xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 space-y-5 animate-in fade-in duration-150">
@@ -1061,7 +1351,6 @@ export default function GapToStrengthSimulator() {
             </div>
           </div>
 
-          {/* Generated Elevator Script */}
           <div className="p-5 rounded-3xl bg-slate-900 text-white space-y-3 shadow-md border border-slate-800">
             <div className="flex items-center justify-between">
               <span className="text-xs font-black uppercase text-teal-400 flex items-center gap-1.5">
@@ -1095,7 +1384,7 @@ export default function GapToStrengthSimulator() {
         </div>
       )}
 
-      {/* ── Direct Link to Returnships Hub ── */}
+      {/* ── Footer Link ── */}
       <div className="p-4 rounded-2xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
         <div className="text-teal-900 dark:text-teal-200 font-medium">
           Ready to apply to verified returnship cohorts with zero gap stigma?
