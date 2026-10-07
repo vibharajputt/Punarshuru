@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Sparkles, Heart } from 'lucide-react'
+import { Heart } from 'lucide-react'
 import HealthBadge from '@/components/common/HealthBadge'
 
 export default function Footer() {
@@ -9,10 +9,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Col 1: Brand */}
           <div className="lg:col-span-2 space-y-4">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0B4F9C] to-[#F26B1D] flex items-center justify-center text-white">
-                <Sparkles size={16} />
-              </div>
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <img
+                src="/logo.png"
+                alt="Punarshuru"
+                className="h-9 w-auto object-contain group-hover:scale-105 transition-transform"
+              />
               <span className="font-black text-xl text-white">
                 Punar<span className="text-[#F26B1D]">shuru</span>
               </span>

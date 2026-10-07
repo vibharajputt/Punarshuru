@@ -70,8 +70,15 @@ export default function LoginPage() {
 
       <div className="relative w-full max-w-md">
         {/* Brand */}
-        <div className="text-center mb-8">
-          <span className="text-2xl font-black tracking-tight text-gradient">Punarshuru</span>
+        <div className="text-center mb-6">
+          <Link to="/" className="inline-block group mb-3">
+            <img
+              src="/logo.png"
+              alt="Punarshuru"
+              className="h-16 w-auto mx-auto object-contain drop-shadow-md group-hover:scale-105 transition-transform"
+            />
+          </Link>
+          <span className="text-2xl font-black tracking-tight text-gradient block">Punarshuru</span>
           <p className="mt-1 text-sm text-[#64748B] dark:text-slate-400">AI career intelligence for Bharat 2.0</p>
         </div>
 

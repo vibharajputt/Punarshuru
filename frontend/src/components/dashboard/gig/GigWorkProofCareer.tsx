@@ -10,7 +10,6 @@ import {
   Briefcase,
   Award,
   Sparkles,
-  ShieldCheck,
   Star,
   ChevronRight,
   MapPin,
@@ -146,9 +145,11 @@ export default function GigWorkProofCareer({
       <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border-2 border-emerald-300/80 dark:border-emerald-800/80 shadow-md space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-black">
-              <ShieldCheck size={26} />
-            </div>
+            <img
+              src="/logo.png"
+              alt="Punarshuru Official Seal"
+              className="w-12 h-12 rounded-2xl object-contain border border-emerald-200 dark:border-emerald-850 p-1 bg-white dark:bg-slate-800 shadow-xs"
+            />
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                 BANK & RECRUITER VERIFIED DOCUMENT

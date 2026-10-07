@@ -21,7 +21,7 @@ export default function HeroSection({ onOpenDemo }: HeroSectionProps) {
           >
             {/* Pill */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-100/90 dark:bg-sky-950/80 border border-sky-200 dark:border-sky-800 text-xs font-bold text-[#0B4F9C] dark:text-sky-300 shadow-xs">
-              <Sparkles size={14} className="text-[#F26B1D]" />
+              <img src="/logo.png" alt="Punarshuru" className="w-5 h-5 object-contain" />
               <span>Intelligent Talent & Workforce Ecosystem • Bharat 2.0</span>
             </div>
 
