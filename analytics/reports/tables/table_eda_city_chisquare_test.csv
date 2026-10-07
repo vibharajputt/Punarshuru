@@ -1,0 +1,2 @@
+test_name,contingency_table,chi2_statistic,degrees_of_freedom,p_value,cramers_v_effect_size,association_interpretation,test_assumption
+Pearson Chi-Square Test of Independence,8 Cities x 6 Salary Bands,274.56,35,5.919425983525091e-39,0.0689,Weak,Non-parametric categorical test applied because salary band is ordinal and city is multinomial; all expected cell counts >= 5.

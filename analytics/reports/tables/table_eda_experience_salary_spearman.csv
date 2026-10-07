@@ -1,0 +1,2 @@
+metric_x,metric_y,spearman_rho,p_value,n_obs,test_assumption
+min_experience,avg_salary,0.6332,2.9057682574235965e-180,1602,Non-parametric Spearman chosen due to right-skewed salary distribution and non-linear wage progression.
