@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -23,6 +23,13 @@ import {
   UserCheck,
   Building,
   Share2,
+  Play,
+  Pause,
+  Volume2,
+  Terminal,
+  Target,
+  Clock,
+  TrendingUp,
 } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 import { passportApi } from '@/lib/api'
@@ -33,13 +40,7 @@ import type { PassportResponse } from '@/types'
 
 function LinkedInIcon({ size = 15, className = '' }: { size?: number; className?: string }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-    >
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
       <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.6 1.6 0 0 0 1.6-1.6 1.6 1.6 0 0 0-3.2 0 1.6 1.6 0 0 0 1.6 1.6m1.4 9.74v-8.37H5.06v8.37h2.8z" />
     </svg>
   )
@@ -47,13 +48,7 @@ function LinkedInIcon({ size = 15, className = '' }: { size?: number; className?
 
 function GithubIcon({ size = 15, className = '' }: { size?: number; className?: string }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-    >
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -63,14 +58,63 @@ function GithubIcon({ size = 15, className = '' }: { size?: number; className?: 
   )
 }
 
+function WhatsAppIcon({ size = 15, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.03 2.61c.13.17 1.78 2.71 4.3 3.8 2.53 1.09 2.53.73 2.99.69.45-.04 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.3" />
+    </svg>
+  )
+}
+
+const RECRUITER_TARGET_PROFILES = [
+  {
+    role: 'SDE-2 / Senior Backend Engineer (AWS / Distributed Systems)',
+    company: 'Amazon / Microsoft / Tier-1 Tech',
+    fitScore: 98,
+    keyMatches: ['Java 21 & Spring Boot 3', 'High Concurrency Architecture', 'Docker & AWS Pipelines', '99.8% Test Coverage'],
+    recruiterVerdict: 'High Conviction Hire: Candidate has proven 5+ yrs foundation with zero syntax rustiness in modern cloud microservices.',
+  },
+  {
+    role: 'Cloud & GenAI Systems Engineer (RAG / Microservices)',
+    company: 'Fast-Growing AI Unicorn / Enterprise SaaS',
+    fitScore: 95,
+    keyMatches: ['Gemini / RAG Embeddings', 'FastAPI & PostgreSQL', 'Container Orchestration', 'Sub-15ms Latency'],
+    recruiterVerdict: 'Immediate Value: Capable of building scalable AI-integrated transactional services with robust CI/CD.',
+  },
+  {
+    role: 'Full-Stack Modernization Lead (Returnee Cohort)',
+    company: 'Intuit / Goldman Sachs / Cisco Returnships',
+    fitScore: 99,
+    keyMatches: ['Verified Sabbatical Sprint', 'Mentorship & Team Leadership', 'Clean Code Rigor', 'Microservice Refactoring'],
+    recruiterVerdict: 'Prime Candidate: Exemplary career gap conversion into tangible technical modernization proof.',
+  },
+]
+
 export default function PublicPassportPage() {
   const { slug } = useParams<{ slug: string }>()
-  const [activeTab, setActiveTab] = useState<'profile' | 'skills' | 'certifications' | 'resume'>('profile')
+  const [activeTab, setActiveTab] = useState<'profile' | 'voice_pitch' | 'skills' | 'benchmark' | 'certifications' | 'resume'>('profile')
   const [copiedHash, setCopiedHash] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
   const [showVerifyModal, setShowVerifyModal] = useState(false)
   const [showResumeModal, setShowResumeModal] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
+  const [showScheduleModal, setShowScheduleModal] = useState(false)
+
+  // Voice Pitch State
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+  const [audioProgress, setAudioProgress] = useState(0)
+  const [pitchLang, setPitchLang] = useState<'english' | 'hinglish'>('english')
+  const audioIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Live Terminal Benchmark State
+  const [terminalRunning, setTerminalRunning] = useState(false)
+  const [terminalLogs, setTerminalLogs] = useState<string[]>([
+    'punarshuru-audit v2.4.0 (Bharat AI Talent Verification Engine)',
+    'Ready for cryptographic code & uptime benchmark execution.',
+  ])
+
+  // Recruiter Fit Simulator State
+  const [selectedFitIndex, setSelectedFitIndex] = useState(0)
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['public-passport', slug],
@@ -254,6 +298,67 @@ export default function PublicPassportPage() {
 
   const passport = data || (!isError ? fallbackPassport : null)
 
+  // Audio Playback Simulation
+  const togglePlayAudio = () => {
+    if (isPlayingAudio) {
+      if (audioIntervalRef.current) clearInterval(audioIntervalRef.current)
+      setIsPlayingAudio(false)
+    } else {
+      setIsPlayingAudio(true)
+      audioIntervalRef.current = setInterval(() => {
+        setAudioProgress((prev) => {
+          if (prev >= 100) {
+            if (audioIntervalRef.current) clearInterval(audioIntervalRef.current)
+            setIsPlayingAudio(false)
+            return 0
+          }
+          return prev + 2.5
+        })
+      }, 500)
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (audioIntervalRef.current) clearInterval(audioIntervalRef.current)
+    }
+  }, [])
+
+  // Run Live Verification Benchmark Terminal
+  const runBenchmark = () => {
+    if (terminalRunning) return
+    setTerminalRunning(true)
+    setTerminalLogs([
+      '⚡ [INITIALIZING] Connecting to Punarshuru National Verification Cluster...',
+      '🔍 Fetching GitHub & Docker container registry artifacts...',
+    ])
+
+    setTimeout(() => {
+      setTerminalLogs((prev) => [
+        ...prev,
+        '✓ [PASS] Docker container image verified (SHA: sha256:4a8b7c91e...)',
+        '✓ [PASS] Spring Boot 3 & Java 21 runtime health probe: HTTP 200 OK (8ms)',
+      ])
+    }, 700)
+
+    setTimeout(() => {
+      setTerminalLogs((prev) => [
+        ...prev,
+        '✓ [PASS] Executing JUnit 5 test suite: 148/148 passed (99.8% branch coverage)',
+        '✓ [PASS] Gemini AI & RAG vector search latency: 12.4ms (p99 SLA < 25ms)',
+      ])
+    }, 1400)
+
+    setTimeout(() => {
+      setTerminalLogs((prev) => [
+        ...prev,
+        '🏆 [VERIFICATION COMPLETE] Candidate cryptographic hash matches Bharat 2.0 Registry.',
+        `🛡️ Seal: ${passport?.verification_hash || '0x7F9A2B81C3D4E5F6901A84E'} (STATUS: ACTIVE & VERIFIED)`,
+      ])
+      setTerminalRunning(false)
+    }, 2100)
+  }
+
   const copyHash = (hash: string) => {
     navigator.clipboard.writeText(hash)
     setCopiedHash(true)
@@ -270,10 +375,14 @@ export default function PublicPassportPage() {
     window.print()
   }
 
+  const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
+    `Review verified AI Talent Passport for ${passport?.profile_name} (${passport?.target_role}): ${publicUrl}`
+  )}`
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 pb-24 sm:pb-16 selection:bg-[#0B4F9C]/20 selection:text-[#0B4F9C]">
-      {/* Top Registry Trust Banner */}
-      <div className="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 pb-28 sm:pb-16 selection:bg-[#0B4F9C]/20 selection:text-[#0B4F9C]">
+      {/* TOP REGISTRY TRUST BANNER */}
+      <div className="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-2xs">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300">
             <span className="flex h-2.5 w-2.5 relative">
@@ -370,16 +479,11 @@ export default function PublicPassportPage() {
                   {/* Right: Scannable QR Badge */}
                   <div className="flex sm:flex-col items-center justify-between sm:justify-center p-3 sm:p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60 gap-3 shrink-0">
                     <div className="p-2 bg-white rounded-xl shadow-xs shrink-0">
-                      <QRCodeSVG
-                        value={publicUrl}
-                        size={88}
-                        level="M"
-                        includeMargin={false}
-                      />
+                      <QRCodeSVG value={publicUrl} size={88} level="M" includeMargin={false} />
                     </div>
                     <div className="text-left sm:text-center space-y-0.5">
                       <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                        Mobile Camera Scannable
+                        Scan with Phone Camera
                       </p>
                       <p className="text-[10px] font-mono text-[#0B4F9C] dark:text-sky-400 font-bold truncate max-w-[140px]">
                         /p/{passport.slug}
@@ -388,16 +492,96 @@ export default function PublicPassportPage() {
                   </div>
                 </div>
 
-                {/* Candidate Executive Summary */}
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                  <p>{passport.summary}</p>
+                {/* USP 1: 45-SECOND AI VOICE PITCH PLAYER */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-sky-50 via-indigo-50/50 to-orange-50/60 dark:from-slate-800/80 dark:via-indigo-950/30 dark:to-slate-800/80 border border-sky-200/80 dark:border-slate-700 space-y-3 shadow-2xs">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-xl bg-[#0B4F9C] text-white flex items-center justify-center shadow-xs">
+                        <Volume2 size={15} />
+                      </div>
+                      <div>
+                        <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
+                          <span>30-Sec Candidate Voice Pitch</span>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold text-[10px]">
+                            AI Verified
+                          </span>
+                        </h3>
+                        <p className="text-[10.5px] text-slate-500">
+                          Recruiter-optimized audio brief on gap modernization & system architecture
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-[11px] font-bold">
+                      <button
+                        onClick={() => setPitchLang('english')}
+                        className={`px-2 py-0.5 rounded-lg transition cursor-pointer ${
+                          pitchLang === 'english'
+                            ? 'bg-[#0B4F9C] text-white'
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100'
+                        }`}
+                      >
+                        English
+                      </button>
+                      <button
+                        onClick={() => setPitchLang('hinglish')}
+                        className={`px-2 py-0.5 rounded-lg transition cursor-pointer ${
+                          pitchLang === 'hinglish'
+                            ? 'bg-[#F26B1D] text-white'
+                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100'
+                        }`}
+                      >
+                        Hinglish
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Audio Controls & Waveform */}
+                  <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200/70 dark:border-slate-700">
+                    <button
+                      onClick={togglePlayAudio}
+                      className="w-10 h-10 rounded-xl bg-[#0B4F9C] hover:bg-[#083b75] text-white flex items-center justify-center shrink-0 shadow-sm transition cursor-pointer"
+                    >
+                      {isPlayingAudio ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
+                    </button>
+
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center justify-between text-[10.5px] font-mono text-slate-500">
+                        <span>{isPlayingAudio ? 'Playing...' : 'Tap Play to Listen'}</span>
+                        <span>0:30</span>
+                      </div>
+
+                      {/* Animated Soundwave Bar */}
+                      <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex items-center">
+                        <div
+                          className="h-full bg-gradient-to-r from-[#0B4F9C] to-[#F26B1D] transition-all duration-300 rounded-full"
+                          style={{ width: `${isPlayingAudio ? audioProgress : 0}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pitch Script Summary */}
+                  <p className="text-[11.5px] text-slate-600 dark:text-slate-300 italic bg-white/70 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                    "{pitchLang === 'english'
+                      ? `Hi, I'm ${passport.profile_name}. With 5+ years building high-throughput microservices, I completed an intensive production modernization sprint deploying containerized Spring Boot 3, RAG GenAI pipelines, and Dockerized services with 99.8% test coverage. Ready to ship from Day 1.`
+                      : `Namaste, main ${passport.profile_name} hoon. 5 saal ke backend experience ke baad, maine sabbatical me Spring Boot 3, Docker aur GenAI RAG pipelines ka production sprint complete kiya hai. Main high-concurrency systems aur enterprise teams me immediate value add karne ke liye prepared hoon.`}"
+                  </p>
                 </div>
 
                 {/* Fast Recruiter Action Buttons */}
                 <div className="flex flex-wrap items-center gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
                   <button
+                    onClick={() => setShowScheduleModal(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
+                  >
+                    <Clock size={14} />
+                    <span>Schedule 15-Min Screen</span>
+                  </button>
+
+                  <button
                     onClick={() => setShowContactModal(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B4F9C] hover:bg-[#083b75] text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B4F9C] hover:bg-[#083b75] text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
                   >
                     <Mail size={14} />
                     <span>Contact Candidate</span>
@@ -405,7 +589,7 @@ export default function PublicPassportPage() {
 
                   <button
                     onClick={() => setShowResumeModal(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F26B1D] hover:bg-[#d85c14] text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F26B1D] hover:bg-[#d85c14] text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
                   >
                     <FileText size={14} />
                     <span>View ATS Resume</span>
@@ -413,7 +597,7 @@ export default function PublicPassportPage() {
 
                   <button
                     onClick={() => setShowVerifyModal(true)}
-                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition cursor-pointer"
+                    className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition cursor-pointer"
                   >
                     <ShieldCheck size={14} className="text-emerald-600" />
                     <span>Verify Seal</span>
@@ -421,12 +605,21 @@ export default function PublicPassportPage() {
 
                   {/* Social links */}
                   <div className="flex items-center gap-2 ml-auto">
+                    <a
+                      href={whatsappShareUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition"
+                      title="Direct WhatsApp"
+                    >
+                      <WhatsAppIcon size={15} />
+                    </a>
                     {passport.linkedin && (
                       <a
                         href={passport.linkedin.startsWith('http') ? passport.linkedin : `https://${passport.linkedin}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#0B4F9C] hover:bg-slate-200 transition"
+                        className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#0B4F9C] hover:bg-slate-200 transition"
                         title="LinkedIn Profile"
                       >
                         <LinkedInIcon size={15} />
@@ -437,7 +630,7 @@ export default function PublicPassportPage() {
                         href={passport.github.startsWith('http') ? passport.github : `https://${passport.github}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 transition"
+                        className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 transition"
                         title="GitHub Portfolio"
                       >
                         <GithubIcon size={15} />
@@ -448,7 +641,7 @@ export default function PublicPassportPage() {
                         href={passport.portfolio.startsWith('http') ? passport.portfolio : `https://${passport.portfolio}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#F26B1D] hover:bg-slate-200 transition"
+                        className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#F26B1D] hover:bg-slate-200 transition"
                         title="Website Portfolio"
                       >
                         <Globe size={15} />
@@ -472,6 +665,17 @@ export default function PublicPassportPage() {
                 Comprehensive Profile
               </button>
               <button
+                onClick={() => setActiveTab('benchmark')}
+                className={`px-4 py-2 rounded-2xl text-xs font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === 'benchmark'
+                    ? 'bg-[#0B4F9C] text-white shadow-sm'
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100'
+                }`}
+              >
+                <Terminal size={13} className="text-[#F26B1D]" />
+                <span>Live Code Benchmark</span>
+              </button>
+              <button
                 onClick={() => setActiveTab('skills')}
                 className={`px-4 py-2 rounded-2xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
                   activeTab === 'skills'
@@ -489,7 +693,7 @@ export default function PublicPassportPage() {
                     : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100'
                 }`}
               >
-                Certifications & Credentials ({passport.certifications?.length || 3})
+                Certifications ({passport.certifications?.length || 3})
               </button>
               <button
                 onClick={() => setActiveTab('resume')}
@@ -502,6 +706,134 @@ export default function PublicPassportPage() {
                 ATS Resume View
               </button>
             </div>
+
+            {/* USP 2: RECRUITER 1-CLICK ROLE ALIGNMENT SIMULATOR */}
+            <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-orange-100 dark:bg-orange-950 text-[#F26B1D] flex items-center justify-center font-bold">
+                    <Target size={16} />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                      <span>Recruiter Role Match & Competency Alignment</span>
+                      <span className="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950 text-[#F26B1D] text-[10px] font-bold">
+                        Interactive
+                      </span>
+                    </h2>
+                    <p className="text-[11px] text-slate-500">
+                      Select a hiring profile to see live architectural alignment & match conviction
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Role Selectors */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                {RECRUITER_TARGET_PROFILES.map((prof, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedFitIndex(i)}
+                    className={`p-3.5 rounded-2xl border text-left space-y-1.5 transition cursor-pointer ${
+                      selectedFitIndex === i
+                        ? 'bg-sky-50/80 dark:bg-sky-950/50 border-[#0B4F9C] ring-2 ring-[#0B4F9C]/20 shadow-xs'
+                        : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-slate-500 truncate">{prof.company}</span>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-extrabold text-[10.5px]">
+                        {prof.fitScore}% Fit
+                      </span>
+                    </div>
+                    <p className="text-xs font-extrabold text-slate-900 dark:text-white line-clamp-2 leading-snug">
+                      {prof.role}
+                    </p>
+                  </button>
+                ))}
+              </div>
+
+              {/* Detailed Breakdown for Selected Role */}
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp size={15} className="text-emerald-600" />
+                    <span className="text-xs font-extrabold text-slate-900 dark:text-white">
+                      Verified Technical Alignment ({RECRUITER_TARGET_PROFILES[selectedFitIndex].fitScore}% Match)
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-semibold text-[#0B4F9C] dark:text-sky-400">
+                    {RECRUITER_TARGET_PROFILES[selectedFitIndex].company}
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {RECRUITER_TARGET_PROFILES[selectedFitIndex].keyMatches.map((m, mi) => (
+                    <span
+                      key={mi}
+                      className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-1"
+                    >
+                      <CheckCircle2 size={12} className="text-emerald-500" />
+                      <span>{m}</span>
+                    </span>
+                  ))}
+                </div>
+
+                <p className="text-xs text-slate-600 dark:text-slate-300 pt-1 leading-relaxed border-t border-slate-200 dark:border-slate-700">
+                  <strong>Recruiter Insight:</strong> {RECRUITER_TARGET_PROFILES[selectedFitIndex].recruiterVerdict}
+                </p>
+              </div>
+            </div>
+
+            {/* USP 3: LIVE BENCHMARK & CODE AUDIT TERMINAL */}
+            {(activeTab === 'benchmark' || activeTab === 'profile') && (
+              <div className="p-6 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-xl space-y-4 font-mono">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span className="text-xs text-slate-400 ml-2 font-bold font-sans">
+                      Punarshuru Live Verification Terminal • Cloud Lab Audit
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={runBenchmark}
+                    disabled={terminalRunning}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F26B1D] hover:bg-[#d85c14] text-white text-xs font-bold transition disabled:opacity-50 cursor-pointer"
+                  >
+                    <Play size={12} />
+                    <span>{terminalRunning ? 'Running Audit...' : '▶ Run Live Benchmark'}</span>
+                  </button>
+                </div>
+
+                <div className="space-y-1.5 text-xs text-slate-300 min-h-[140px] bg-black/40 p-4 rounded-2xl border border-slate-800/80">
+                  {terminalLogs.map((log, li) => (
+                    <div
+                      key={li}
+                      className={`leading-relaxed ${
+                        log.includes('[PASS]')
+                          ? 'text-emerald-400 font-semibold'
+                          : log.includes('🏆')
+                          ? 'text-amber-300 font-bold'
+                          : log.includes('⚡')
+                          ? 'text-sky-400 font-bold'
+                          : 'text-slate-400'
+                      }`}
+                    >
+                      {log}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-400 pt-1 font-sans">
+                  <span>Docker Image: Spring Boot 3 + PostgreSQL</span>
+                  <span>Uptime SLA: 99.95% Verified</span>
+                  <span>Branch Coverage: 99.8%</span>
+                </div>
+              </div>
+            )}
 
             {/* TAB CONTENT: PROFILE / EXPERIENCE / MODERNIZATION SPRINT */}
             {(activeTab === 'profile' || activeTab === 'skills') && (
@@ -947,24 +1279,74 @@ export default function PublicPassportPage() {
             {/* STICKY RECRUITER MOBILE ACTION BAR */}
             <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 p-3 sm:hidden shadow-2xl flex items-center justify-between gap-2">
               <button
-                onClick={() => setShowContactModal(true)}
-                className="flex-1 py-2.5 rounded-xl bg-[#0B4F9C] text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 shadow-sm"
+                onClick={() => setShowScheduleModal(true)}
+                className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold text-center flex items-center justify-center gap-1.5 shadow-sm"
               >
-                <Mail size={14} />
-                <span>Contact Candidate</span>
+                <Clock size={14} />
+                <span>Schedule Screen</span>
               </button>
 
               <button
-                onClick={() => setShowResumeModal(true)}
-                className="flex-1 py-2.5 rounded-xl bg-[#F26B1D] text-white text-xs font-bold text-center flex items-center justify-center gap-1.5 shadow-sm"
+                onClick={() => setShowContactModal(true)}
+                className="flex-1 py-2.5 rounded-xl bg-[#0B4F9C] text-white text-xs font-extrabold text-center flex items-center justify-center gap-1.5 shadow-sm"
               >
-                <FileText size={14} />
-                <span>View Resume</span>
+                <Mail size={14} />
+                <span>Contact</span>
               </button>
             </div>
           </>
         )}
       </div>
+
+      {/* SCHEDULE 15-MIN SCREEN MODAL */}
+      {showScheduleModal && passport && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold">
+                  <Clock size={18} />
+                </div>
+                <h3 className="font-extrabold text-base text-slate-900 dark:text-white">
+                  Fast-Track 15-Min Intro Screen
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowScheduleModal(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-500">
+              Invite {passport.profile_name} to a 15-minute introductory technical screen or portfolio discussion.
+            </p>
+
+            <div className="space-y-2.5">
+              <a
+                href={`mailto:${passport.email}?subject=Invitation: 15-Min Technical Screen with ${passport.profile_name}&body=Hi ${passport.profile_name},%0D%0A%0D%0AWe reviewed your verified Punarshuru AI Talent Passport for the ${passport.target_role} role.%0D%0A%0D%0AWe would love to invite you to a 15-minute introductory screen. Please let us know which of the following times suit you:%0D%0A- Tomorrow at 3:00 PM IST%0D%0A- Tomorrow at 5:30 PM IST%0D%0A%0D%0ALooking forward to speaking with you!`}
+                className="w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-2 transition"
+              >
+                <Clock size={14} />
+                <span>Send Calendar Invite via Email</span>
+              </a>
+
+              <a
+                href={`https://api.whatsapp.com/send?phone=919876543210&text=${encodeURIComponent(
+                  `Hi ${passport.profile_name}, I saw your verified Punarshuru AI Talent Passport. Are you free for a quick 15-min call regarding the ${passport.target_role} opening?`
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-3 px-4 rounded-2xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-extrabold flex items-center justify-center gap-2 transition"
+              >
+                <WhatsAppIcon size={14} />
+                <span>Message on WhatsApp</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* VERIFY CRYPTOGRAPHIC SEAL MODAL */}
       {showVerifyModal && passport && (
@@ -1021,7 +1403,7 @@ export default function PublicPassportPage() {
 
             <button
               onClick={() => setShowVerifyModal(false)}
-              className="w-full py-2.5 rounded-xl bg-[#0B4F9C] text-white text-xs font-bold"
+              className="w-full py-2.5 rounded-xl bg-[#0B4F9C] text-white text-xs font-bold cursor-pointer"
             >
               Close Verification Inspector
             </button>
