@@ -1,0 +1,102 @@
+{
+  "model_name": "JDS Salary Hike Logistic Regression",
+  "description": "Predicts probability of high salary hike from 5 skill competency scores (1.0 to 5.0 scale).",
+  "target": "high_hike",
+  "sample_size": 137,
+  "features": [
+    "big_data_skills",
+    "maths_stats_skills",
+    "coding_skills",
+    "ai_and_ml_skills",
+    "dashboard_and_storytelling_skills"
+  ],
+  "feature_labels": {
+    "big_data_skills": "Big Data Skills",
+    "maths_stats_skills": "Maths & Statistics",
+    "coding_skills": "Coding Skills",
+    "ai_and_ml_skills": "AI & ML Skills",
+    "dashboard_and_storytelling_skills": "Dashboard & Storytelling"
+  },
+  "means": {
+    "big_data_skills": 3.8467,
+    "maths_stats_skills": 4.2956,
+    "coding_skills": 4.2577,
+    "ai_and_ml_skills": 4.573,
+    "dashboard_and_storytelling_skills": 4.3642
+  },
+  "stds": {
+    "big_data_skills": 0.8445,
+    "maths_stats_skills": 0.8458,
+    "coding_skills": 0.8918,
+    "ai_and_ml_skills": 0.6617,
+    "dashboard_and_storytelling_skills": 0.9213
+  },
+  "standardized_coefficients": {
+    "big_data_skills": 0.6739,
+    "maths_stats_skills": 1.2847,
+    "coding_skills": 0.5304,
+    "ai_and_ml_skills": 0.7547,
+    "dashboard_and_storytelling_skills": 1.1029
+  },
+  "intercept": -0.2095,
+  "metrics_cv": {
+    "model_group": "Model A (JDS Hike)",
+    "model_name": "Logistic Regression (Std)",
+    "target": "high_hike",
+    "accuracy_mean": 0.8556,
+    "accuracy_std": 0.0623,
+    "precision_mean": 0.8477,
+    "precision_std": 0.068,
+    "recall_mean": 0.8918,
+    "recall_std": 0.0935,
+    "f1_mean": 0.8655,
+    "f1_std": 0.0605,
+    "roc_auc_mean": 0.9012,
+    "roc_auc_std": 0.0618,
+    "within_one_band_mean": null,
+    "within_one_band_std": null
+  },
+  "odds_ratios_unstandardized": {
+    "big_data_skills": {
+      "coefficient": 0.9848,
+      "std_error": 0.3713,
+      "p_value": 0.007997839185270642,
+      "odds_ratio": 2.6773,
+      "ci_lower_95": 1.2931,
+      "ci_upper_95": 5.5432
+    },
+    "maths_stats_skills": {
+      "coefficient": 1.813,
+      "std_error": 0.4962,
+      "p_value": 0.0002586104605079773,
+      "odds_ratio": 6.1291,
+      "ci_lower_95": 2.3174,
+      "ci_upper_95": 16.2103
+    },
+    "coding_skills": {
+      "coefficient": 0.6046,
+      "std_error": 0.3432,
+      "p_value": 0.07813701808692505,
+      "odds_ratio": 1.8305,
+      "ci_lower_95": 0.9342,
+      "ci_upper_95": 3.5869
+    },
+    "ai_and_ml_skills": {
+      "coefficient": 1.2571,
+      "std_error": 0.4705,
+      "p_value": 0.007540504149600138,
+      "odds_ratio": 3.5154,
+      "ci_lower_95": 1.3979,
+      "ci_upper_95": 8.8401
+    },
+    "dashboard_and_storytelling_skills": {
+      "coefficient": 1.3487,
+      "std_error": 0.37,
+      "p_value": 0.0002671880375332204,
+      "odds_ratio": 3.8523,
+      "ci_lower_95": 1.8655,
+      "ci_upper_95": 7.9553
+    }
+  },
+  "usage_formula": "z = intercept + sum(coef_i * (x_i - mean_i) / std_i); prob_high_hike = 1 / (1 + exp(-z))"
+}
