@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -17,19 +17,11 @@ import {
   Cloud,
   Brain,
   Check,
-  Copy,
-  Sparkles,
   ArrowRight,
   UserCheck,
   Building,
   Share2,
-  Play,
-  Pause,
-  Volume2,
-  Terminal,
-  Target,
-  Clock,
-  TrendingUp,
+  FolderGit2,
 } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 import { passportApi } from '@/lib/api'
@@ -66,55 +58,12 @@ function WhatsAppIcon({ size = 15, className = '' }: { size?: number; className?
   )
 }
 
-const RECRUITER_TARGET_PROFILES = [
-  {
-    role: 'SDE-2 / Senior Backend Engineer (AWS / Distributed Systems)',
-    company: 'Amazon / Microsoft / Tier-1 Tech',
-    fitScore: 98,
-    keyMatches: ['Java 21 & Spring Boot 3', 'High Concurrency Architecture', 'Docker & AWS Pipelines', '99.8% Test Coverage'],
-    recruiterVerdict: 'High Conviction Hire: Candidate has proven 5+ yrs foundation with zero syntax rustiness in modern cloud microservices.',
-  },
-  {
-    role: 'Cloud & GenAI Systems Engineer (RAG / Microservices)',
-    company: 'Fast-Growing AI Unicorn / Enterprise SaaS',
-    fitScore: 95,
-    keyMatches: ['Gemini / RAG Embeddings', 'FastAPI & PostgreSQL', 'Container Orchestration', 'Sub-15ms Latency'],
-    recruiterVerdict: 'Immediate Value: Capable of building scalable AI-integrated transactional services with robust CI/CD.',
-  },
-  {
-    role: 'Full-Stack Modernization Lead (Returnee Cohort)',
-    company: 'Intuit / Goldman Sachs / Cisco Returnships',
-    fitScore: 99,
-    keyMatches: ['Verified Sabbatical Sprint', 'Mentorship & Team Leadership', 'Clean Code Rigor', 'Microservice Refactoring'],
-    recruiterVerdict: 'Prime Candidate: Exemplary career gap conversion into tangible technical modernization proof.',
-  },
-]
-
 export default function PublicPassportPage() {
   const { slug } = useParams<{ slug: string }>()
-  const [activeTab, setActiveTab] = useState<'profile' | 'voice_pitch' | 'skills' | 'benchmark' | 'certifications' | 'resume'>('profile')
-  const [copiedHash, setCopiedHash] = useState(false)
+  const [activeTab, setActiveTab] = useState<'all' | 'skills' | 'projects' | 'certifications' | 'resume'>('all')
   const [copiedLink, setCopiedLink] = useState(false)
-  const [showVerifyModal, setShowVerifyModal] = useState(false)
   const [showResumeModal, setShowResumeModal] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
-  const [showScheduleModal, setShowScheduleModal] = useState(false)
-
-  // Voice Pitch State
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
-  const [audioProgress, setAudioProgress] = useState(0)
-  const [pitchLang, setPitchLang] = useState<'english' | 'hinglish'>('english')
-  const audioIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  // Live Terminal Benchmark State
-  const [terminalRunning, setTerminalRunning] = useState(false)
-  const [terminalLogs, setTerminalLogs] = useState<string[]>([
-    'punarshuru-audit v2.4.0 (Bharat AI Talent Verification Engine)',
-    'Ready for cryptographic code & uptime benchmark execution.',
-  ])
-
-  // Recruiter Fit Simulator State
-  const [selectedFitIndex, setSelectedFitIndex] = useState(0)
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['public-passport', slug],
@@ -187,13 +136,6 @@ export default function PublicPassportPage() {
           verified: true,
           date: '2026-01-20',
         },
-        {
-          type: 'Resilience Benchmark',
-          title: 'Career Sabbatical Modernized to 99.8% Test Rigor',
-          issuer: 'Punarshuru Intelligence Engine',
-          verified: true,
-          date: '2026-03-01',
-        },
       ],
       qr_data: publicUrl,
       created_at: '2026-03-15',
@@ -202,7 +144,7 @@ export default function PublicPassportPage() {
       linkedin: `https://linkedin.com/in/${slugName}`,
       github: `https://github.com/${slugName}`,
       portfolio: `https://${slugName}.dev`,
-      summary: `Results-driven ${role} with 5+ years of foundational backend engineering experience. Following a structured career sabbatical, successfully completed an intensive technical modernization sprint mastering Spring Boot 3, Docker containerization, AWS cloud workflows, and Gemini GenAI pipelines. Recognized for robust architectural fundamentals and high execution velocity.`,
+      summary: `Results-driven ${role} with 5+ years of foundational backend engineering experience. Following a dedicated sabbatical, successfully completed an intensive technical modernization sprint mastering Spring Boot 3, Docker containerization, AWS cloud workflows, and Gemini GenAI pipelines. Recognized for robust architectural fundamentals and high execution velocity.`,
       skills_breakdown: {
         languages: ['Java 17/21', 'SQL', 'TypeScript', 'Python', 'C++'],
         frameworks: ['Spring Boot 3', 'Hibernate/JPA', 'React 19', 'RESTful APIs', 'FastAPI'],
@@ -268,7 +210,6 @@ export default function PublicPassportPage() {
             'Architected and deployed a containerized multi-tier microservice using Spring Boot 3, PostgreSQL, and Docker with automated GitHub Actions CI/CD pipelines.',
             'Integrated Gemini AI & RAG vector search workflow, reducing query latency by 42% for contextual semantic search across 10,000+ data nodes.',
             'Engineered resilient REST endpoints with Redis caching layer, achieving 99.8% test coverage with JUnit 5 & Mockito.',
-            'Maintained active open-source contributions and modernized system design practices adhering to 12-Factor App standards.',
           ],
         },
         {
@@ -298,73 +239,6 @@ export default function PublicPassportPage() {
 
   const passport = data || (!isError ? fallbackPassport : null)
 
-  // Audio Playback Simulation
-  const togglePlayAudio = () => {
-    if (isPlayingAudio) {
-      if (audioIntervalRef.current) clearInterval(audioIntervalRef.current)
-      setIsPlayingAudio(false)
-    } else {
-      setIsPlayingAudio(true)
-      audioIntervalRef.current = setInterval(() => {
-        setAudioProgress((prev) => {
-          if (prev >= 100) {
-            if (audioIntervalRef.current) clearInterval(audioIntervalRef.current)
-            setIsPlayingAudio(false)
-            return 0
-          }
-          return prev + 2.5
-        })
-      }, 500)
-    }
-  }
-
-  useEffect(() => {
-    return () => {
-      if (audioIntervalRef.current) clearInterval(audioIntervalRef.current)
-    }
-  }, [])
-
-  // Run Live Verification Benchmark Terminal
-  const runBenchmark = () => {
-    if (terminalRunning) return
-    setTerminalRunning(true)
-    setTerminalLogs([
-      '⚡ [INITIALIZING] Connecting to Punarshuru National Verification Cluster...',
-      '🔍 Fetching GitHub & Docker container registry artifacts...',
-    ])
-
-    setTimeout(() => {
-      setTerminalLogs((prev) => [
-        ...prev,
-        '✓ [PASS] Docker container image verified (SHA: sha256:4a8b7c91e...)',
-        '✓ [PASS] Spring Boot 3 & Java 21 runtime health probe: HTTP 200 OK (8ms)',
-      ])
-    }, 700)
-
-    setTimeout(() => {
-      setTerminalLogs((prev) => [
-        ...prev,
-        '✓ [PASS] Executing JUnit 5 test suite: 148/148 passed (99.8% branch coverage)',
-        '✓ [PASS] Gemini AI & RAG vector search latency: 12.4ms (p99 SLA < 25ms)',
-      ])
-    }, 1400)
-
-    setTimeout(() => {
-      setTerminalLogs((prev) => [
-        ...prev,
-        '🏆 [VERIFICATION COMPLETE] Candidate cryptographic hash matches Bharat 2.0 Registry.',
-        `🛡️ Seal: ${passport?.verification_hash || '0x7F9A2B81C3D4E5F6901A84E'} (STATUS: ACTIVE & VERIFIED)`,
-      ])
-      setTerminalRunning(false)
-    }, 2100)
-  }
-
-  const copyHash = (hash: string) => {
-    navigator.clipboard.writeText(hash)
-    setCopiedHash(true)
-    setTimeout(() => setCopiedHash(false), 2000)
-  }
-
   const copyPageLink = () => {
     navigator.clipboard.writeText(publicUrl)
     setCopiedLink(true)
@@ -375,13 +249,9 @@ export default function PublicPassportPage() {
     window.print()
   }
 
-  const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-    `Review verified AI Talent Passport for ${passport?.profile_name} (${passport?.target_role}): ${publicUrl}`
-  )}`
-
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 pb-28 sm:pb-16 selection:bg-[#0B4F9C]/20 selection:text-[#0B4F9C]">
-      {/* TOP REGISTRY TRUST BANNER */}
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 pb-24 sm:pb-16 selection:bg-[#0B4F9C]/20 selection:text-[#0B4F9C]">
+      {/* Top Registry Trust Banner */}
       <div className="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-2xs">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300">
@@ -483,7 +353,7 @@ export default function PublicPassportPage() {
                     </div>
                     <div className="text-left sm:text-center space-y-0.5">
                       <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                        Scan with Phone Camera
+                        Camera Scannable
                       </p>
                       <p className="text-[10px] font-mono text-[#0B4F9C] dark:text-sky-400 font-bold truncate max-w-[140px]">
                         /p/{passport.slug}
@@ -492,96 +362,16 @@ export default function PublicPassportPage() {
                   </div>
                 </div>
 
-                {/* USP 1: 45-SECOND AI VOICE PITCH PLAYER */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-sky-50 via-indigo-50/50 to-orange-50/60 dark:from-slate-800/80 dark:via-indigo-950/30 dark:to-slate-800/80 border border-sky-200/80 dark:border-slate-700 space-y-3 shadow-2xs">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-xl bg-[#0B4F9C] text-white flex items-center justify-center shadow-xs">
-                        <Volume2 size={15} />
-                      </div>
-                      <div>
-                        <h3 className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
-                          <span>30-Sec Candidate Voice Pitch</span>
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold text-[10px]">
-                            AI Verified
-                          </span>
-                        </h3>
-                        <p className="text-[10.5px] text-slate-500">
-                          Recruiter-optimized audio brief on gap modernization & system architecture
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-[11px] font-bold">
-                      <button
-                        onClick={() => setPitchLang('english')}
-                        className={`px-2 py-0.5 rounded-lg transition cursor-pointer ${
-                          pitchLang === 'english'
-                            ? 'bg-[#0B4F9C] text-white'
-                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100'
-                        }`}
-                      >
-                        English
-                      </button>
-                      <button
-                        onClick={() => setPitchLang('hinglish')}
-                        className={`px-2 py-0.5 rounded-lg transition cursor-pointer ${
-                          pitchLang === 'hinglish'
-                            ? 'bg-[#F26B1D] text-white'
-                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100'
-                        }`}
-                      >
-                        Hinglish
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Audio Controls & Waveform */}
-                  <div className="flex items-center gap-3 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200/70 dark:border-slate-700">
-                    <button
-                      onClick={togglePlayAudio}
-                      className="w-10 h-10 rounded-xl bg-[#0B4F9C] hover:bg-[#083b75] text-white flex items-center justify-center shrink-0 shadow-sm transition cursor-pointer"
-                    >
-                      {isPlayingAudio ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
-                    </button>
-
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center justify-between text-[10.5px] font-mono text-slate-500">
-                        <span>{isPlayingAudio ? 'Playing...' : 'Tap Play to Listen'}</span>
-                        <span>0:30</span>
-                      </div>
-
-                      {/* Animated Soundwave Bar */}
-                      <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex items-center">
-                        <div
-                          className="h-full bg-gradient-to-r from-[#0B4F9C] to-[#F26B1D] transition-all duration-300 rounded-full"
-                          style={{ width: `${isPlayingAudio ? audioProgress : 0}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Pitch Script Summary */}
-                  <p className="text-[11.5px] text-slate-600 dark:text-slate-300 italic bg-white/70 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                    "{pitchLang === 'english'
-                      ? `Hi, I'm ${passport.profile_name}. With 5+ years building high-throughput microservices, I completed an intensive production modernization sprint deploying containerized Spring Boot 3, RAG GenAI pipelines, and Dockerized services with 99.8% test coverage. Ready to ship from Day 1.`
-                      : `Namaste, main ${passport.profile_name} hoon. 5 saal ke backend experience ke baad, maine sabbatical me Spring Boot 3, Docker aur GenAI RAG pipelines ka production sprint complete kiya hai. Main high-concurrency systems aur enterprise teams me immediate value add karne ke liye prepared hoon.`}"
-                  </p>
+                {/* Candidate Executive Summary */}
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <p>{passport.summary}</p>
                 </div>
 
-                {/* Fast Recruiter Action Buttons */}
+                {/* Fast Contact & Action Bar */}
                 <div className="flex flex-wrap items-center gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
                   <button
-                    onClick={() => setShowScheduleModal(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
-                  >
-                    <Clock size={14} />
-                    <span>Schedule 15-Min Screen</span>
-                  </button>
-
-                  <button
                     onClick={() => setShowContactModal(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B4F9C] hover:bg-[#083b75] text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0B4F9C] hover:bg-[#083b75] text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
                   >
                     <Mail size={14} />
                     <span>Contact Candidate</span>
@@ -589,28 +379,40 @@ export default function PublicPassportPage() {
 
                   <button
                     onClick={() => setShowResumeModal(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F26B1D] hover:bg-[#d85c14] text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#F26B1D] hover:bg-[#d85c14] text-white text-xs font-extrabold shadow-sm transition cursor-pointer"
                   >
                     <FileText size={14} />
-                    <span>View ATS Resume</span>
+                    <span>View Resume</span>
                   </button>
 
-                  <button
-                    onClick={() => setShowVerifyModal(true)}
-                    className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition cursor-pointer"
-                  >
-                    <ShieldCheck size={14} className="text-emerald-600" />
-                    <span>Verify Seal</span>
-                  </button>
-
-                  {/* Social links */}
+                  {/* Direct Contact Links */}
                   <div className="flex items-center gap-2 ml-auto">
+                    {passport.email && (
+                      <a
+                        href={`mailto:${passport.email}`}
+                        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#0B4F9C] hover:bg-slate-200 transition"
+                        title={`Email: ${passport.email}`}
+                      >
+                        <Mail size={15} />
+                      </a>
+                    )}
+                    {passport.phone && (
+                      <a
+                        href={`tel:${passport.phone}`}
+                        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-emerald-600 hover:bg-slate-200 transition"
+                        title={`Phone: ${passport.phone}`}
+                      >
+                        <Phone size={15} />
+                      </a>
+                    )}
                     <a
-                      href={whatsappShareUrl}
+                      href={`https://api.whatsapp.com/send?phone=919876543210&text=${encodeURIComponent(
+                        `Hi ${passport.profile_name}, I saw your verified Punarshuru AI Talent Passport for the ${passport.target_role} role.`
+                      )}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition"
-                      title="Direct WhatsApp"
+                      className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition"
+                      title="WhatsApp"
                     >
                       <WhatsAppIcon size={15} />
                     </a>
@@ -619,7 +421,7 @@ export default function PublicPassportPage() {
                         href={passport.linkedin.startsWith('http') ? passport.linkedin : `https://${passport.linkedin}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#0B4F9C] hover:bg-slate-200 transition"
+                        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#0B4F9C] hover:bg-slate-200 transition"
                         title="LinkedIn Profile"
                       >
                         <LinkedInIcon size={15} />
@@ -630,7 +432,7 @@ export default function PublicPassportPage() {
                         href={passport.github.startsWith('http') ? passport.github : `https://${passport.github}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 transition"
+                        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 transition"
                         title="GitHub Portfolio"
                       >
                         <GithubIcon size={15} />
@@ -641,7 +443,7 @@ export default function PublicPassportPage() {
                         href={passport.portfolio.startsWith('http') ? passport.portfolio : `https://${passport.portfolio}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#F26B1D] hover:bg-slate-200 transition"
+                        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-[#F26B1D] hover:bg-slate-200 transition"
                         title="Website Portfolio"
                       >
                         <Globe size={15} />
@@ -652,38 +454,39 @@ export default function PublicPassportPage() {
               </div>
             </div>
 
-            {/* NAVIGATION TABS (Mobile Friendly) */}
+            {/* NAVIGATION TABS */}
             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
               <button
-                onClick={() => setActiveTab('profile')}
+                onClick={() => setActiveTab('all')}
                 className={`px-4 py-2 rounded-2xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
-                  activeTab === 'profile'
+                  activeTab === 'all'
                     ? 'bg-[#0B4F9C] text-white shadow-sm'
                     : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100'
                 }`}
               >
-                Comprehensive Profile
-              </button>
-              <button
-                onClick={() => setActiveTab('benchmark')}
-                className={`px-4 py-2 rounded-2xl text-xs font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1.5 ${
-                  activeTab === 'benchmark'
-                    ? 'bg-[#0B4F9C] text-white shadow-sm'
-                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100'
-                }`}
-              >
-                <Terminal size={13} className="text-[#F26B1D]" />
-                <span>Live Code Benchmark</span>
+                All Details
               </button>
               <button
                 onClick={() => setActiveTab('skills')}
-                className={`px-4 py-2 rounded-2xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
+                className={`px-4 py-2 rounded-2xl text-xs font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1.5 ${
                   activeTab === 'skills'
                     ? 'bg-[#0B4F9C] text-white shadow-sm'
                     : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100'
                 }`}
               >
-                Verified Skills Matrix
+                <Award size={13} />
+                <span>Verified Skills Matrix</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('projects')}
+                className={`px-4 py-2 rounded-2xl text-xs font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === 'projects'
+                    ? 'bg-[#0B4F9C] text-white shadow-sm'
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-100'
+                }`}
+              >
+                <FolderGit2 size={13} />
+                <span>Technical Projects ({passport.projects?.length || 2})</span>
               </button>
               <button
                 onClick={() => setActiveTab('certifications')}
@@ -707,380 +510,180 @@ export default function PublicPassportPage() {
               </button>
             </div>
 
-            {/* USP 2: RECRUITER 1-CLICK ROLE ALIGNMENT SIMULATOR */}
-            <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-orange-100 dark:bg-orange-950 text-[#F26B1D] flex items-center justify-center font-bold">
-                    <Target size={16} />
-                  </div>
-                  <div>
-                    <h2 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                      <span>Recruiter Role Match & Competency Alignment</span>
-                      <span className="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950 text-[#F26B1D] text-[10px] font-bold">
-                        Interactive
-                      </span>
-                    </h2>
-                    <p className="text-[11px] text-slate-500">
-                      Select a hiring profile to see live architectural alignment & match conviction
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Role Selectors */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-                {RECRUITER_TARGET_PROFILES.map((prof, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedFitIndex(i)}
-                    className={`p-3.5 rounded-2xl border text-left space-y-1.5 transition cursor-pointer ${
-                      selectedFitIndex === i
-                        ? 'bg-sky-50/80 dark:bg-sky-950/50 border-[#0B4F9C] ring-2 ring-[#0B4F9C]/20 shadow-xs'
-                        : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 hover:border-slate-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-slate-500 truncate">{prof.company}</span>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-extrabold text-[10.5px]">
-                        {prof.fitScore}% Fit
-                      </span>
-                    </div>
-                    <p className="text-xs font-extrabold text-slate-900 dark:text-white line-clamp-2 leading-snug">
-                      {prof.role}
-                    </p>
-                  </button>
-                ))}
-              </div>
-
-              {/* Detailed Breakdown for Selected Role */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-2.5">
+            {/* 1. CATEGORIZED VERIFIED SKILLS MATRIX */}
+            {(activeTab === 'all' || activeTab === 'skills') && (
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <TrendingUp size={15} className="text-emerald-600" />
-                    <span className="text-xs font-extrabold text-slate-900 dark:text-white">
-                      Verified Technical Alignment ({RECRUITER_TARGET_PROFILES[selectedFitIndex].fitScore}% Match)
-                    </span>
+                    <div className="w-8 h-8 rounded-xl bg-sky-100 dark:bg-sky-950 text-[#0B4F9C] dark:text-sky-300 flex items-center justify-center font-bold">
+                      <Award size={16} />
+                    </div>
+                    <div>
+                      <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
+                        Verified Skills & Technical Matrix
+                      </h2>
+                      <p className="text-[11px] text-slate-500">
+                        Categorized competencies cross-verified with code & architecture proof
+                      </p>
+                    </div>
                   </div>
-                  <span className="text-[11px] font-semibold text-[#0B4F9C] dark:text-sky-400">
-                    {RECRUITER_TARGET_PROFILES[selectedFitIndex].company}
+                  <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                    <ShieldCheck size={14} />
+                    <span>Verified on Registry</span>
                   </span>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5">
-                  {RECRUITER_TARGET_PROFILES[selectedFitIndex].keyMatches.map((m, mi) => (
-                    <span
-                      key={mi}
-                      className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-1"
-                    >
-                      <CheckCircle2 size={12} className="text-emerald-500" />
-                      <span>{m}</span>
-                    </span>
-                  ))}
-                </div>
-
-                <p className="text-xs text-slate-600 dark:text-slate-300 pt-1 leading-relaxed border-t border-slate-200 dark:border-slate-700">
-                  <strong>Recruiter Insight:</strong> {RECRUITER_TARGET_PROFILES[selectedFitIndex].recruiterVerdict}
-                </p>
-              </div>
-            </div>
-
-            {/* USP 3: LIVE BENCHMARK & CODE AUDIT TERMINAL */}
-            {(activeTab === 'benchmark' || activeTab === 'profile') && (
-              <div className="p-6 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-xl space-y-4 font-mono">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span className="text-xs text-slate-400 ml-2 font-bold font-sans">
-                      Punarshuru Live Verification Terminal • Cloud Lab Audit
-                    </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                  {/* Languages */}
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+                      <Cpu size={14} className="text-[#0B4F9C]" />
+                      <span>Programming Languages & Runtimes</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(passport.skills_breakdown?.languages || ['Java 17/21', 'SQL', 'TypeScript', 'Python', 'C++']).map(
+                        (sk) => (
+                          <span
+                            key={sk}
+                            className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-1"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            {sk}
+                          </span>
+                        )
+                      )}
+                    </div>
                   </div>
 
-                  <button
-                    onClick={runBenchmark}
-                    disabled={terminalRunning}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F26B1D] hover:bg-[#d85c14] text-white text-xs font-bold transition disabled:opacity-50 cursor-pointer"
-                  >
-                    <Play size={12} />
-                    <span>{terminalRunning ? 'Running Audit...' : '▶ Run Live Benchmark'}</span>
-                  </button>
+                  {/* Frameworks */}
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+                      <Layers size={14} className="text-[#F26B1D]" />
+                      <span>Frameworks & Microservices</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(passport.skills_breakdown?.frameworks || ['Spring Boot 3', 'Hibernate/JPA', 'React 19', 'RESTful APIs', 'FastAPI']).map(
+                        (sk) => (
+                          <span
+                            key={sk}
+                            className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-1"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            {sk}
+                          </span>
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Cloud & DevOps */}
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+                      <Cloud size={14} className="text-sky-500" />
+                      <span>Cloud, Containers & DevOps</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(passport.skills_breakdown?.cloud_devops || ['Docker', 'AWS (EC2, S3, RDS)', 'GitHub Actions CI/CD', 'PostgreSQL', 'Redis', 'Kubernetes']).map(
+                        (sk) => (
+                          <span
+                            key={sk}
+                            className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-1"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            {sk}
+                          </span>
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Core Competencies */}
+                  <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+                      <Brain size={14} className="text-purple-500" />
+                      <span>Architecture & GenAI Specialization</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(passport.skills_breakdown?.core_competencies || ['Distributed Systems Architecture', 'Microservices Modernization', 'GenAI & RAG Integration', '12-Factor Scalability']).map(
+                        (sk) => (
+                          <span
+                            key={sk}
+                            className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-1"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                            {sk}
+                          </span>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 2. TECHNICAL PROJECTS */}
+            {(activeTab === 'all' || activeTab === 'projects') && (
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 flex items-center justify-center font-bold">
+                    <FolderGit2 size={16} />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
+                      Featured Technical Projects
+                    </h2>
+                    <p className="text-[11px] text-slate-500">
+                      Production microservices, vector search pipelines & open source code
+                    </p>
+                  </div>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-slate-300 min-h-[140px] bg-black/40 p-4 rounded-2xl border border-slate-800/80">
-                  {terminalLogs.map((log, li) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                  {(passport.projects || []).map((proj, pi) => (
                     <div
-                      key={li}
-                      className={`leading-relaxed ${
-                        log.includes('[PASS]')
-                          ? 'text-emerald-400 font-semibold'
-                          : log.includes('🏆')
-                          ? 'text-amber-300 font-bold'
-                          : log.includes('⚡')
-                          ? 'text-sky-400 font-bold'
-                          : 'text-slate-400'
-                      }`}
+                      key={pi}
+                      className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 space-y-3 flex flex-col justify-between shadow-2xs"
                     >
-                      {log}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
+                            {proj.title}
+                          </h3>
+                          {proj.link && (
+                            <a
+                              href={proj.link.startsWith('http') ? proj.link : `https://${proj.link}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-[#0B4F9C] dark:text-sky-400 font-bold hover:underline flex items-center gap-1"
+                            >
+                              <span>GitHub Repo</span>
+                              <ExternalLink size={12} />
+                            </a>
+                          )}
+                        </div>
+                        <p className="text-[11px] font-mono text-[#0B4F9C] dark:text-sky-400 font-semibold">
+                          {proj.stack}
+                        </p>
+                        <ul className="space-y-1.5 pt-1">
+                          {proj.bullets.map((b, bi) => (
+                            <li
+                              key={bi}
+                              className="text-xs text-slate-600 dark:text-slate-300 flex items-start gap-1.5"
+                            >
+                              <span className="text-[#0B4F9C] font-bold shrink-0">•</span>
+                              <span>{b}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   ))}
                 </div>
-
-                <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-400 pt-1 font-sans">
-                  <span>Docker Image: Spring Boot 3 + PostgreSQL</span>
-                  <span>Uptime SLA: 99.95% Verified</span>
-                  <span>Branch Coverage: 99.8%</span>
-                </div>
               </div>
             )}
 
-            {/* TAB CONTENT: PROFILE / EXPERIENCE / MODERNIZATION SPRINT */}
-            {(activeTab === 'profile' || activeTab === 'skills') && (
-              <div className="space-y-6">
-                {/* CATEGORIZED SKILLS BREAKDOWN */}
-                <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-xl bg-sky-100 dark:bg-sky-950 text-[#0B4F9C] dark:text-sky-300 flex items-center justify-center font-bold">
-                        <Award size={16} />
-                      </div>
-                      <div>
-                        <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
-                          Verified Skills & Technical Competencies
-                        </h2>
-                        <p className="text-[11px] text-slate-500">
-                          Cross-verified via Punarshuru Cloud Labs & code evaluation
-                        </p>
-                      </div>
-                    </div>
-                    <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                      <ShieldCheck size={14} />
-                      <span>100% Validated</span>
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                    {/* Languages */}
-                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-2">
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
-                        <Cpu size={14} className="text-[#0B4F9C]" />
-                        <span>Programming Languages & Runtimes</span>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {(passport.skills_breakdown?.languages || ['Java 17/21', 'SQL', 'TypeScript', 'Python']).map(
-                          (sk) => (
-                            <span
-                              key={sk}
-                              className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-1"
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                              {sk}
-                            </span>
-                          )
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Frameworks */}
-                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-2">
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
-                        <Layers size={14} className="text-[#F26B1D]" />
-                        <span>Frameworks & Microservices</span>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {(passport.skills_breakdown?.frameworks || ['Spring Boot 3', 'Hibernate/JPA', 'React 19', 'RESTful APIs']).map(
-                          (sk) => (
-                            <span
-                              key={sk}
-                              className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-1"
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                              {sk}
-                            </span>
-                          )
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Cloud & DevOps */}
-                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-2">
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
-                        <Cloud size={14} className="text-sky-500" />
-                        <span>Cloud, Containers & DevOps</span>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {(passport.skills_breakdown?.cloud_devops || ['Docker', 'AWS (EC2, S3, RDS)', 'GitHub Actions CI/CD', 'PostgreSQL', 'Redis']).map(
-                          (sk) => (
-                            <span
-                              key={sk}
-                              className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-1"
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                              {sk}
-                            </span>
-                          )
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Core Competencies */}
-                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-2">
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
-                        <Brain size={14} className="text-purple-500" />
-                        <span>Architecture & GenAI Specialization</span>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {(passport.skills_breakdown?.core_competencies || ['Distributed Systems Architecture', 'Microservices Modernization', 'GenAI & RAG Integration']).map(
-                          (sk) => (
-                            <span
-                              key={sk}
-                              className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-2xs flex items-center gap-1"
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                              {sk}
-                            </span>
-                          )
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* SPRINT PROOF & PROFESSIONAL EXPERIENCE */}
-                <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold">
-                      <Building size={16} />
-                    </div>
-                    <div>
-                      <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
-                        Experience & Career Gap Modernization Sprint
-                      </h2>
-                      <p className="text-[11px] text-slate-500">
-                        Demonstrated production code, uptime benchmarks, and architectural leadership
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-800">
-                    {(passport.experience || []).map((exp, idx) => (
-                      <div key={idx} className="relative pl-9 space-y-2">
-                        {/* Timeline node */}
-                        <div
-                          className={`absolute left-1 top-1 w-5 h-5 rounded-full ring-4 ring-white dark:ring-slate-900 flex items-center justify-center text-[10px] font-bold ${
-                            exp.is_gap_sprint
-                              ? 'bg-[#F26B1D] text-white shadow-xs'
-                              : 'bg-[#0B4F9C] text-white'
-                          }`}
-                        >
-                          {idx + 1}
-                        </div>
-
-                        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-2">
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                            <div>
-                              <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                                <span>{exp.role}</span>
-                                {exp.is_gap_sprint && (
-                                  <span className="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-[10px]">
-                                    Verified Modernization Sprint
-                                  </span>
-                                )}
-                              </h3>
-                              <p className="text-xs font-semibold text-[#0B4F9C] dark:text-sky-400">
-                                {exp.company} • <span className="text-slate-500 font-normal">{exp.location}</span>
-                              </p>
-                            </div>
-                            <span className="text-[11px] font-mono text-slate-400 font-medium">
-                              {exp.period}
-                            </span>
-                          </div>
-
-                          <ul className="space-y-1.5 pt-1">
-                            {exp.bullets.map((b, bi) => (
-                              <li
-                                key={bi}
-                                className="text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2"
-                              >
-                                <CheckCircle2
-                                  size={13}
-                                  className={`shrink-0 mt-0.5 ${
-                                    exp.is_gap_sprint ? 'text-[#F26B1D]' : 'text-emerald-600'
-                                  }`}
-                                />
-                                <span>{b}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* FEATURED PROJECTS */}
-                <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 flex items-center justify-center font-bold">
-                      <Sparkles size={16} />
-                    </div>
-                    <div>
-                      <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
-                        Featured Technical Projects
-                      </h2>
-                      <p className="text-[11px] text-slate-500">
-                        Live microservices, vector pipelines & distributed code repos
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                    {(passport.projects || []).map((proj, pi) => (
-                      <div
-                        key={pi}
-                        className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 space-y-2.5 flex flex-col justify-between"
-                      >
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">
-                              {proj.title}
-                            </h3>
-                            {proj.link && (
-                              <a
-                                href={proj.link.startsWith('http') ? proj.link : `https://${proj.link}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-slate-400 hover:text-[#0B4F9C] transition"
-                              >
-                                <ExternalLink size={13} />
-                              </a>
-                            )}
-                          </div>
-                          <p className="text-[11px] font-mono text-[#0B4F9C] dark:text-sky-400 font-semibold">
-                            {proj.stack}
-                          </p>
-                          <ul className="space-y-1 pt-1">
-                            {proj.bullets.map((b, bi) => (
-                              <li
-                                key={bi}
-                                className="text-xs text-slate-600 dark:text-slate-300 flex items-start gap-1.5"
-                              >
-                                <span className="text-[#0B4F9C] font-bold">•</span>
-                                <span>{b}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* TAB CONTENT: CERTIFICATIONS */}
-            {(activeTab === 'certifications' || activeTab === 'profile') && (
+            {/* 3. VERIFIABLE CERTIFICATIONS */}
+            {(activeTab === 'all' || activeTab === 'certifications') && (
               <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -1092,7 +695,7 @@ export default function PublicPassportPage() {
                         Verifiable Industry Certifications
                       </h2>
                       <p className="text-[11px] text-slate-500">
-                        Official credentials listed on candidate's verified resume
+                        Official credentials and verification IDs mentioned in candidate's resume
                       </p>
                     </div>
                   </div>
@@ -1144,7 +747,78 @@ export default function PublicPassportPage() {
               </div>
             )}
 
-            {/* TAB CONTENT: ATS RESUME PREVIEW */}
+            {/* 4. EXPERIENCE & MODERNIZATION SPRINT */}
+            {activeTab === 'all' && (
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold">
+                    <Building size={16} />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
+                      Work Experience & Sabbatical Modernization Sprint
+                    </h2>
+                    <p className="text-[11px] text-slate-500">
+                      Proven engineering track record and production microservice implementation
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-800">
+                  {(passport.experience || []).map((exp, idx) => (
+                    <div key={idx} className="relative pl-9 space-y-2">
+                      <div
+                        className={`absolute left-1 top-1 w-5 h-5 rounded-full ring-4 ring-white dark:ring-slate-900 flex items-center justify-center text-[10px] font-bold ${
+                          exp.is_gap_sprint ? 'bg-[#F26B1D] text-white shadow-xs' : 'bg-[#0B4F9C] text-white'
+                        }`}
+                      >
+                        {idx + 1}
+                      </div>
+
+                      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                          <div>
+                            <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                              <span>{exp.role}</span>
+                              {exp.is_gap_sprint && (
+                                <span className="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-[10px]">
+                                  Verified Modernization Sprint
+                                </span>
+                              )}
+                            </h3>
+                            <p className="text-xs font-semibold text-[#0B4F9C] dark:text-sky-400">
+                              {exp.company} • <span className="text-slate-500 font-normal">{exp.location}</span>
+                            </p>
+                          </div>
+                          <span className="text-[11px] font-mono text-slate-400 font-medium">
+                            {exp.period}
+                          </span>
+                        </div>
+
+                        <ul className="space-y-1.5 pt-1">
+                          {exp.bullets.map((b, bi) => (
+                            <li
+                              key={bi}
+                              className="text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2"
+                            >
+                              <CheckCircle2
+                                size={13}
+                                className={`shrink-0 mt-0.5 ${
+                                  exp.is_gap_sprint ? 'text-[#F26B1D]' : 'text-emerald-600'
+                                }`}
+                              />
+                              <span>{b}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 5. ATS RESUME PREVIEW & DOWNLOAD */}
             {(activeTab === 'resume' || showResumeModal) && (
               <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
@@ -1157,7 +831,7 @@ export default function PublicPassportPage() {
                         Standard ATS & Overleaf Resume Preview
                       </h2>
                       <p className="text-[11px] text-slate-500">
-                        Synchronized with live verified skills and sabbatical modernization sprint
+                        Synchronized with live verified skills and projects
                       </p>
                     </div>
                   </div>
@@ -1222,6 +896,26 @@ export default function PublicPassportPage() {
                     </div>
                   </div>
 
+                  {/* Projects */}
+                  <div className="space-y-2">
+                    <h3 className="font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-[11px] border-b border-slate-200 dark:border-slate-800 pb-0.5">
+                      Technical Projects
+                    </h3>
+                    {(passport.projects || []).map((proj, pji) => (
+                      <div key={pji} className="space-y-0.5">
+                        <div className="flex justify-between font-bold text-slate-900 dark:text-white text-[11px]">
+                          <span>{proj.title}</span>
+                          <span className="font-mono text-[10px] text-[#0B4F9C] dark:text-sky-400">{proj.stack}</span>
+                        </div>
+                        <ul className="list-disc list-inside space-y-0.5 text-[10.5px] text-slate-600 dark:text-slate-300">
+                          {proj.bullets.map((b, bi) => (
+                            <li key={bi}>{b}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+
                   {/* Experience */}
                   <div className="space-y-2">
                     <h3 className="font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-[11px] border-b border-slate-200 dark:border-slate-800 pb-0.5">
@@ -1279,137 +973,24 @@ export default function PublicPassportPage() {
             {/* STICKY RECRUITER MOBILE ACTION BAR */}
             <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 p-3 sm:hidden shadow-2xl flex items-center justify-between gap-2">
               <button
-                onClick={() => setShowScheduleModal(true)}
-                className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold text-center flex items-center justify-center gap-1.5 shadow-sm"
-              >
-                <Clock size={14} />
-                <span>Schedule Screen</span>
-              </button>
-
-              <button
                 onClick={() => setShowContactModal(true)}
                 className="flex-1 py-2.5 rounded-xl bg-[#0B4F9C] text-white text-xs font-extrabold text-center flex items-center justify-center gap-1.5 shadow-sm"
               >
                 <Mail size={14} />
-                <span>Contact</span>
+                <span>Contact Candidate</span>
+              </button>
+
+              <button
+                onClick={() => setShowResumeModal(true)}
+                className="flex-1 py-2.5 rounded-xl bg-[#F26B1D] text-white text-xs font-extrabold text-center flex items-center justify-center gap-1.5 shadow-sm"
+              >
+                <FileText size={14} />
+                <span>View Resume</span>
               </button>
             </div>
           </>
         )}
       </div>
-
-      {/* SCHEDULE 15-MIN SCREEN MODAL */}
-      {showScheduleModal && passport && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold">
-                  <Clock size={18} />
-                </div>
-                <h3 className="font-extrabold text-base text-slate-900 dark:text-white">
-                  Fast-Track 15-Min Intro Screen
-                </h3>
-              </div>
-              <button
-                onClick={() => setShowScheduleModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-              >
-                ✕
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-500">
-              Invite {passport.profile_name} to a 15-minute introductory technical screen or portfolio discussion.
-            </p>
-
-            <div className="space-y-2.5">
-              <a
-                href={`mailto:${passport.email}?subject=Invitation: 15-Min Technical Screen with ${passport.profile_name}&body=Hi ${passport.profile_name},%0D%0A%0D%0AWe reviewed your verified Punarshuru AI Talent Passport for the ${passport.target_role} role.%0D%0A%0D%0AWe would love to invite you to a 15-minute introductory screen. Please let us know which of the following times suit you:%0D%0A- Tomorrow at 3:00 PM IST%0D%0A- Tomorrow at 5:30 PM IST%0D%0A%0D%0ALooking forward to speaking with you!`}
-                className="w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold flex items-center justify-center gap-2 transition"
-              >
-                <Clock size={14} />
-                <span>Send Calendar Invite via Email</span>
-              </a>
-
-              <a
-                href={`https://api.whatsapp.com/send?phone=919876543210&text=${encodeURIComponent(
-                  `Hi ${passport.profile_name}, I saw your verified Punarshuru AI Talent Passport. Are you free for a quick 15-min call regarding the ${passport.target_role} opening?`
-                )}`}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full py-3 px-4 rounded-2xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-extrabold flex items-center justify-center gap-2 transition"
-              >
-                <WhatsAppIcon size={14} />
-                <span>Message on WhatsApp</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* VERIFY CRYPTOGRAPHIC SEAL MODAL */}
-      {showVerifyModal && passport && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold">
-                  <ShieldCheck size={18} />
-                </div>
-                <h3 className="font-extrabold text-base text-slate-900 dark:text-white">
-                  Cryptographic Trust Seal
-                </h3>
-              </div>
-              <button
-                onClick={() => setShowVerifyModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-              >
-                ✕
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-500">
-              This profile has been verified against the Punarshuru National AI Talent Registry. Skills, certifications, and experience evidence are cryptographically hashed.
-            </p>
-
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 space-y-2 text-xs">
-              <div className="flex justify-between">
-                <span className="text-slate-400">Registry Slug:</span>
-                <span className="font-mono font-bold text-slate-800 dark:text-slate-200">{passport.slug}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Status:</span>
-                <span className="font-bold text-emerald-600">Active & Verified</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Issue Timestamp:</span>
-                <span className="font-mono text-slate-600 dark:text-slate-300">{passport.created_at}</span>
-              </div>
-              <div className="space-y-1 pt-1 border-t border-slate-200 dark:border-slate-700">
-                <span className="text-slate-400 text-[10px]">SHA-256 Verification Signature:</span>
-                <div className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-100 dark:bg-slate-900 font-mono text-[11px] text-slate-700 dark:text-slate-300 break-all">
-                  <span className="truncate">{passport.verification_hash || '0x7F9A2B81C3D4E5F6901A84E'}</span>
-                  <button
-                    onClick={() => copyHash(passport.verification_hash || '0x7F9A2B81C3D4E5F6901A84E')}
-                    className="p-1 text-slate-400 hover:text-slate-700 shrink-0"
-                    title="Copy Signature"
-                  >
-                    {copiedHash ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setShowVerifyModal(false)}
-              className="w-full py-2.5 rounded-xl bg-[#0B4F9C] text-white text-xs font-bold cursor-pointer"
-            >
-              Close Verification Inspector
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* RECRUITER CONTACT MODAL */}
       {showContactModal && passport && (
@@ -1454,6 +1035,18 @@ export default function PublicPassportPage() {
                 >
                   <LinkedInIcon size={14} />
                   <span>Message on LinkedIn</span>
+                </a>
+              )}
+
+              {passport.github && (
+                <a
+                  href={passport.github.startsWith('http') ? passport.github : `https://${passport.github}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition"
+                >
+                  <GithubIcon size={14} />
+                  <span>View GitHub Repositories</span>
                 </a>
               )}
 
