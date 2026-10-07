@@ -165,6 +165,39 @@ export interface PassportEvidence {
   date: string
 }
 
+export interface PassportCertification {
+  id: string
+  name: string
+  issuer: string
+  issue_date: string
+  verified: boolean
+  badge_icon?: string
+  credential_url?: string
+}
+
+export interface PassportProject {
+  title: string
+  stack: string
+  link?: string
+  bullets: string[]
+}
+
+export interface PassportExperience {
+  company: string
+  role: string
+  period: string
+  location?: string
+  is_gap_sprint?: boolean
+  bullets: string[]
+}
+
+export interface PassportEducation {
+  degree: string
+  institution: string
+  period: string
+  score?: string
+}
+
 export interface PassportResponse {
   id: string
   profile_id: string
@@ -180,7 +213,25 @@ export interface PassportResponse {
   evidence: PassportEvidence[]
   qr_data: string
   created_at: string
+  email?: string | null
+  phone?: string | null
+  linkedin?: string | null
+  github?: string | null
+  portfolio?: string | null
+  summary?: string | null
+  skills_breakdown?: {
+    languages?: string[]
+    frameworks?: string[]
+    cloud_devops?: string[]
+    core_competencies?: string[]
+  } | null
+  certifications?: PassportCertification[]
+  projects?: PassportProject[]
+  experience?: PassportExperience[]
+  education?: PassportEducation[]
+  verification_hash?: string | null
 }
+
 
 export interface PersonaSummary {
   key: string

@@ -22,3 +22,16 @@ class PassportResponse(BaseModel):
     evidence: list[dict] = Field(default_factory=list)
     qr_data: str
     created_at: str
+    email: str | None = None
+    phone: str | None = None
+    linkedin: str | None = None
+    github: str | None = None
+    portfolio: str | None = None
+    summary: str | None = None
+    skills_breakdown: dict[str, list[str]] | None = None
+    certifications: list[dict] = Field(default_factory=list)
+    projects: list[dict] = Field(default_factory=list)
+    experience: list[dict] = Field(default_factory=list)
+    education: list[dict] = Field(default_factory=list)
+    verification_hash: str | None = None
+

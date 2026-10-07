@@ -1,18 +1,34 @@
+import { useState, useId } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
-import { ShieldCheck, MapPin, Award, CheckCircle2 } from 'lucide-react'
+import { ShieldCheck, MapPin, Award, CheckCircle2, Smartphone, Settings2 } from 'lucide-react'
 import type { PassportResponse } from '@/types'
 
 interface PassportCardProps {
   passport: PassportResponse
   showFullUrl?: boolean
+  initialHost?: string
 }
 
 export default function PassportCard({
   passport,
   showFullUrl = false,
+  initialHost,
 }: PassportCardProps) {
-  const publicUrl = `${typeof window !== 'undefined' ? window.location.origin : 'https://punarshuru.in'}/p/${passport.slug}`
+  const customHostInputId = useId()
+  const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  
+  // Active Wi-Fi network host for mobile phone scanning
+  const currentNetworkHost = 'http://172.22.203.34:5173'
+  const defaultNetworkHost = isLocalhost ? currentNetworkHost : (typeof window !== 'undefined' ? window.location.origin : 'https://punarshuru.in')
+
+  const [targetOrigin, setTargetOrigin] = useState<string>(initialHost || defaultNetworkHost)
+  const [showHostSettings, setShowHostSettings] = useState(false)
+  const [customHost, setCustomHost] = useState(currentNetworkHost)
+
+
+  const publicUrl = `${targetOrigin.replace(/\/$/, '')}/p/${passport.slug}`
   const resilienceScore = Math.max(20, 100 - (passport.disruption_score || 35))
+
 
   return (
     <div
@@ -78,19 +94,97 @@ export default function PassportCard({
             </div>
           </div>
 
-          {/* QR Code */}
-          <div className="sm:col-span-4 flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 space-y-2 text-center">
+          {/* QR Code & Mobile Scan Selector */}
+          <div className="sm:col-span-4 flex flex-col items-center justify-center p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 space-y-2.5 text-center">
             <div className="p-2 bg-white rounded-xl shadow-xs">
               <QRCodeSVG
                 value={publicUrl}
-                size={95}
+                size={100}
                 level="M"
                 includeMargin={false}
               />
             </div>
-            <span className="text-[10px] font-mono text-slate-400 truncate max-w-[120px]">
-              /p/{passport.slug}
-            </span>
+            
+            <div className="space-y-1 w-full">
+              <span className="text-[10px] font-mono text-[#0B4F9C] dark:text-sky-400 font-bold truncate block">
+                /p/{passport.slug}
+              </span>
+
+              {/* Host Toggle Switcher for Mobile Phone Scanning */}
+              {isLocalhost && (
+                <div className="pt-1.5 border-t border-slate-200/60 dark:border-slate-700/60 space-y-1">
+                  <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-slate-500">
+                    <Smartphone size={11} className="text-[#F26B1D]" />
+                    <span>Scan Target:</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setTargetOrigin(currentNetworkHost)}
+                      className={`px-2 py-0.5 rounded-lg text-[9.5px] font-bold transition cursor-pointer ${
+                        targetOrigin === currentNetworkHost
+                          ? 'bg-emerald-600 text-white shadow-2xs'
+                          : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300'
+                      }`}
+                      title="Use Wi-Fi LAN IP so phone camera connects on same Wi-Fi"
+                    >
+                      Wi-Fi IP
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTargetOrigin('http://localhost:5173')}
+                      className={`px-2 py-0.5 rounded-lg text-[9.5px] font-bold transition cursor-pointer ${
+                        targetOrigin.includes('localhost')
+                          ? 'bg-[#0B4F9C] text-white shadow-2xs'
+                          : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300'
+                      }`}
+                      title="Use Localhost (PC only)"
+                    >
+                      Localhost
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowHostSettings(!showHostSettings)}
+                      className="p-1 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 text-[9.5px] cursor-pointer"
+                      title="Custom IP / Host"
+                    >
+                      <Settings2 size={10} />
+                    </button>
+                  </div>
+
+                  {showHostSettings && (
+                    <div className="pt-1.5 space-y-1 text-left">
+                      <label htmlFor={customHostInputId} className="text-[9px] text-slate-400 block font-semibold">Custom Host / Tunnel:</label>
+                      <div className="flex gap-1">
+                        <input
+                          id={customHostInputId}
+                          type="text"
+                          value={customHost}
+                          onChange={(e) => setCustomHost(e.target.value)}
+                          placeholder="http://192.168.1.x:5173"
+                          className="w-full px-1.5 py-0.5 rounded text-[9px] font-mono bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setTargetOrigin(customHost)}
+                          className="px-1.5 py-0.5 bg-[#0B4F9C] text-white text-[9px] font-bold rounded cursor-pointer"
+                        >
+                          Set
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <p className="text-[9px] text-slate-400 leading-tight">
+                    {targetOrigin === currentNetworkHost
+                      ? '✓ Phone & PC same Wi-Fi par hone chahiye'
+                      : '⚠️ Localhost phone par direct open nahi hota'}
+                  </p>
+                </div>
+              )}
+
+            </div>
           </div>
         </div>
 
@@ -155,3 +249,4 @@ export default function PassportCard({
     </div>
   )
 }
+
