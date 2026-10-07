@@ -1,0 +1,4258 @@
+{
+  "Architecture | 0-2 yrs (Junior) | Bangalore": {
+    "role_family": "Architecture",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Bangalore",
+    "sample_size": 1,
+    "most_likely_band": 1,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Architecture | 13+ yrs (Executive) | Bangalore": {
+    "role_family": "Architecture",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Bangalore",
+    "sample_size": 58,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.017,
+      0.19,
+      0.5,
+      0.293
+    ]
+  },
+  "Architecture | 13+ yrs (Executive) | Chennai": {
+    "role_family": "Architecture",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Chennai",
+    "sample_size": 8,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.125,
+      0.5,
+      0.375
+    ]
+  },
+  "Architecture | 13+ yrs (Executive) | Delhi NCR": {
+    "role_family": "Architecture",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Delhi NCR",
+    "sample_size": 9,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.111,
+      0.111,
+      0.778
+    ]
+  },
+  "Architecture | 13+ yrs (Executive) | Gurgaon": {
+    "role_family": "Architecture",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Gurgaon",
+    "sample_size": 1,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  "Architecture | 13+ yrs (Executive) | Hyderabad": {
+    "role_family": "Architecture",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Hyderabad",
+    "sample_size": 21,
+    "most_likely_band": 5,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.048,
+      0.238,
+      0.333,
+      0.381
+    ]
+  },
+  "Architecture | 13+ yrs (Executive) | Mumbai": {
+    "role_family": "Architecture",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Mumbai",
+    "sample_size": 9,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.222,
+      0.444,
+      0.333
+    ]
+  },
+  "Architecture | 13+ yrs (Executive) | Other Hubs": {
+    "role_family": "Architecture",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Other Hubs",
+    "sample_size": 30,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.033,
+      0.033,
+      0.1,
+      0.433,
+      0.4
+    ]
+  },
+  "Architecture | 13+ yrs (Executive) | Pune": {
+    "role_family": "Architecture",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Pune",
+    "sample_size": 20,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.05,
+      0.0,
+      0.0,
+      0.2,
+      0.4,
+      0.35
+    ]
+  },
+  "Architecture | 3-5 yrs (Mid-level) | Bangalore": {
+    "role_family": "Architecture",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Bangalore",
+    "sample_size": 10,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.0,
+      0.4,
+      0.5,
+      0.0,
+      0.0,
+      0.1
+    ]
+  },
+  "Architecture | 3-5 yrs (Mid-level) | Delhi NCR": {
+    "role_family": "Architecture",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Delhi NCR",
+    "sample_size": 1,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Architecture | 3-5 yrs (Mid-level) | Kolkata": {
+    "role_family": "Architecture",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Kolkata",
+    "sample_size": 2,
+    "most_likely_band": 1,
+    "median_lpa": 6.25,
+    "band_probabilities": [
+      0.0,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Architecture | 3-5 yrs (Mid-level) | Mumbai": {
+    "role_family": "Architecture",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Mumbai",
+    "sample_size": 2,
+    "most_likely_band": 1,
+    "median_lpa": 6.25,
+    "band_probabilities": [
+      0.0,
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Architecture | 3-5 yrs (Mid-level) | Other Hubs": {
+    "role_family": "Architecture",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Other Hubs",
+    "sample_size": 8,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.0,
+      0.25,
+      0.375,
+      0.125,
+      0.25,
+      0.0
+    ]
+  },
+  "Architecture | 3-5 yrs (Mid-level) | Pune": {
+    "role_family": "Architecture",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Pune",
+    "sample_size": 3,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Architecture | 6-8 yrs (Senior) | Bangalore": {
+    "role_family": "Architecture",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Bangalore",
+    "sample_size": 29,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.034,
+      0.31,
+      0.483,
+      0.172,
+      0.0
+    ]
+  },
+  "Architecture | 6-8 yrs (Senior) | Chennai": {
+    "role_family": "Architecture",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Chennai",
+    "sample_size": 5,
+    "most_likely_band": 2,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.4,
+      0.2,
+      0.4,
+      0.0
+    ]
+  },
+  "Architecture | 6-8 yrs (Senior) | Delhi NCR": {
+    "role_family": "Architecture",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Delhi NCR",
+    "sample_size": 2,
+    "most_likely_band": 3,
+    "median_lpa": 25.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5
+    ]
+  },
+  "Architecture | 6-8 yrs (Senior) | Gurgaon": {
+    "role_family": "Architecture",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Gurgaon",
+    "sample_size": 6,
+    "most_likely_band": 2,
+    "median_lpa": 10.25,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.5,
+      0.333,
+      0.0,
+      0.167
+    ]
+  },
+  "Architecture | 6-8 yrs (Senior) | Hyderabad": {
+    "role_family": "Architecture",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Hyderabad",
+    "sample_size": 6,
+    "most_likely_band": 2,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.333,
+      0.333,
+      0.333,
+      0.0
+    ]
+  },
+  "Architecture | 6-8 yrs (Senior) | Mumbai": {
+    "role_family": "Architecture",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Mumbai",
+    "sample_size": 5,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.2,
+      0.4,
+      0.2,
+      0.2
+    ]
+  },
+  "Architecture | 6-8 yrs (Senior) | Other Hubs": {
+    "role_family": "Architecture",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Other Hubs",
+    "sample_size": 4,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.75,
+      0.25,
+      0.0
+    ]
+  },
+  "Architecture | 6-8 yrs (Senior) | Pune": {
+    "role_family": "Architecture",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Pune",
+    "sample_size": 7,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.143,
+      0.0,
+      0.143,
+      0.429,
+      0.286,
+      0.0
+    ]
+  },
+  "Architecture | 9-12 yrs (Lead) | Bangalore": {
+    "role_family": "Architecture",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Bangalore",
+    "sample_size": 60,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.017,
+      0.0,
+      0.033,
+      0.3,
+      0.5,
+      0.15
+    ]
+  },
+  "Architecture | 9-12 yrs (Lead) | Chennai": {
+    "role_family": "Architecture",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Chennai",
+    "sample_size": 12,
+    "most_likely_band": 5,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.167,
+      0.25,
+      0.25,
+      0.333
+    ]
+  },
+  "Architecture | 9-12 yrs (Lead) | Delhi NCR": {
+    "role_family": "Architecture",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Delhi NCR",
+    "sample_size": 21,
+    "most_likely_band": 3,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.048,
+      0.429,
+      0.429,
+      0.095
+    ]
+  },
+  "Architecture | 9-12 yrs (Lead) | Gurgaon": {
+    "role_family": "Architecture",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Gurgaon",
+    "sample_size": 11,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.091,
+      0.273,
+      0.455,
+      0.182
+    ]
+  },
+  "Architecture | 9-12 yrs (Lead) | Hyderabad": {
+    "role_family": "Architecture",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Hyderabad",
+    "sample_size": 12,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.083,
+      0.25,
+      0.583,
+      0.083
+    ]
+  },
+  "Architecture | 9-12 yrs (Lead) | Mumbai": {
+    "role_family": "Architecture",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Mumbai",
+    "sample_size": 13,
+    "most_likely_band": 3,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.077,
+      0.077,
+      0.0,
+      0.308,
+      0.308,
+      0.231
+    ]
+  },
+  "Architecture | 9-12 yrs (Lead) | Other Hubs": {
+    "role_family": "Architecture",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Other Hubs",
+    "sample_size": 20,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.1,
+      0.2,
+      0.45,
+      0.25
+    ]
+  },
+  "Architecture | 9-12 yrs (Lead) | Pune": {
+    "role_family": "Architecture",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Pune",
+    "sample_size": 14,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.071,
+      0.286,
+      0.571,
+      0.071
+    ]
+  },
+  "Business Analysis | 0-2 yrs (Junior) | Bangalore": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Bangalore",
+    "sample_size": 10,
+    "most_likely_band": 0,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.3,
+      0.1,
+      0.3,
+      0.3,
+      0.0,
+      0.0
+    ]
+  },
+  "Business Analysis | 0-2 yrs (Junior) | Chennai": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Chennai",
+    "sample_size": 5,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.6,
+      0.4,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Business Analysis | 0-2 yrs (Junior) | Delhi NCR": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Delhi NCR",
+    "sample_size": 9,
+    "most_likely_band": 1,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.111,
+      0.333,
+      0.222,
+      0.333,
+      0.0,
+      0.0
+    ]
+  },
+  "Business Analysis | 0-2 yrs (Junior) | Gurgaon": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Gurgaon",
+    "sample_size": 8,
+    "most_likely_band": 1,
+    "median_lpa": 6.25,
+    "band_probabilities": [
+      0.125,
+      0.375,
+      0.25,
+      0.25,
+      0.0,
+      0.0
+    ]
+  },
+  "Business Analysis | 0-2 yrs (Junior) | Hyderabad": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Hyderabad",
+    "sample_size": 1,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Business Analysis | 0-2 yrs (Junior) | Mumbai": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Mumbai",
+    "sample_size": 9,
+    "most_likely_band": 2,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.333,
+      0.222,
+      0.444,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Business Analysis | 0-2 yrs (Junior) | Other Hubs": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Other Hubs",
+    "sample_size": 34,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.618,
+      0.235,
+      0.029,
+      0.088,
+      0.029,
+      0.0
+    ]
+  },
+  "Business Analysis | 0-2 yrs (Junior) | Pune": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Pune",
+    "sample_size": 7,
+    "most_likely_band": 1,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.429,
+      0.571,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Business Analysis | 13+ yrs (Executive) | Bangalore": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Bangalore",
+    "sample_size": 11,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.545,
+      0.273,
+      0.182
+    ]
+  },
+  "Business Analysis | 13+ yrs (Executive) | Chennai": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Chennai",
+    "sample_size": 3,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.333,
+      0.667,
+      0.0
+    ]
+  },
+  "Business Analysis | 13+ yrs (Executive) | Delhi NCR": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Delhi NCR",
+    "sample_size": 2,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "Business Analysis | 13+ yrs (Executive) | Gurgaon": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Gurgaon",
+    "sample_size": 1,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Business Analysis | 13+ yrs (Executive) | Hyderabad": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Hyderabad",
+    "sample_size": 2,
+    "most_likely_band": 4,
+    "median_lpa": 28.75,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5
+    ]
+  },
+  "Business Analysis | 13+ yrs (Executive) | Mumbai": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Mumbai",
+    "sample_size": 1,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "Business Analysis | 13+ yrs (Executive) | Other Hubs": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Other Hubs",
+    "sample_size": 13,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.077,
+      0.0,
+      0.077,
+      0.0,
+      0.462,
+      0.385
+    ]
+  },
+  "Business Analysis | 13+ yrs (Executive) | Pune": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Pune",
+    "sample_size": 2,
+    "most_likely_band": 3,
+    "median_lpa": 16.25,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.0
+    ]
+  },
+  "Business Analysis | 3-5 yrs (Mid-level) | Bangalore": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Bangalore",
+    "sample_size": 67,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.03,
+      0.119,
+      0.328,
+      0.448,
+      0.075,
+      0.0
+    ]
+  },
+  "Business Analysis | 3-5 yrs (Mid-level) | Chennai": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Chennai",
+    "sample_size": 20,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.35,
+      0.25,
+      0.2,
+      0.2,
+      0.0,
+      0.0
+    ]
+  },
+  "Business Analysis | 3-5 yrs (Mid-level) | Delhi NCR": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Delhi NCR",
+    "sample_size": 35,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.143,
+      0.143,
+      0.2,
+      0.457,
+      0.057,
+      0.0
+    ]
+  },
+  "Business Analysis | 3-5 yrs (Mid-level) | Gurgaon": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Gurgaon",
+    "sample_size": 37,
+    "most_likely_band": 2,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.081,
+      0.081,
+      0.297,
+      0.27,
+      0.243,
+      0.027
+    ]
+  },
+  "Business Analysis | 3-5 yrs (Mid-level) | Hyderabad": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Hyderabad",
+    "sample_size": 7,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.143,
+      0.286,
+      0.429,
+      0.0,
+      0.143,
+      0.0
+    ]
+  },
+  "Business Analysis | 3-5 yrs (Mid-level) | Kolkata": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Kolkata",
+    "sample_size": 2,
+    "most_likely_band": 2,
+    "median_lpa": 14.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5,
+      0.0
+    ]
+  },
+  "Business Analysis | 3-5 yrs (Mid-level) | Mumbai": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Mumbai",
+    "sample_size": 60,
+    "most_likely_band": 3,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.133,
+      0.183,
+      0.3,
+      0.317,
+      0.067,
+      0.0
+    ]
+  },
+  "Business Analysis | 3-5 yrs (Mid-level) | Other Hubs": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Other Hubs",
+    "sample_size": 71,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.31,
+      0.254,
+      0.197,
+      0.197,
+      0.028,
+      0.014
+    ]
+  },
+  "Business Analysis | 3-5 yrs (Mid-level) | Pune": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Pune",
+    "sample_size": 25,
+    "most_likely_band": 1,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.04,
+      0.4,
+      0.32,
+      0.16,
+      0.08,
+      0.0
+    ]
+  },
+  "Business Analysis | 6-8 yrs (Senior) | Bangalore": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Bangalore",
+    "sample_size": 51,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.039,
+      0.039,
+      0.098,
+      0.51,
+      0.294,
+      0.02
+    ]
+  },
+  "Business Analysis | 6-8 yrs (Senior) | Chennai": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Chennai",
+    "sample_size": 22,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.045,
+      0.091,
+      0.136,
+      0.409,
+      0.318,
+      0.0
+    ]
+  },
+  "Business Analysis | 6-8 yrs (Senior) | Delhi NCR": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Delhi NCR",
+    "sample_size": 17,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.059,
+      0.176,
+      0.235,
+      0.353,
+      0.176,
+      0.0
+    ]
+  },
+  "Business Analysis | 6-8 yrs (Senior) | Gurgaon": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Gurgaon",
+    "sample_size": 15,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.067,
+      0.267,
+      0.067,
+      0.4,
+      0.2,
+      0.0
+    ]
+  },
+  "Business Analysis | 6-8 yrs (Senior) | Hyderabad": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Hyderabad",
+    "sample_size": 17,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.059,
+      0.176,
+      0.294,
+      0.235,
+      0.235,
+      0.0
+    ]
+  },
+  "Business Analysis | 6-8 yrs (Senior) | Mumbai": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Mumbai",
+    "sample_size": 43,
+    "most_likely_band": 4,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.023,
+      0.256,
+      0.349,
+      0.372,
+      0.0
+    ]
+  },
+  "Business Analysis | 6-8 yrs (Senior) | Other Hubs": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Other Hubs",
+    "sample_size": 61,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.016,
+      0.066,
+      0.098,
+      0.41,
+      0.262,
+      0.148
+    ]
+  },
+  "Business Analysis | 6-8 yrs (Senior) | Pune": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Pune",
+    "sample_size": 28,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.036,
+      0.036,
+      0.214,
+      0.393,
+      0.321,
+      0.0
+    ]
+  },
+  "Business Analysis | 9-12 yrs (Lead) | Bangalore": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Bangalore",
+    "sample_size": 39,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.103,
+      0.359,
+      0.436,
+      0.103
+    ]
+  },
+  "Business Analysis | 9-12 yrs (Lead) | Chennai": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Chennai",
+    "sample_size": 8,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.125,
+      0.5,
+      0.375,
+      0.0
+    ]
+  },
+  "Business Analysis | 9-12 yrs (Lead) | Delhi NCR": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Delhi NCR",
+    "sample_size": 4,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.75,
+      0.25
+    ]
+  },
+  "Business Analysis | 9-12 yrs (Lead) | Gurgaon": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Gurgaon",
+    "sample_size": 14,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.286,
+      0.429,
+      0.286
+    ]
+  },
+  "Business Analysis | 9-12 yrs (Lead) | Hyderabad": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Hyderabad",
+    "sample_size": 18,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.167,
+      0.278,
+      0.444,
+      0.111
+    ]
+  },
+  "Business Analysis | 9-12 yrs (Lead) | Mumbai": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Mumbai",
+    "sample_size": 14,
+    "most_likely_band": 4,
+    "median_lpa": 16.25,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.071,
+      0.429,
+      0.5,
+      0.0
+    ]
+  },
+  "Business Analysis | 9-12 yrs (Lead) | Other Hubs": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Other Hubs",
+    "sample_size": 21,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.048,
+      0.0,
+      0.143,
+      0.286,
+      0.524,
+      0.0
+    ]
+  },
+  "Business Analysis | 9-12 yrs (Lead) | Pune": {
+    "role_family": "Business Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Pune",
+    "sample_size": 11,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.091,
+      0.364,
+      0.455,
+      0.091
+    ]
+  },
+  "Data Analysis | 0-2 yrs (Junior) | Bangalore": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Bangalore",
+    "sample_size": 82,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.476,
+      0.366,
+      0.122,
+      0.024,
+      0.012,
+      0.0
+    ]
+  },
+  "Data Analysis | 0-2 yrs (Junior) | Chennai": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Chennai",
+    "sample_size": 30,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.6,
+      0.167,
+      0.2,
+      0.033,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Analysis | 0-2 yrs (Junior) | Delhi NCR": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Delhi NCR",
+    "sample_size": 29,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.379,
+      0.138,
+      0.138,
+      0.31,
+      0.034,
+      0.0
+    ]
+  },
+  "Data Analysis | 0-2 yrs (Junior) | Gurgaon": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Gurgaon",
+    "sample_size": 57,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.421,
+      0.298,
+      0.193,
+      0.07,
+      0.018,
+      0.0
+    ]
+  },
+  "Data Analysis | 0-2 yrs (Junior) | Hyderabad": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Hyderabad",
+    "sample_size": 16,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.562,
+      0.312,
+      0.062,
+      0.062,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Analysis | 0-2 yrs (Junior) | Kolkata": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Kolkata",
+    "sample_size": 9,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.778,
+      0.111,
+      0.111,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Analysis | 0-2 yrs (Junior) | Mumbai": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Mumbai",
+    "sample_size": 55,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.455,
+      0.164,
+      0.145,
+      0.218,
+      0.018,
+      0.0
+    ]
+  },
+  "Data Analysis | 0-2 yrs (Junior) | Other Hubs": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Other Hubs",
+    "sample_size": 123,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.683,
+      0.187,
+      0.081,
+      0.033,
+      0.016,
+      0.0
+    ]
+  },
+  "Data Analysis | 0-2 yrs (Junior) | Pune": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Pune",
+    "sample_size": 24,
+    "most_likely_band": 0,
+    "median_lpa": 3.0,
+    "band_probabilities": [
+      0.5,
+      0.417,
+      0.083,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Analysis | 13+ yrs (Executive) | Bangalore": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Bangalore",
+    "sample_size": 42,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.071,
+      0.048,
+      0.333,
+      0.548
+    ]
+  },
+  "Data Analysis | 13+ yrs (Executive) | Chennai": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Chennai",
+    "sample_size": 9,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.222,
+      0.111,
+      0.444,
+      0.222
+    ]
+  },
+  "Data Analysis | 13+ yrs (Executive) | Delhi NCR": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Delhi NCR",
+    "sample_size": 17,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.118,
+      0.0,
+      0.176,
+      0.706
+    ]
+  },
+  "Data Analysis | 13+ yrs (Executive) | Gurgaon": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Gurgaon",
+    "sample_size": 28,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.143,
+      0.036,
+      0.286,
+      0.536
+    ]
+  },
+  "Data Analysis | 13+ yrs (Executive) | Hyderabad": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Hyderabad",
+    "sample_size": 7,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.143,
+      0.143,
+      0.143,
+      0.571
+    ]
+  },
+  "Data Analysis | 13+ yrs (Executive) | Kolkata": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Kolkata",
+    "sample_size": 2,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "Data Analysis | 13+ yrs (Executive) | Mumbai": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Mumbai",
+    "sample_size": 32,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.125,
+      0.0,
+      0.312,
+      0.562
+    ]
+  },
+  "Data Analysis | 13+ yrs (Executive) | Other Hubs": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Other Hubs",
+    "sample_size": 14,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.071,
+      0.0,
+      0.071,
+      0.143,
+      0.571,
+      0.143
+    ]
+  },
+  "Data Analysis | 13+ yrs (Executive) | Pune": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Pune",
+    "sample_size": 6,
+    "most_likely_band": 2,
+    "median_lpa": 16.25,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.333,
+      0.167,
+      0.167,
+      0.333
+    ]
+  },
+  "Data Analysis | 3-5 yrs (Mid-level) | Bangalore": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Bangalore",
+    "sample_size": 345,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.139,
+      0.246,
+      0.348,
+      0.174,
+      0.081,
+      0.012
+    ]
+  },
+  "Data Analysis | 3-5 yrs (Mid-level) | Chennai": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Chennai",
+    "sample_size": 85,
+    "most_likely_band": 1,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.259,
+      0.341,
+      0.282,
+      0.106,
+      0.012,
+      0.0
+    ]
+  },
+  "Data Analysis | 3-5 yrs (Mid-level) | Delhi NCR": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Delhi NCR",
+    "sample_size": 128,
+    "most_likely_band": 3,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.188,
+      0.07,
+      0.312,
+      0.32,
+      0.109,
+      0.0
+    ]
+  },
+  "Data Analysis | 3-5 yrs (Mid-level) | Gurgaon": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Gurgaon",
+    "sample_size": 194,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.124,
+      0.247,
+      0.433,
+      0.144,
+      0.041,
+      0.01
+    ]
+  },
+  "Data Analysis | 3-5 yrs (Mid-level) | Hyderabad": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Hyderabad",
+    "sample_size": 63,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.27,
+      0.238,
+      0.254,
+      0.222,
+      0.016,
+      0.0
+    ]
+  },
+  "Data Analysis | 3-5 yrs (Mid-level) | Kolkata": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Kolkata",
+    "sample_size": 13,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.385,
+      0.385,
+      0.231,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Analysis | 3-5 yrs (Mid-level) | Mumbai": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Mumbai",
+    "sample_size": 258,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.19,
+      0.194,
+      0.267,
+      0.248,
+      0.093,
+      0.008
+    ]
+  },
+  "Data Analysis | 3-5 yrs (Mid-level) | Other Hubs": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Other Hubs",
+    "sample_size": 296,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.412,
+      0.209,
+      0.206,
+      0.135,
+      0.027,
+      0.01
+    ]
+  },
+  "Data Analysis | 3-5 yrs (Mid-level) | Pune": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Pune",
+    "sample_size": 73,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.205,
+      0.288,
+      0.329,
+      0.123,
+      0.055,
+      0.0
+    ]
+  },
+  "Data Analysis | 6-8 yrs (Senior) | Bangalore": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Bangalore",
+    "sample_size": 207,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.01,
+      0.097,
+      0.246,
+      0.343,
+      0.3,
+      0.005
+    ]
+  },
+  "Data Analysis | 6-8 yrs (Senior) | Chennai": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Chennai",
+    "sample_size": 49,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.061,
+      0.163,
+      0.245,
+      0.347,
+      0.184,
+      0.0
+    ]
+  },
+  "Data Analysis | 6-8 yrs (Senior) | Delhi NCR": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Delhi NCR",
+    "sample_size": 71,
+    "most_likely_band": 4,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.014,
+      0.099,
+      0.183,
+      0.268,
+      0.394,
+      0.042
+    ]
+  },
+  "Data Analysis | 6-8 yrs (Senior) | Gurgaon": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Gurgaon",
+    "sample_size": 80,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.013,
+      0.113,
+      0.3,
+      0.312,
+      0.212,
+      0.05
+    ]
+  },
+  "Data Analysis | 6-8 yrs (Senior) | Hyderabad": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Hyderabad",
+    "sample_size": 45,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.089,
+      0.133,
+      0.244,
+      0.289,
+      0.222,
+      0.022
+    ]
+  },
+  "Data Analysis | 6-8 yrs (Senior) | Kolkata": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Kolkata",
+    "sample_size": 10,
+    "most_likely_band": 2,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.4,
+      0.4,
+      0.2,
+      0.0
+    ]
+  },
+  "Data Analysis | 6-8 yrs (Senior) | Mumbai": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Mumbai",
+    "sample_size": 158,
+    "most_likely_band": 4,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.013,
+      0.051,
+      0.259,
+      0.304,
+      0.361,
+      0.013
+    ]
+  },
+  "Data Analysis | 6-8 yrs (Senior) | Other Hubs": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Other Hubs",
+    "sample_size": 134,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.052,
+      0.149,
+      0.231,
+      0.291,
+      0.261,
+      0.015
+    ]
+  },
+  "Data Analysis | 6-8 yrs (Senior) | Pune": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Pune",
+    "sample_size": 81,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.025,
+      0.086,
+      0.309,
+      0.37,
+      0.21,
+      0.0
+    ]
+  },
+  "Data Analysis | 9-12 yrs (Lead) | Bangalore": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Bangalore",
+    "sample_size": 122,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.008,
+      0.164,
+      0.402,
+      0.344,
+      0.082
+    ]
+  },
+  "Data Analysis | 9-12 yrs (Lead) | Chennai": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Chennai",
+    "sample_size": 21,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.143,
+      0.333,
+      0.381,
+      0.143
+    ]
+  },
+  "Data Analysis | 9-12 yrs (Lead) | Delhi NCR": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Delhi NCR",
+    "sample_size": 42,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.071,
+      0.19,
+      0.429,
+      0.31
+    ]
+  },
+  "Data Analysis | 9-12 yrs (Lead) | Gurgaon": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Gurgaon",
+    "sample_size": 65,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.108,
+      0.2,
+      0.462,
+      0.231
+    ]
+  },
+  "Data Analysis | 9-12 yrs (Lead) | Hyderabad": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Hyderabad",
+    "sample_size": 33,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.152,
+      0.333,
+      0.424,
+      0.091
+    ]
+  },
+  "Data Analysis | 9-12 yrs (Lead) | Kolkata": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Kolkata",
+    "sample_size": 1,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "Data Analysis | 9-12 yrs (Lead) | Mumbai": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Mumbai",
+    "sample_size": 58,
+    "most_likely_band": 4,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.207,
+      0.31,
+      0.345,
+      0.138
+    ]
+  },
+  "Data Analysis | 9-12 yrs (Lead) | Other Hubs": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Other Hubs",
+    "sample_size": 45,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.022,
+      0.067,
+      0.222,
+      0.333,
+      0.311,
+      0.044
+    ]
+  },
+  "Data Analysis | 9-12 yrs (Lead) | Pune": {
+    "role_family": "Data Analysis",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Pune",
+    "sample_size": 46,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.261,
+      0.304,
+      0.283,
+      0.152
+    ]
+  },
+  "Data Engineering | 0-2 yrs (Junior) | Bangalore": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Bangalore",
+    "sample_size": 4,
+    "most_likely_band": 0,
+    "median_lpa": 3.0,
+    "band_probabilities": [
+      0.5,
+      0.25,
+      0.25,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Engineering | 0-2 yrs (Junior) | Delhi NCR": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Delhi NCR",
+    "sample_size": 2,
+    "most_likely_band": 2,
+    "median_lpa": 10.25,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Engineering | 0-2 yrs (Junior) | Pune": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Pune",
+    "sample_size": 1,
+    "most_likely_band": 1,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Engineering | 13+ yrs (Executive) | Bangalore": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Bangalore",
+    "sample_size": 13,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.077,
+      0.0,
+      0.385,
+      0.538
+    ]
+  },
+  "Data Engineering | 13+ yrs (Executive) | Delhi NCR": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Delhi NCR",
+    "sample_size": 3,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.667,
+      0.333
+    ]
+  },
+  "Data Engineering | 13+ yrs (Executive) | Mumbai": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Mumbai",
+    "sample_size": 2,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "Data Engineering | 13+ yrs (Executive) | Other Hubs": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Other Hubs",
+    "sample_size": 7,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.571,
+      0.429
+    ]
+  },
+  "Data Engineering | 3-5 yrs (Mid-level) | Bangalore": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Bangalore",
+    "sample_size": 46,
+    "most_likely_band": 1,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.022,
+      0.348,
+      0.348,
+      0.174,
+      0.087,
+      0.022
+    ]
+  },
+  "Data Engineering | 3-5 yrs (Mid-level) | Chennai": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Chennai",
+    "sample_size": 8,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.0,
+      0.375,
+      0.625,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Engineering | 3-5 yrs (Mid-level) | Delhi NCR": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Delhi NCR",
+    "sample_size": 8,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.25,
+      0.75,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Engineering | 3-5 yrs (Mid-level) | Gurgaon": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Gurgaon",
+    "sample_size": 23,
+    "most_likely_band": 1,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.043,
+      0.348,
+      0.348,
+      0.217,
+      0.043,
+      0.0
+    ]
+  },
+  "Data Engineering | 3-5 yrs (Mid-level) | Hyderabad": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Hyderabad",
+    "sample_size": 12,
+    "most_likely_band": 1,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.083,
+      0.333,
+      0.333,
+      0.167,
+      0.083,
+      0.0
+    ]
+  },
+  "Data Engineering | 3-5 yrs (Mid-level) | Kolkata": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Kolkata",
+    "sample_size": 4,
+    "most_likely_band": 4,
+    "median_lpa": 16.25,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.25,
+      0.25,
+      0.5,
+      0.0
+    ]
+  },
+  "Data Engineering | 3-5 yrs (Mid-level) | Mumbai": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Mumbai",
+    "sample_size": 14,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.0,
+      0.071,
+      0.571,
+      0.357,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Engineering | 3-5 yrs (Mid-level) | Other Hubs": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Other Hubs",
+    "sample_size": 19,
+    "most_likely_band": 1,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.211,
+      0.316,
+      0.263,
+      0.211,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Engineering | 3-5 yrs (Mid-level) | Pune": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Pune",
+    "sample_size": 14,
+    "most_likely_band": 1,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.143,
+      0.429,
+      0.357,
+      0.071,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Engineering | 6-8 yrs (Senior) | Bangalore": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Bangalore",
+    "sample_size": 67,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.03,
+      0.075,
+      0.239,
+      0.343,
+      0.284,
+      0.03
+    ]
+  },
+  "Data Engineering | 6-8 yrs (Senior) | Chennai": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Chennai",
+    "sample_size": 12,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.167,
+      0.167,
+      0.417,
+      0.25,
+      0.0
+    ]
+  },
+  "Data Engineering | 6-8 yrs (Senior) | Delhi NCR": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Delhi NCR",
+    "sample_size": 6,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.167,
+      0.0,
+      0.5,
+      0.333,
+      0.0
+    ]
+  },
+  "Data Engineering | 6-8 yrs (Senior) | Gurgaon": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Gurgaon",
+    "sample_size": 21,
+    "most_likely_band": 4,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.048,
+      0.238,
+      0.286,
+      0.429,
+      0.0
+    ]
+  },
+  "Data Engineering | 6-8 yrs (Senior) | Hyderabad": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Hyderabad",
+    "sample_size": 17,
+    "most_likely_band": 4,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.059,
+      0.353,
+      0.118,
+      0.412,
+      0.059
+    ]
+  },
+  "Data Engineering | 6-8 yrs (Senior) | Mumbai": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Mumbai",
+    "sample_size": 13,
+    "most_likely_band": 4,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.231,
+      0.308,
+      0.385,
+      0.077
+    ]
+  },
+  "Data Engineering | 6-8 yrs (Senior) | Other Hubs": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Other Hubs",
+    "sample_size": 27,
+    "most_likely_band": 2,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.037,
+      0.111,
+      0.296,
+      0.296,
+      0.222,
+      0.037
+    ]
+  },
+  "Data Engineering | 6-8 yrs (Senior) | Pune": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Pune",
+    "sample_size": 10,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.1,
+      0.2,
+      0.4,
+      0.3,
+      0.0
+    ]
+  },
+  "Data Engineering | 9-12 yrs (Lead) | Bangalore": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Bangalore",
+    "sample_size": 21,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.048,
+      0.19,
+      0.381,
+      0.381,
+      0.0
+    ]
+  },
+  "Data Engineering | 9-12 yrs (Lead) | Chennai": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Chennai",
+    "sample_size": 5,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.2,
+      0.2,
+      0.4,
+      0.2,
+      0.0
+    ]
+  },
+  "Data Engineering | 9-12 yrs (Lead) | Delhi NCR": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Delhi NCR",
+    "sample_size": 4,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.25,
+      0.75,
+      0.0
+    ]
+  },
+  "Data Engineering | 9-12 yrs (Lead) | Gurgaon": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Gurgaon",
+    "sample_size": 7,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.143,
+      0.0,
+      0.429,
+      0.429
+    ]
+  },
+  "Data Engineering | 9-12 yrs (Lead) | Hyderabad": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Hyderabad",
+    "sample_size": 5,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.4,
+      0.6,
+      0.0
+    ]
+  },
+  "Data Engineering | 9-12 yrs (Lead) | Mumbai": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Mumbai",
+    "sample_size": 8,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.125,
+      0.625,
+      0.25,
+      0.0
+    ]
+  },
+  "Data Engineering | 9-12 yrs (Lead) | Other Hubs": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Other Hubs",
+    "sample_size": 10,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.1,
+      0.6,
+      0.2,
+      0.1
+    ]
+  },
+  "Data Engineering | 9-12 yrs (Lead) | Pune": {
+    "role_family": "Data Engineering",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Pune",
+    "sample_size": 16,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.125,
+      0.438,
+      0.375,
+      0.062
+    ]
+  },
+  "Data Science | 0-2 yrs (Junior) | Bangalore": {
+    "role_family": "Data Science",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Bangalore",
+    "sample_size": 3,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.667,
+      0.333,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Science | 0-2 yrs (Junior) | Chennai": {
+    "role_family": "Data Science",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Chennai",
+    "sample_size": 2,
+    "most_likely_band": 0,
+    "median_lpa": 3.0,
+    "band_probabilities": [
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Science | 0-2 yrs (Junior) | Gurgaon": {
+    "role_family": "Data Science",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Gurgaon",
+    "sample_size": 4,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Science | 0-2 yrs (Junior) | Mumbai": {
+    "role_family": "Data Science",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Mumbai",
+    "sample_size": 2,
+    "most_likely_band": 1,
+    "median_lpa": 12.25,
+    "band_probabilities": [
+      0.0,
+      0.5,
+      0.0,
+      0.0,
+      0.5,
+      0.0
+    ]
+  },
+  "Data Science | 0-2 yrs (Junior) | Other Hubs": {
+    "role_family": "Data Science",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Other Hubs",
+    "sample_size": 2,
+    "most_likely_band": 0,
+    "median_lpa": 3.0,
+    "band_probabilities": [
+      0.5,
+      0.5,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Science | 13+ yrs (Executive) | Bangalore": {
+    "role_family": "Data Science",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Bangalore",
+    "sample_size": 6,
+    "most_likely_band": 3,
+    "median_lpa": 16.25,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.167,
+      0.333,
+      0.333,
+      0.167
+    ]
+  },
+  "Data Science | 13+ yrs (Executive) | Chennai": {
+    "role_family": "Data Science",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Chennai",
+    "sample_size": 3,
+    "most_likely_band": 3,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.333,
+      0.333,
+      0.333
+    ]
+  },
+  "Data Science | 13+ yrs (Executive) | Delhi NCR": {
+    "role_family": "Data Science",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Delhi NCR",
+    "sample_size": 1,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  "Data Science | 13+ yrs (Executive) | Mumbai": {
+    "role_family": "Data Science",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Mumbai",
+    "sample_size": 2,
+    "most_likely_band": 4,
+    "median_lpa": 28.75,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5
+    ]
+  },
+  "Data Science | 13+ yrs (Executive) | Other Hubs": {
+    "role_family": "Data Science",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Other Hubs",
+    "sample_size": 6,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.167,
+      0.833
+    ]
+  },
+  "Data Science | 13+ yrs (Executive) | Pune": {
+    "role_family": "Data Science",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Pune",
+    "sample_size": 2,
+    "most_likely_band": 3,
+    "median_lpa": 25.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.0,
+      0.5
+    ]
+  },
+  "Data Science | 3-5 yrs (Mid-level) | Bangalore": {
+    "role_family": "Data Science",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Bangalore",
+    "sample_size": 26,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.077,
+      0.192,
+      0.269,
+      0.192,
+      0.231,
+      0.038
+    ]
+  },
+  "Data Science | 3-5 yrs (Mid-level) | Delhi NCR": {
+    "role_family": "Data Science",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Delhi NCR",
+    "sample_size": 8,
+    "most_likely_band": 1,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.125,
+      0.25,
+      0.25,
+      0.25,
+      0.125,
+      0.0
+    ]
+  },
+  "Data Science | 3-5 yrs (Mid-level) | Gurgaon": {
+    "role_family": "Data Science",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Gurgaon",
+    "sample_size": 21,
+    "most_likely_band": 2,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.381,
+      0.333,
+      0.19,
+      0.095
+    ]
+  },
+  "Data Science | 3-5 yrs (Mid-level) | Hyderabad": {
+    "role_family": "Data Science",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Hyderabad",
+    "sample_size": 9,
+    "most_likely_band": 3,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.111,
+      0.222,
+      0.222,
+      0.333,
+      0.111,
+      0.0
+    ]
+  },
+  "Data Science | 3-5 yrs (Mid-level) | Kolkata": {
+    "role_family": "Data Science",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Kolkata",
+    "sample_size": 1,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Science | 3-5 yrs (Mid-level) | Mumbai": {
+    "role_family": "Data Science",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Mumbai",
+    "sample_size": 20,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.05,
+      0.35,
+      0.45,
+      0.05,
+      0.1
+    ]
+  },
+  "Data Science | 3-5 yrs (Mid-level) | Other Hubs": {
+    "role_family": "Data Science",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Other Hubs",
+    "sample_size": 33,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.03,
+      0.212,
+      0.242,
+      0.303,
+      0.212,
+      0.0
+    ]
+  },
+  "Data Science | 3-5 yrs (Mid-level) | Pune": {
+    "role_family": "Data Science",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Pune",
+    "sample_size": 6,
+    "most_likely_band": 1,
+    "median_lpa": 6.25,
+    "band_probabilities": [
+      0.167,
+      0.333,
+      0.167,
+      0.0,
+      0.333,
+      0.0
+    ]
+  },
+  "Data Science | 6-8 yrs (Senior) | Bangalore": {
+    "role_family": "Data Science",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Bangalore",
+    "sample_size": 45,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.022,
+      0.178,
+      0.356,
+      0.289,
+      0.156
+    ]
+  },
+  "Data Science | 6-8 yrs (Senior) | Chennai": {
+    "role_family": "Data Science",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Chennai",
+    "sample_size": 5,
+    "most_likely_band": 1,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.4,
+      0.0,
+      0.2,
+      0.4,
+      0.0
+    ]
+  },
+  "Data Science | 6-8 yrs (Senior) | Delhi NCR": {
+    "role_family": "Data Science",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Delhi NCR",
+    "sample_size": 14,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.071,
+      0.071,
+      0.5,
+      0.357,
+      0.0
+    ]
+  },
+  "Data Science | 6-8 yrs (Senior) | Gurgaon": {
+    "role_family": "Data Science",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Gurgaon",
+    "sample_size": 6,
+    "most_likely_band": 4,
+    "median_lpa": 16.25,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.167,
+      0.333,
+      0.5,
+      0.0
+    ]
+  },
+  "Data Science | 6-8 yrs (Senior) | Hyderabad": {
+    "role_family": "Data Science",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Hyderabad",
+    "sample_size": 19,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.0,
+      0.211,
+      0.368,
+      0.316,
+      0.105,
+      0.0
+    ]
+  },
+  "Data Science | 6-8 yrs (Senior) | Kolkata": {
+    "role_family": "Data Science",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Kolkata",
+    "sample_size": 7,
+    "most_likely_band": 4,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.143,
+      0.286,
+      0.143,
+      0.429,
+      0.0
+    ]
+  },
+  "Data Science | 6-8 yrs (Senior) | Mumbai": {
+    "role_family": "Data Science",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Mumbai",
+    "sample_size": 16,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.062,
+      0.188,
+      0.188,
+      0.5,
+      0.062
+    ]
+  },
+  "Data Science | 6-8 yrs (Senior) | Other Hubs": {
+    "role_family": "Data Science",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Other Hubs",
+    "sample_size": 17,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.235,
+      0.294,
+      0.294,
+      0.176
+    ]
+  },
+  "Data Science | 6-8 yrs (Senior) | Pune": {
+    "role_family": "Data Science",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Pune",
+    "sample_size": 9,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.222,
+      0.0,
+      0.667,
+      0.111
+    ]
+  },
+  "Data Science | 9-12 yrs (Lead) | Bangalore": {
+    "role_family": "Data Science",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Bangalore",
+    "sample_size": 18,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.056,
+      0.0,
+      0.111,
+      0.278,
+      0.333,
+      0.222
+    ]
+  },
+  "Data Science | 9-12 yrs (Lead) | Chennai": {
+    "role_family": "Data Science",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Chennai",
+    "sample_size": 9,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.222,
+      0.222,
+      0.444,
+      0.111
+    ]
+  },
+  "Data Science | 9-12 yrs (Lead) | Delhi NCR": {
+    "role_family": "Data Science",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Delhi NCR",
+    "sample_size": 7,
+    "most_likely_band": 3,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.429,
+      0.429,
+      0.143
+    ]
+  },
+  "Data Science | 9-12 yrs (Lead) | Gurgaon": {
+    "role_family": "Data Science",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Gurgaon",
+    "sample_size": 2,
+    "most_likely_band": 2,
+    "median_lpa": 10.25,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.0,
+      0.0
+    ]
+  },
+  "Data Science | 9-12 yrs (Lead) | Kolkata": {
+    "role_family": "Data Science",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Kolkata",
+    "sample_size": 1,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  "Data Science | 9-12 yrs (Lead) | Mumbai": {
+    "role_family": "Data Science",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Mumbai",
+    "sample_size": 9,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.111,
+      0.333,
+      0.444,
+      0.111
+    ]
+  },
+  "Data Science | 9-12 yrs (Lead) | Other Hubs": {
+    "role_family": "Data Science",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Other Hubs",
+    "sample_size": 10,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.3,
+      0.5,
+      0.2
+    ]
+  },
+  "Data Science | 9-12 yrs (Lead) | Pune": {
+    "role_family": "Data Science",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Pune",
+    "sample_size": 7,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.143,
+      0.0,
+      0.143,
+      0.571,
+      0.143
+    ]
+  },
+  "ML | 0-2 yrs (Junior) | Bangalore": {
+    "role_family": "ML",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Bangalore",
+    "sample_size": 1,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  "ML | 0-2 yrs (Junior) | Chennai": {
+    "role_family": "ML",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Chennai",
+    "sample_size": 1,
+    "most_likely_band": 1,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ML | 0-2 yrs (Junior) | Delhi NCR": {
+    "role_family": "ML",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Delhi NCR",
+    "sample_size": 1,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ML | 0-2 yrs (Junior) | Gurgaon": {
+    "role_family": "ML",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Gurgaon",
+    "sample_size": 1,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ML | 0-2 yrs (Junior) | Mumbai": {
+    "role_family": "ML",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Mumbai",
+    "sample_size": 1,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ML | 0-2 yrs (Junior) | Other Hubs": {
+    "role_family": "ML",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Other Hubs",
+    "sample_size": 1,
+    "most_likely_band": 1,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ML | 13+ yrs (Executive) | Bangalore": {
+    "role_family": "ML",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Bangalore",
+    "sample_size": 9,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.111,
+      0.0,
+      0.222,
+      0.667
+    ]
+  },
+  "ML | 13+ yrs (Executive) | Delhi NCR": {
+    "role_family": "ML",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Delhi NCR",
+    "sample_size": 2,
+    "most_likely_band": 4,
+    "median_lpa": 28.75,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5
+    ]
+  },
+  "ML | 13+ yrs (Executive) | Hyderabad": {
+    "role_family": "ML",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Hyderabad",
+    "sample_size": 2,
+    "most_likely_band": 4,
+    "median_lpa": 28.75,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5
+    ]
+  },
+  "ML | 13+ yrs (Executive) | Mumbai": {
+    "role_family": "ML",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Mumbai",
+    "sample_size": 4,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.25,
+      0.75
+    ]
+  },
+  "ML | 13+ yrs (Executive) | Pune": {
+    "role_family": "ML",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Pune",
+    "sample_size": 1,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "ML | 3-5 yrs (Mid-level) | Bangalore": {
+    "role_family": "ML",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Bangalore",
+    "sample_size": 24,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.083,
+      0.167,
+      0.417,
+      0.25,
+      0.083
+    ]
+  },
+  "ML | 3-5 yrs (Mid-level) | Chennai": {
+    "role_family": "ML",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Chennai",
+    "sample_size": 4,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.0,
+      0.25,
+      0.5,
+      0.25,
+      0.0,
+      0.0
+    ]
+  },
+  "ML | 3-5 yrs (Mid-level) | Delhi NCR": {
+    "role_family": "ML",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Delhi NCR",
+    "sample_size": 2,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ML | 3-5 yrs (Mid-level) | Gurgaon": {
+    "role_family": "ML",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Gurgaon",
+    "sample_size": 14,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.214,
+      0.643,
+      0.071,
+      0.071
+    ]
+  },
+  "ML | 3-5 yrs (Mid-level) | Hyderabad": {
+    "role_family": "ML",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Hyderabad",
+    "sample_size": 4,
+    "most_likely_band": 1,
+    "median_lpa": 8.5,
+    "band_probabilities": [
+      0.0,
+      0.5,
+      0.0,
+      0.25,
+      0.25,
+      0.0
+    ]
+  },
+  "ML | 3-5 yrs (Mid-level) | Kolkata": {
+    "role_family": "ML",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Kolkata",
+    "sample_size": 1,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ML | 3-5 yrs (Mid-level) | Mumbai": {
+    "role_family": "ML",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Mumbai",
+    "sample_size": 22,
+    "most_likely_band": 3,
+    "median_lpa": 10.25,
+    "band_probabilities": [
+      0.0,
+      0.136,
+      0.364,
+      0.5,
+      0.0,
+      0.0
+    ]
+  },
+  "ML | 3-5 yrs (Mid-level) | Other Hubs": {
+    "role_family": "ML",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Other Hubs",
+    "sample_size": 18,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.278,
+      0.5,
+      0.222,
+      0.0
+    ]
+  },
+  "ML | 3-5 yrs (Mid-level) | Pune": {
+    "role_family": "ML",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Pune",
+    "sample_size": 4,
+    "most_likely_band": 1,
+    "median_lpa": 10.25,
+    "band_probabilities": [
+      0.0,
+      0.25,
+      0.25,
+      0.25,
+      0.25,
+      0.0
+    ]
+  },
+  "ML | 6-8 yrs (Senior) | Bangalore": {
+    "role_family": "ML",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Bangalore",
+    "sample_size": 44,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.023,
+      0.114,
+      0.295,
+      0.386,
+      0.182
+    ]
+  },
+  "ML | 6-8 yrs (Senior) | Chennai": {
+    "role_family": "ML",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Chennai",
+    "sample_size": 9,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.111,
+      0.111,
+      0.222,
+      0.333,
+      0.222
+    ]
+  },
+  "ML | 6-8 yrs (Senior) | Delhi NCR": {
+    "role_family": "ML",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Delhi NCR",
+    "sample_size": 7,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.143,
+      0.714,
+      0.143
+    ]
+  },
+  "ML | 6-8 yrs (Senior) | Gurgaon": {
+    "role_family": "ML",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Gurgaon",
+    "sample_size": 18,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.111,
+      0.222,
+      0.5,
+      0.167
+    ]
+  },
+  "ML | 6-8 yrs (Senior) | Hyderabad": {
+    "role_family": "ML",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Hyderabad",
+    "sample_size": 6,
+    "most_likely_band": 1,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.333,
+      0.0,
+      0.333,
+      0.333,
+      0.0
+    ]
+  },
+  "ML | 6-8 yrs (Senior) | Kolkata": {
+    "role_family": "ML",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Kolkata",
+    "sample_size": 1,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ML | 6-8 yrs (Senior) | Mumbai": {
+    "role_family": "ML",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Mumbai",
+    "sample_size": 9,
+    "most_likely_band": 4,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.222,
+      0.222,
+      0.111,
+      0.444,
+      0.0
+    ]
+  },
+  "ML | 6-8 yrs (Senior) | Other Hubs": {
+    "role_family": "ML",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Other Hubs",
+    "sample_size": 14,
+    "most_likely_band": 4,
+    "median_lpa": 16.25,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.286,
+      0.214,
+      0.357,
+      0.143
+    ]
+  },
+  "ML | 6-8 yrs (Senior) | Pune": {
+    "role_family": "ML",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Pune",
+    "sample_size": 9,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.111,
+      0.111,
+      0.556,
+      0.222
+    ]
+  },
+  "ML | 9-12 yrs (Lead) | Bangalore": {
+    "role_family": "ML",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Bangalore",
+    "sample_size": 26,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.077,
+      0.308,
+      0.385,
+      0.231
+    ]
+  },
+  "ML | 9-12 yrs (Lead) | Chennai": {
+    "role_family": "ML",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Chennai",
+    "sample_size": 1,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  "ML | 9-12 yrs (Lead) | Delhi NCR": {
+    "role_family": "ML",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Delhi NCR",
+    "sample_size": 4,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.75,
+      0.25,
+      0.0
+    ]
+  },
+  "ML | 9-12 yrs (Lead) | Gurgaon": {
+    "role_family": "ML",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Gurgaon",
+    "sample_size": 6,
+    "most_likely_band": 3,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.333,
+      0.333,
+      0.333
+    ]
+  },
+  "ML | 9-12 yrs (Lead) | Hyderabad": {
+    "role_family": "ML",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Hyderabad",
+    "sample_size": 1,
+    "most_likely_band": 5,
+    "median_lpa": 37.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "ML | 9-12 yrs (Lead) | Other Hubs": {
+    "role_family": "ML",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Other Hubs",
+    "sample_size": 3,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  "ML | 9-12 yrs (Lead) | Pune": {
+    "role_family": "ML",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Pune",
+    "sample_size": 2,
+    "most_likely_band": 3,
+    "median_lpa": 16.25,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.5,
+      0.5,
+      0.0
+    ]
+  },
+  "Other / Strategy | 0-2 yrs (Junior) | Bangalore": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Bangalore",
+    "sample_size": 136,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.588,
+      0.25,
+      0.066,
+      0.059,
+      0.029,
+      0.007
+    ]
+  },
+  "Other / Strategy | 0-2 yrs (Junior) | Chennai": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Chennai",
+    "sample_size": 66,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.788,
+      0.182,
+      0.015,
+      0.015,
+      0.0,
+      0.0
+    ]
+  },
+  "Other / Strategy | 0-2 yrs (Junior) | Delhi NCR": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Delhi NCR",
+    "sample_size": 104,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.702,
+      0.183,
+      0.058,
+      0.058,
+      0.0,
+      0.0
+    ]
+  },
+  "Other / Strategy | 0-2 yrs (Junior) | Gurgaon": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Gurgaon",
+    "sample_size": 71,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.606,
+      0.282,
+      0.042,
+      0.028,
+      0.042,
+      0.0
+    ]
+  },
+  "Other / Strategy | 0-2 yrs (Junior) | Hyderabad": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Hyderabad",
+    "sample_size": 56,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.804,
+      0.179,
+      0.018,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "Other / Strategy | 0-2 yrs (Junior) | Kolkata": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Kolkata",
+    "sample_size": 23,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.739,
+      0.174,
+      0.043,
+      0.043,
+      0.0,
+      0.0
+    ]
+  },
+  "Other / Strategy | 0-2 yrs (Junior) | Mumbai": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Mumbai",
+    "sample_size": 115,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.635,
+      0.226,
+      0.052,
+      0.052,
+      0.035,
+      0.0
+    ]
+  },
+  "Other / Strategy | 0-2 yrs (Junior) | Other Hubs": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Other Hubs",
+    "sample_size": 438,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.774,
+      0.189,
+      0.021,
+      0.011,
+      0.005,
+      0.0
+    ]
+  },
+  "Other / Strategy | 0-2 yrs (Junior) | Pune": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "0-2 yrs (Junior)",
+    "city": "Pune",
+    "sample_size": 67,
+    "most_likely_band": 0,
+    "median_lpa": 1.5,
+    "band_probabilities": [
+      0.746,
+      0.194,
+      0.03,
+      0.03,
+      0.0,
+      0.0
+    ]
+  },
+  "Other / Strategy | 13+ yrs (Executive) | Bangalore": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Bangalore",
+    "sample_size": 178,
+    "most_likely_band": 5,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.006,
+      0.017,
+      0.163,
+      0.404,
+      0.41
+    ]
+  },
+  "Other / Strategy | 13+ yrs (Executive) | Chennai": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Chennai",
+    "sample_size": 49,
+    "most_likely_band": 5,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.02,
+      0.0,
+      0.245,
+      0.347,
+      0.388
+    ]
+  },
+  "Other / Strategy | 13+ yrs (Executive) | Delhi NCR": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Delhi NCR",
+    "sample_size": 53,
+    "most_likely_band": 5,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.019,
+      0.132,
+      0.415,
+      0.434
+    ]
+  },
+  "Other / Strategy | 13+ yrs (Executive) | Gurgaon": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Gurgaon",
+    "sample_size": 40,
+    "most_likely_band": 5,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.0,
+      0.175,
+      0.35,
+      0.475
+    ]
+  },
+  "Other / Strategy | 13+ yrs (Executive) | Hyderabad": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Hyderabad",
+    "sample_size": 46,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.043,
+      0.13,
+      0.457,
+      0.37
+    ]
+  },
+  "Other / Strategy | 13+ yrs (Executive) | Kolkata": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Kolkata",
+    "sample_size": 6,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.167,
+      0.167,
+      0.5,
+      0.167
+    ]
+  },
+  "Other / Strategy | 13+ yrs (Executive) | Mumbai": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Mumbai",
+    "sample_size": 153,
+    "most_likely_band": 5,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.02,
+      0.203,
+      0.333,
+      0.444
+    ]
+  },
+  "Other / Strategy | 13+ yrs (Executive) | Other Hubs": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Other Hubs",
+    "sample_size": 219,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.018,
+      0.009,
+      0.018,
+      0.269,
+      0.406,
+      0.279
+    ]
+  },
+  "Other / Strategy | 13+ yrs (Executive) | Pune": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "13+ yrs (Executive)",
+    "city": "Pune",
+    "sample_size": 39,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.026,
+      0.026,
+      0.077,
+      0.179,
+      0.385,
+      0.308
+    ]
+  },
+  "Other / Strategy | 3-5 yrs (Mid-level) | Bangalore": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Bangalore",
+    "sample_size": 743,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.118,
+      0.227,
+      0.366,
+      0.205,
+      0.074,
+      0.009
+    ]
+  },
+  "Other / Strategy | 3-5 yrs (Mid-level) | Chennai": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Chennai",
+    "sample_size": 169,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.325,
+      0.237,
+      0.278,
+      0.112,
+      0.041,
+      0.006
+    ]
+  },
+  "Other / Strategy | 3-5 yrs (Mid-level) | Delhi NCR": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Delhi NCR",
+    "sample_size": 243,
+    "most_likely_band": 0,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.28,
+      0.193,
+      0.222,
+      0.222,
+      0.074,
+      0.008
+    ]
+  },
+  "Other / Strategy | 3-5 yrs (Mid-level) | Gurgaon": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Gurgaon",
+    "sample_size": 350,
+    "most_likely_band": 2,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.14,
+      0.231,
+      0.326,
+      0.226,
+      0.071,
+      0.006
+    ]
+  },
+  "Other / Strategy | 3-5 yrs (Mid-level) | Hyderabad": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Hyderabad",
+    "sample_size": 167,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.317,
+      0.216,
+      0.275,
+      0.126,
+      0.054,
+      0.012
+    ]
+  },
+  "Other / Strategy | 3-5 yrs (Mid-level) | Kolkata": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Kolkata",
+    "sample_size": 47,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.404,
+      0.255,
+      0.234,
+      0.085,
+      0.021,
+      0.0
+    ]
+  },
+  "Other / Strategy | 3-5 yrs (Mid-level) | Mumbai": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Mumbai",
+    "sample_size": 577,
+    "most_likely_band": 0,
+    "median_lpa": 8.0,
+    "band_probabilities": [
+      0.246,
+      0.189,
+      0.244,
+      0.234,
+      0.08,
+      0.007
+    ]
+  },
+  "Other / Strategy | 3-5 yrs (Mid-level) | Other Hubs": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Other Hubs",
+    "sample_size": 967,
+    "most_likely_band": 0,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.442,
+      0.242,
+      0.177,
+      0.101,
+      0.023,
+      0.016
+    ]
+  },
+  "Other / Strategy | 3-5 yrs (Mid-level) | Pune": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "3-5 yrs (Mid-level)",
+    "city": "Pune",
+    "sample_size": 182,
+    "most_likely_band": 1,
+    "median_lpa": 4.5,
+    "band_probabilities": [
+      0.247,
+      0.335,
+      0.28,
+      0.104,
+      0.033,
+      0.0
+    ]
+  },
+  "Other / Strategy | 6-8 yrs (Senior) | Bangalore": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Bangalore",
+    "sample_size": 611,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.029,
+      0.072,
+      0.262,
+      0.339,
+      0.267,
+      0.031
+    ]
+  },
+  "Other / Strategy | 6-8 yrs (Senior) | Chennai": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Chennai",
+    "sample_size": 152,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.086,
+      0.072,
+      0.276,
+      0.368,
+      0.197,
+      0.0
+    ]
+  },
+  "Other / Strategy | 6-8 yrs (Senior) | Delhi NCR": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Delhi NCR",
+    "sample_size": 208,
+    "most_likely_band": 4,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.034,
+      0.077,
+      0.149,
+      0.351,
+      0.361,
+      0.029
+    ]
+  },
+  "Other / Strategy | 6-8 yrs (Senior) | Gurgaon": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Gurgaon",
+    "sample_size": 232,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.022,
+      0.073,
+      0.172,
+      0.379,
+      0.297,
+      0.056
+    ]
+  },
+  "Other / Strategy | 6-8 yrs (Senior) | Hyderabad": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Hyderabad",
+    "sample_size": 190,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.053,
+      0.121,
+      0.226,
+      0.342,
+      0.226,
+      0.032
+    ]
+  },
+  "Other / Strategy | 6-8 yrs (Senior) | Kolkata": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Kolkata",
+    "sample_size": 19,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.053,
+      0.158,
+      0.263,
+      0.368,
+      0.158,
+      0.0
+    ]
+  },
+  "Other / Strategy | 6-8 yrs (Senior) | Mumbai": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Mumbai",
+    "sample_size": 422,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.031,
+      0.081,
+      0.197,
+      0.367,
+      0.273,
+      0.052
+    ]
+  },
+  "Other / Strategy | 6-8 yrs (Senior) | Other Hubs": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Other Hubs",
+    "sample_size": 573,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.098,
+      0.159,
+      0.23,
+      0.269,
+      0.202,
+      0.042
+    ]
+  },
+  "Other / Strategy | 6-8 yrs (Senior) | Pune": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "6-8 yrs (Senior)",
+    "city": "Pune",
+    "sample_size": 136,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.103,
+      0.25,
+      0.338,
+      0.287,
+      0.022
+    ]
+  },
+  "Other / Strategy | 9-12 yrs (Lead) | Bangalore": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Bangalore",
+    "sample_size": 359,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.006,
+      0.006,
+      0.064,
+      0.37,
+      0.437,
+      0.117
+    ]
+  },
+  "Other / Strategy | 9-12 yrs (Lead) | Chennai": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Chennai",
+    "sample_size": 70,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.014,
+      0.014,
+      0.2,
+      0.457,
+      0.257,
+      0.057
+    ]
+  },
+  "Other / Strategy | 9-12 yrs (Lead) | Delhi NCR": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Delhi NCR",
+    "sample_size": 109,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.009,
+      0.0,
+      0.055,
+      0.266,
+      0.459,
+      0.211
+    ]
+  },
+  "Other / Strategy | 9-12 yrs (Lead) | Gurgaon": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Gurgaon",
+    "sample_size": 118,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.017,
+      0.025,
+      0.068,
+      0.339,
+      0.415,
+      0.136
+    ]
+  },
+  "Other / Strategy | 9-12 yrs (Lead) | Hyderabad": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Hyderabad",
+    "sample_size": 93,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.011,
+      0.0,
+      0.108,
+      0.344,
+      0.398,
+      0.14
+    ]
+  },
+  "Other / Strategy | 9-12 yrs (Lead) | Kolkata": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Kolkata",
+    "sample_size": 18,
+    "most_likely_band": 3,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.0,
+      0.0,
+      0.167,
+      0.444,
+      0.333,
+      0.056
+    ]
+  },
+  "Other / Strategy | 9-12 yrs (Lead) | Mumbai": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Mumbai",
+    "sample_size": 260,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.008,
+      0.023,
+      0.085,
+      0.373,
+      0.377,
+      0.135
+    ]
+  },
+  "Other / Strategy | 9-12 yrs (Lead) | Other Hubs": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Other Hubs",
+    "sample_size": 293,
+    "most_likely_band": 4,
+    "median_lpa": 20.0,
+    "band_probabilities": [
+      0.027,
+      0.017,
+      0.089,
+      0.341,
+      0.386,
+      0.14
+    ]
+  },
+  "Other / Strategy | 9-12 yrs (Lead) | Pune": {
+    "role_family": "Other / Strategy",
+    "exp_bucket": "9-12 yrs (Lead)",
+    "city": "Pune",
+    "sample_size": 69,
+    "most_likely_band": 4,
+    "median_lpa": 12.5,
+    "band_probabilities": [
+      0.014,
+      0.014,
+      0.145,
+      0.362,
+      0.377,
+      0.087
+    ]
+  }
+}

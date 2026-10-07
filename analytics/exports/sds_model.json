@@ -1,0 +1,108 @@
+{
+  "model_name": "SDS Executive Success Logistic Regression",
+  "description": "Diagnoses leadership success probability from Big Five OCEAN dimensions (0 to 100 scale). Strictly intended for personal coaching and self-reflection.",
+  "target": "high_success",
+  "sample_size": 152,
+  "features": [
+    "neuroticism",
+    "extraversion",
+    "openness_to_experience",
+    "agreeableness",
+    "conscientiousness"
+  ],
+  "feature_labels": {
+    "neuroticism": "Neuroticism",
+    "extraversion": "Extraversion",
+    "openness_to_experience": "Openness to Experience",
+    "agreeableness": "Agreeableness",
+    "conscientiousness": "Conscientiousness"
+  },
+  "means": {
+    "neuroticism": 36.0132,
+    "extraversion": 43.2697,
+    "openness_to_experience": 41.1184,
+    "agreeableness": 44.5132,
+    "conscientiousness": 45.1184
+  },
+  "stds": {
+    "neuroticism": 11.4081,
+    "extraversion": 12.1715,
+    "openness_to_experience": 11.389,
+    "agreeableness": 11.3015,
+    "conscientiousness": 13.2491
+  },
+  "standardized_coefficients": {
+    "neuroticism": 0.8006,
+    "extraversion": 0.9088,
+    "openness_to_experience": 2.0193,
+    "agreeableness": 0.6296,
+    "conscientiousness": 2.0316
+  },
+  "intercept": -0.5959,
+  "metrics_cv": {
+    "model_group": "Model B (SDS Success)",
+    "model_name": "Logistic Regression (Std)",
+    "target": "high_success",
+    "accuracy_mean": 0.9266,
+    "accuracy_std": 0.0462,
+    "precision_mean": 0.9095,
+    "precision_std": 0.0597,
+    "recall_mean": 0.957,
+    "recall_std": 0.0461,
+    "f1_mean": 0.9314,
+    "f1_std": 0.0423,
+    "roc_auc_mean": 0.965,
+    "roc_auc_std": 0.0269,
+    "within_one_band_mean": null,
+    "within_one_band_std": null
+  },
+  "odds_ratios_10pt": {
+    "neuroticism": {
+      "coefficient": 0.1201,
+      "std_error": 0.0378,
+      "p_value": 0.0014957848980658435,
+      "odds_ratio_unit": 1.1277,
+      "odds_ratio_10pt": 3.3247,
+      "or_10pt_ci_lower_95": 1.5839,
+      "or_10pt_ci_upper_95": 6.9788
+    },
+    "extraversion": {
+      "coefficient": 0.1073,
+      "std_error": 0.0404,
+      "p_value": 0.007859116479621397,
+      "odds_ratio_unit": 1.1133,
+      "odds_ratio_10pt": 2.9247,
+      "or_10pt_ci_lower_95": 1.3256,
+      "or_10pt_ci_upper_95": 6.453
+    },
+    "openness_to_experience": {
+      "coefficient": 0.2637,
+      "std_error": 0.0577,
+      "p_value": 4.801719045358313e-06,
+      "odds_ratio_unit": 1.3017,
+      "odds_ratio_10pt": 13.9664,
+      "or_10pt_ci_lower_95": 4.5117,
+      "or_10pt_ci_upper_95": 43.2346
+    },
+    "agreeableness": {
+      "coefficient": 0.079,
+      "std_error": 0.0415,
+      "p_value": 0.056842166427734736,
+      "odds_ratio_unit": 1.0822,
+      "odds_ratio_10pt": 2.2029,
+      "or_10pt_ci_lower_95": 0.9773,
+      "or_10pt_ci_upper_95": 4.9658
+    },
+    "conscientiousness": {
+      "coefficient": 0.2419,
+      "std_error": 0.0588,
+      "p_value": 3.8586729910587544e-05,
+      "odds_ratio_unit": 1.2736,
+      "odds_ratio_10pt": 11.2325,
+      "or_10pt_ci_lower_95": 3.55,
+      "or_10pt_ci_upper_95": 35.5402
+    }
+  },
+  "usage_formula": "z = intercept + sum(coef_i * (x_i - mean_i) / std_i); prob_high_success = 1 / (1 + exp(-z))",
+  "ethical_disclaimer": "CRITICAL: This model must NOT be used for hiring, firing, or screening decisions. It is designed solely for self-development."
+}

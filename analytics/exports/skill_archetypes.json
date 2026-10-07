@@ -1,0 +1,97 @@
+[
+  {
+    "cluster_id": 0,
+    "archetype_name": "Business Intelligence & SQL Analytics",
+    "top_skills": [
+      "data",
+      "analytics",
+      "analysis",
+      "sql",
+      "big",
+      "business",
+      "excel",
+      "modeling"
+    ],
+    "postings_count": 1901,
+    "market_share_pct": 12.81,
+    "dominant_role_family": "Other / Strategy",
+    "median_salary_band": 3,
+    "median_band_lpa": 12.5
+  },
+  {
+    "cluster_id": 1,
+    "archetype_name": "Core Machine Learning & Data Science",
+    "top_skills": [
+      "analysis",
+      "business",
+      "financial",
+      "finance",
+      "analytics",
+      "development",
+      "research",
+      "analyst"
+    ],
+    "postings_count": 8687,
+    "market_share_pct": 58.54,
+    "dominant_role_family": "Other / Strategy",
+    "median_salary_band": 2,
+    "median_band_lpa": 8.0
+  },
+  {
+    "cluster_id": 2,
+    "archetype_name": "Cloud Data Engineering & Big Data",
+    "top_skills": [
+      "learning",
+      "machine",
+      "python",
+      "data",
+      "processing",
+      "language",
+      "science",
+      "analytics"
+    ],
+    "postings_count": 728,
+    "market_share_pct": 4.91,
+    "dominant_role_family": "ML",
+    "median_salary_band": 3,
+    "median_band_lpa": 12.5
+  },
+  {
+    "cluster_id": 3,
+    "archetype_name": "Software Engineering & Fullstack Systems",
+    "top_skills": [
+      "management",
+      "project",
+      "business",
+      "product",
+      "sales",
+      "analysis",
+      "development",
+      "operations"
+    ],
+    "postings_count": 2169,
+    "market_share_pct": 14.62,
+    "dominant_role_family": "Other / Strategy",
+    "median_salary_band": 3,
+    "median_band_lpa": 12.5
+  },
+  {
+    "cluster_id": 4,
+    "archetype_name": "Operations, Quality & Process Analytics",
+    "top_skills": [
+      "marketing",
+      "digital",
+      "sales",
+      "seo",
+      "media",
+      "social",
+      "google",
+      "analytics"
+    ],
+    "postings_count": 1355,
+    "market_share_pct": 9.13,
+    "dominant_role_family": "Other / Strategy",
+    "median_salary_band": 2,
+    "median_band_lpa": 8.0
+  }
+]
