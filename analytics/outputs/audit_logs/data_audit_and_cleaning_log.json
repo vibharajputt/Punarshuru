@@ -1,0 +1,129 @@
+{
+  "timestamp": "2026-10-07T11:03:03.024381Z",
+  "seed": 42,
+  "datasets": {
+    "DataScience_Jobs": {
+      "initial_rows": 1602,
+      "initial_cols": 8,
+      "cleaned_rows": 1602,
+      "cleaned_cols": 9,
+      "duplicate_reference_no_count": 142,
+      "exact_content_duplicates": 0,
+      "decision_on_duplicates": "reference_no is non-unique batch index (0 exact content duplicates). Retained all 1,602 rows with newly assigned unique surrogate ds_job_id.",
+      "num_of_jobs_stats": {
+        "median": 22.0,
+        "mean": 58.06,
+        "max": 4200.0,
+        "skewness": 12.8,
+        "decision": "Heavily right-skewed due to mass IT hiring (TCS 4200, Accenture 1900). Both unweighted and vacancy-weighted metrics preserved."
+      },
+      "experience_outliers": {
+        "count_over_10yrs": 19,
+        "titles": {
+          "Data Architect": 19
+        },
+        "decision": "All 19 high-experience rows (up to 21 yrs) belong to enterprise Data Architect roles (Deloitte, Shell, Barclays). Preserved as valid executive-tier data."
+      },
+      "null_counts_after": {
+        "ds_job_id": 0,
+        "raw_reference_no": 0,
+        "company_name": 0,
+        "job_title": 0,
+        "min_experience": 0,
+        "min_salary_lpa": 0,
+        "avg_salary_lpa": 0,
+        "max_salary_lpa": 0,
+        "num_of_jobs": 0
+      }
+    },
+    "Analytics_Jobs": {
+      "initial_rows": 15841,
+      "initial_cols": 8,
+      "exact_duplicates_removed": 1001,
+      "rows_after_dedup": 14840,
+      "junk_spam_postings_removed": 151,
+      "final_cleaned_rows": 14689,
+      "final_cleaned_cols": 19,
+      "job_type_null_count": 11420,
+      "job_type_imputation": "Normalized 5 casing variants to 'Analytics'; imputed missing (76%) as 'Unspecified Analytics'.",
+      "salary_transformation": "Mapped binned categories to ordinal rank (0..5), bounds, and midpoint LPA.",
+      "experience_transformation": "Extracted exp_min, exp_max, exp_mid from textual range strings.",
+      "location_normalization": "Extracted primary tech hub, metro tier, and multi-city flag across Indian geography.",
+      "salary_bracket_distribution": {
+        "10to15": 3501,
+        "15to25": 2872,
+        "6to10": 2866,
+        "0to3": 2463,
+        "3to6": 1995,
+        "25to50": 992
+      },
+      "top_10_cities": {
+        "Bengaluru": 4118,
+        "Mumbai": 2435,
+        "Gurugram": 1923,
+        "Delhi NCR": 1105,
+        "Pune": 1085,
+        "Hyderabad": 964,
+        "Chennai": 914,
+        "Noida": 553,
+        "Kolkata": 187,
+        "Ahmedabad": 187
+      }
+    },
+    "JDS_Skill_Traits": {
+      "initial_rows": 139,
+      "initial_cols": 7,
+      "cleaned_rows": 139,
+      "cleaned_cols": 8,
+      "duplicate_id_count": 2,
+      "content_rubric_ties": 21,
+      "decision": "Duplicate IDs are evaluation-batch collisions with distinct skill measurements. Assigned unique surrogate jds_id. Target is well-balanced (High: 73, Low: 66). Due to sample size N=139, all subsequent modeling must use Stratified 5-Fold Cross-Validation.",
+      "target_distribution": {
+        "1": 73,
+        "0": 66
+      },
+      "skill_means": {
+        "big_data_skills": 3.85,
+        "maths_stats_skills": 4.29,
+        "coding_skills": 4.27,
+        "ai_and_ml_skills": 4.57,
+        "dashboard_and_storytelling_skills": 4.36
+      },
+      "skill_stds": {
+        "big_data_skills": 0.85,
+        "maths_stats_skills": 0.84,
+        "coding_skills": 0.89,
+        "ai_and_ml_skills": 0.67,
+        "dashboard_and_storytelling_skills": 0.93
+      }
+    },
+    "SDS_Personality_Traits": {
+      "initial_rows": 161,
+      "initial_cols": 7,
+      "cleaned_rows": 161,
+      "cleaned_cols": 8,
+      "duplicate_id_count": 9,
+      "content_duplicates": 0,
+      "column_name_fixes": "Standardized stray leading spaces in ' extraversion' and multiple whitespace in target name.",
+      "decision": "9 ID collisions verified to contain distinct trait measurements across independent evaluations. Assigned unique surrogate sds_id. Target distribution (High: 83, Low: 78) is balanced. Due to sample size N=161, Stratified 5-Fold Cross-Validation will be enforced.",
+      "target_distribution": {
+        "1": 85,
+        "0": 76
+      },
+      "trait_means": {
+        "neuroticism": 36.19,
+        "extraversion": 43.2,
+        "openness_to_experience": 41.33,
+        "agreeableness": 44.6,
+        "conscientiousness": 45.21
+      },
+      "trait_stds": {
+        "neuroticism": 11.27,
+        "extraversion": 12.13,
+        "openness_to_experience": 11.32,
+        "agreeableness": 11.29,
+        "conscientiousness": 13.21
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+skill,frequency,median_salary_lpa,mean_salary_lpa,skill_title
+...,880,12.5,12.024431818181819,...
+sql,836,12.5,11.938397129186603,Sql
+python,778,12.5,13.587403598971722,Python
+analytics,774,8.0,12.297157622739018,Analytics
+finance,714,12.5,13.102240896358543,Finance
+java,687,12.5,14.74599708879185,Java
+business analysis,603,12.5,12.137645107794361,Business Analysis
+machine learning,554,12.5,15.576714801444043,Machine Learning
+data analysis,551,8.0,10.428312159709618,Data Analysis
+sas,543,12.5,14.644567219152854,Sas
+digital marketing,533,8.0,9.044090056285178,Digital Marketing
+javascript,514,12.5,12.021400778210117,Javascript
+project management,469,12.5,13.885927505330491,Project Management
+seo,459,4.5,7.476034858387799,Seo
+sales,382,12.5,13.56282722513089,Sales
+accounting,349,12.5,11.415472779369628,Accounting
+outsourcing,335,8.0,7.864179104477612,Outsourcing
+data analytics,324,12.5,13.709876543209877,Data Analytics
+excel,322,8.0,9.540372670807454,Excel
+marketing,310,12.5,13.096774193548388,Marketing
+html,292,8.0,11.217465753424657,Html
+hadoop,281,12.5,14.208185053380783,Hadoop
+business process,269,8.0,8.085501858736059,Business Process
+spark,254,12.5,15.429133858267717,Spark
+big data,237,12.5,14.791139240506329,Big Data

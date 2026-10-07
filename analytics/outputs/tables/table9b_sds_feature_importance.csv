@@ -1,0 +1,6 @@
+trait,importance_mean,importance_std
+openness_to_experience,0.2056,0.0201
+conscientiousness,0.1839,0.0174
+agreeableness,0.1124,0.0076
+extraversion,0.1099,0.016
+neuroticism,0.0124,0.0056
