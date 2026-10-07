@@ -17,12 +17,14 @@ export default function PassportCard({
   const customHostInputId = useId()
   const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   
-  // Best default for mobile scanning when developing locally
-  const defaultNetworkHost = isLocalhost ? 'http://172.25.160.184:5173' : (typeof window !== 'undefined' ? window.location.origin : 'https://punarshuru.in')
+  // Active Wi-Fi network host for mobile phone scanning
+  const currentNetworkHost = 'http://172.22.203.34:5173'
+  const defaultNetworkHost = isLocalhost ? currentNetworkHost : (typeof window !== 'undefined' ? window.location.origin : 'https://punarshuru.in')
 
   const [targetOrigin, setTargetOrigin] = useState<string>(initialHost || defaultNetworkHost)
   const [showHostSettings, setShowHostSettings] = useState(false)
-  const [customHost, setCustomHost] = useState(defaultNetworkHost)
+  const [customHost, setCustomHost] = useState(currentNetworkHost)
+
 
   const publicUrl = `${targetOrigin.replace(/\/$/, '')}/p/${passport.slug}`
   const resilienceScore = Math.max(20, 100 - (passport.disruption_score || 35))
@@ -119,9 +121,9 @@ export default function PassportCard({
                   <div className="flex items-center justify-center gap-1">
                     <button
                       type="button"
-                      onClick={() => setTargetOrigin('http://172.25.160.184:5173')}
+                      onClick={() => setTargetOrigin(currentNetworkHost)}
                       className={`px-2 py-0.5 rounded-lg text-[9.5px] font-bold transition cursor-pointer ${
-                        targetOrigin.includes('172.25.160.184')
+                        targetOrigin === currentNetworkHost
                           ? 'bg-emerald-600 text-white shadow-2xs'
                           : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300'
                       }`}
@@ -175,12 +177,13 @@ export default function PassportCard({
                   )}
 
                   <p className="text-[9px] text-slate-400 leading-tight">
-                    {targetOrigin.includes('172.25.160.184')
+                    {targetOrigin === currentNetworkHost
                       ? '✓ Phone & PC same Wi-Fi par hone chahiye'
                       : '⚠️ Localhost phone par direct open nahi hota'}
                   </p>
                 </div>
               )}
+
             </div>
           </div>
         </div>
