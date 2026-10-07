@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Sparkles, Phone, CheckCircle2, ArrowRight, ShieldCheck, Briefcase } from 'lucide-react'
+import { X, Phone, CheckCircle2, ArrowRight, ShieldCheck, Briefcase } from 'lucide-react'
 import { useProfileStore } from '@/store/profileStore'
 import { demoApi, profileApi } from '@/lib/api'
 import type { UserType } from '@/types'
@@ -134,10 +134,12 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'signin' }: Au
                 <X size={18} />
               </button>
 
-              <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0B4F9C] to-[#F26B1D] flex items-center justify-center text-white shadow-md shadow-blue-900/10">
-                  <Sparkles size={20} />
-                </div>
+              <div className="flex items-center gap-3">
+                <img
+                  src="/logo.png"
+                  alt="Punarshuru"
+                  className="w-10 h-10 rounded-2xl object-contain drop-shadow-sm shrink-0"
+                />
                 <div>
                   <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
                     Welcome to <span className="text-[#0B4F9C] dark:text-sky-400">Punar</span>

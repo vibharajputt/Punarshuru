@@ -93,12 +93,14 @@ export default function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-40 glass dark:glass-dark border-b border-slate-200/80 dark:border-slate-800/80 shadow-xs transition-colors">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-15 flex items-center justify-between gap-3">
+        <nav className="w-full px-3 sm:px-6 h-15 flex items-center justify-between gap-3">
           {/* Left: Logo */}
-          <Link to="/" className="flex items-center gap-2 shrink-0 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0B4F9C] to-[#F26B1D] flex items-center justify-center text-white shadow-md shadow-blue-900/10 group-hover:scale-105 transition-transform">
-              <Sparkles size={16} />
-            </div>
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+            <img
+              src="/logo.png"
+              alt="Punarshuru"
+              className="h-9 w-auto object-contain shrink-0 group-hover:scale-105 transition-transform"
+            />
             <div className="flex items-center gap-1.5">
               <span className="font-black text-lg tracking-tight text-[#0B4F9C] dark:text-sky-400">
                 Punar<span className="text-[#F26B1D]">shuru</span>

@@ -1,5 +1,5 @@
 import { QRCodeSVG } from 'qrcode.react'
-import { Sparkles, ShieldCheck, MapPin, Award, CheckCircle2 } from 'lucide-react'
+import { ShieldCheck, MapPin, Award, CheckCircle2 } from 'lucide-react'
 import type { PassportResponse } from '@/types'
 
 interface PassportCardProps {
@@ -24,9 +24,11 @@ export default function PassportCard({
         {/* Top Header */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#0B4F9C] to-[#F26B1D] flex items-center justify-center text-white shadow-sm">
-              <Sparkles size={16} />
-            </div>
+            <img
+              src="/logo.png"
+              alt="Punarshuru"
+              className="w-9 h-9 rounded-xl object-contain shadow-sm shrink-0"
+            />
             <div>
               <h2 className="text-sm font-black tracking-tight text-[#0B4F9C] dark:text-sky-400 uppercase">
                 Punarshuru AI Talent Passport

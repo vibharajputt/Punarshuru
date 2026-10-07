@@ -8,7 +8,7 @@
  *   Home /home | My Skills /skills | My Path /path | Jobs & Salary /jobs | Skill Passport /passport
  */
 import { useState, useRef, useEffect } from 'react'
-import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
+import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   Home,
   Zap,
@@ -446,7 +446,10 @@ export default function AppLayout() {
         >
           {/* Logo */}
           <div className="px-5 py-4 border-b border-[#E2E8F0] dark:border-slate-800 flex items-center justify-between">
-            <span className="text-xl font-black tracking-tight text-gradient">Punarshuru</span>
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <img src="/logo.png" alt="Punarshuru" className="w-8 h-8 rounded-lg object-contain group-hover:scale-105 transition-transform" />
+              <span className="text-xl font-black tracking-tight text-gradient">Punarshuru</span>
+            </Link>
             <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0B4F9C] dark:text-sky-300 border border-blue-200/60 dark:border-blue-800/60">
               v2.0
             </span>
