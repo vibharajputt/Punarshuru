@@ -4,6 +4,6 @@
   "within_bracket_accuracy_pct": 87.55,
   "mae_lpa": 4.23,
   "r2_score": 0.621,
-  "trained_at": "2026-10-07T09:52:54.419244Z",
+  "trained_at": "2026-10-07T13:12:36.995704Z",
   "model_version": "v1.0-xgb-ridge-ensemble"
 }

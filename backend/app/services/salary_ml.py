@@ -4,6 +4,7 @@ Loads trained model bundle ('salary_ml_bundle.joblib') and provides high-speed,
 calibrated salary inference and market intelligence based on the 15,841 Analytics Jobs dataset.
 """
 
+import math
 from bisect import bisect_left
 import json
 import logging
@@ -19,7 +20,103 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 BUNDLE_PATH = DATA_DIR / "salary_ml_bundle.joblib"
 METADATA_PATH = DATA_DIR / "salary_model_metadata.json"
 
+ORDERED_LABELS: list[str] = ["0to3", "3to6", "6to10", "10to15", "15to25", "25to50"]
+BRACKET_BOUNDS: dict[str, tuple[float, float]] = {
+    "0to3": (0.0, 3.0),
+    "3to6": (3.0, 6.0),
+    "6to10": (6.0, 10.0),
+    "10to15": (10.0, 15.0),
+    "15to25": (15.0, 25.0),
+    "25to50": (25.0, 50.0),
+}
+
 _BUNDLE: dict[str, Any] | None = None
+
+
+def norm_cdf(x: float, loc: float = 0.0, scale: float = 1.0) -> float:
+    """Standard Normal Cumulative Distribution Function via math.erf."""
+    z = (x - loc) / (scale * math.sqrt(2.0))
+    return 0.5 * (1.0 + math.erf(z))
+
+
+def get_bracket_for_salary(sal_lpa: float) -> str:
+    """
+    Strict partition mapping from continuous LPA to official hackathon salary bracket.
+    Guarantees 100% synchronization between continuous prediction and bracket badge.
+    """
+    if sal_lpa < 3.0:
+        return "0to3"
+    elif sal_lpa < 6.0:
+        return "3to6"
+    elif sal_lpa < 10.0:
+        return "6to10"
+    elif sal_lpa < 15.0:
+        return "10to15"
+    elif sal_lpa < 25.0:
+        return "15to25"
+    else:
+        return "25to50"
+
+
+def get_bracket_bounded_range(pred_lpa: float, bracket: str) -> tuple[float, float]:
+    """
+    Computes market compensation range [min, max] strictly bounded by the predicted bracket.
+    Guarantees that the expected band NEVER conflicts with the bracket.
+    """
+    b_min, b_max = BRACKET_BOUNDS.get(bracket, (0.0, 50.0))
+    margin = max(1.0, round(pred_lpa * 0.15, 1))
+
+    sal_min = max(b_min, round(pred_lpa - margin, 1))
+    sal_max = min(b_max, round(pred_lpa + margin, 1))
+
+    if sal_max - sal_min < 1.5:
+        sal_min = max(b_min, round(pred_lpa - 1.0, 1))
+        sal_max = min(b_max, round(pred_lpa + 1.0, 1))
+
+    return round(sal_min, 1), round(sal_max, 1)
+
+
+def calibrate_bracket_distribution(
+    pred_lpa: float,
+    clf_probs: list[float] | np.ndarray | None = None,
+    sigma: float = 3.6,
+) -> tuple[dict[str, float], float]:
+    """
+    Computes a mathematically coherent, smooth probability distribution across the 6 brackets.
+    Blends empirical classifier logits with continuous likelihood density P(bracket | pred_lpa, sigma).
+    Guarantees that the highest probability strictly matches the bracket containing pred_lpa.
+    Returns (prob_dict, confidence_score).
+    """
+    if clf_probs is None or len(clf_probs) != len(ORDERED_LABELS):
+        clf_probs = [1.0 / len(ORDERED_LABELS)] * len(ORDERED_LABELS)
+
+    # 1. Continuous Gaussian density across bracket intervals
+    reg_probs = []
+    for lbl in ORDERED_LABELS:
+        low, high = BRACKET_BOUNDS[lbl]
+        h = 55.0 if high == 50.0 else high
+        p = max(0.0001, norm_cdf(h, loc=pred_lpa, scale=sigma) - norm_cdf(low, loc=pred_lpa, scale=sigma))
+        reg_probs.append(p)
+    reg_sum = sum(reg_probs)
+    reg_probs = [p / reg_sum for p in reg_probs]
+
+    # 2. Ensemble blend: 30% classifier prior + 70% continuous regression density
+    target_bracket = get_bracket_for_salary(pred_lpa)
+    target_idx = ORDERED_LABELS.index(target_bracket)
+
+    blended = [0.30 * float(clf_probs[i]) + 0.70 * reg_probs[i] for i in range(len(ORDERED_LABELS))]
+
+    # 3. Enforce that target_bracket is the modal (highest) bar
+    max_other = max([blended[i] for i in range(len(ORDERED_LABELS)) if i != target_idx], default=0.0)
+    if blended[target_idx] <= max_other:
+        blended[target_idx] = max_other + 0.08
+
+    tot = sum(blended)
+    normalized = [p / tot for p in blended]
+    confidence = round(float(normalized[target_idx]), 2)
+
+    prob_dict = {lbl: round(float(normalized[i]), 3) for i, lbl in enumerate(ORDERED_LABELS)}
+    return prob_dict, confidence
 
 
 def clean_city(loc_str: str) -> str:
@@ -75,8 +172,8 @@ def _get_bundle() -> dict[str, Any]:
         "classifier": None,
         "ridge_reg": None,
         "xgb_reg": None,
-        "salary_labels": ["0to3", "3to6", "6to10", "10to15", "15to25", "25to50"],
-        "idx2label": {0: "0to3", 1: "3to6", 2: "6to10", 3: "10to15", 4: "15to25", 5: "25to50"},
+        "salary_labels": ORDERED_LABELS,
+        "idx2label": {i: lbl for i, lbl in enumerate(ORDERED_LABELS)},
         "midpoints": [1.5, 4.5, 8.0, 12.5, 20.0, 35.0],
         "bracket_min_max": {
             "0to3": (1.0, 3.0),
@@ -133,6 +230,7 @@ def predict_salary(
     """
     Predicts LPA compensation range, exact bracket, confidence score, and market percentile
     using the dual-head ML ensemble trained on 15,841 jobs.
+    Guarantees 100% synchronization between continuous salary and salary bracket.
     """
     bundle = _get_bundle()
     skills_list = skills or []
@@ -140,7 +238,7 @@ def predict_salary(
     norm_city = clean_city(city)
 
     exp_years = max(0.0, float(experience_years))
-    exp_min = max(0.0, exp_years - 1.0)
+    exp_min = max(0.0, exp_years - 1.5)
     exp_max = exp_years + 2.0
     exp_mid = exp_years
 
@@ -162,35 +260,26 @@ def predict_salary(
 
         X_proc = preprocessor.transform(input_df)
 
-        # 1. Classification & Class Probabilities
-        probs = clf.predict_proba(X_proc)[0]
-        labels = bundle["salary_labels"]
-        prob_dict = {label: round(float(probs[i]), 3) for i, label in enumerate(labels)}
-        best_class_idx = int(np.argmax(probs))
-        predicted_bracket = labels[best_class_idx]
-        confidence = round(float(probs[best_class_idx]), 2)
-
-        # 2. Continuous Blended Regression
+        # 1. Continuous Blended Regression
         pred_ridge = float(ridge_reg.predict(X_proc)[0])
         pred_xgb = float(xgb_reg.predict(X_proc)[0])
         pred_continuous = 0.5 * pred_ridge + 0.5 * pred_xgb
+        pred_lpa = round(max(1.5, min(50.0, pred_continuous)), 1)
 
-        # Bounds sanity enforcement
-        pred_lpa = max(1.5, min(50.0, pred_continuous))
+        # 2. Deterministic Bracket & Bounded Range (Strictly Aligned)
+        predicted_bracket = get_bracket_for_salary(pred_lpa)
+        sal_min, sal_max = get_bracket_bounded_range(pred_lpa, predicted_bracket)
 
-        # Range computation based on predicted bracket and model MAE
-        bracket_min, bracket_max = bundle["bracket_min_max"].get(predicted_bracket, (pred_lpa * 0.8, pred_lpa * 1.25))
-        sal_min = round(max(1.0, min(bracket_min, pred_lpa - 2.0)), 1)
-        sal_max = round(max(sal_min + 2.0, max(bracket_max, pred_lpa + 2.5)), 1)
+        # 3. Calibrated Probabilities & Modal Confidence
+        raw_probs = clf.predict_proba(X_proc)[0]
+        prob_dict, confidence = calibrate_bracket_distribution(pred_lpa, raw_probs)
     else:
         # Heuristic fallback if models not loaded
         base = 8.0 + (exp_years * 1.5)
         pred_lpa = round(base, 1)
-        predicted_bracket = "6to10" if pred_lpa <= 10 else "10to15"
-        sal_min = round(pred_lpa * 0.8, 1)
-        sal_max = round(pred_lpa * 1.25, 1)
-        confidence = 0.75
-        prob_dict = {"0to3": 0.05, "3to6": 0.15, "6to10": 0.35, "10to15": 0.30, "15to25": 0.12, "25to50": 0.03}
+        predicted_bracket = get_bracket_for_salary(pred_lpa)
+        sal_min, sal_max = get_bracket_bounded_range(pred_lpa, predicted_bracket)
+        prob_dict, confidence = calibrate_bracket_distribution(pred_lpa)
 
     # Market Percentile calculation
     all_salaries = bundle.get("all_salaries_sorted", [])
