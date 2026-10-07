@@ -1,0 +1,6 @@
+skill,high_hike_n,high_hike_mean,high_hike_sd,high_hike_median,high_hike_iqr,low_hike_n,low_hike_mean,low_hike_sd,low_hike_median,low_hike_iqr,welch_t_stat,welch_t_pval,mann_whitney_u,mann_whitney_pval,cohens_d,effect_interpretation
+dashboard_and_storytelling_skills,73,4.85,0.49,5.0,0.0,66,3.81,1.01,3.85,2.1,7.55,3.0678194889518115e-11,3827.5,2.3984746423395638e-11,1.323,Large
+maths_stats_skills,73,4.71,0.43,5.0,0.5,66,3.83,0.95,3.8,1.95,6.96,5.708313286648944e-10,3735.5,6.657535629392647e-09,1.222,Large
+coding_skills,73,4.64,0.66,5.0,0.4,66,3.85,0.94,3.9,1.8,5.698,9.489199317999552e-08,3585.0,2.0275005979496897e-07,0.985,Large
+ai_and_ml_skills,73,4.82,0.32,5.0,0.3,66,4.28,0.82,4.6,1.48,4.988,3.321373455362335e-06,3284.0,8.567173857110042e-05,0.88,Large
+big_data_skills,73,3.94,0.71,3.8,1.0,66,3.75,0.97,3.75,1.9,1.303,0.1950513502631222,2701.0,0.21723125429287382,0.225,Small

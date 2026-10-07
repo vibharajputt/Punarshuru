@@ -1,0 +1,9 @@
+{
+  "nobs": 139,
+  "mcfadden_pseudo_r2": 0.4993,
+  "log_likelihood": -48.15,
+  "null_log_likelihood": -96.17,
+  "llr_pvalue": 3.6132055523833005e-19,
+  "aic": 108.31,
+  "bic": 125.91
+}
