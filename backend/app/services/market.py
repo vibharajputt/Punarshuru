@@ -86,6 +86,14 @@ def get_market_trends() -> TrendsResponse:
         for city, sals in city_salaries.items()
     }
 
+    # Prefer high-sample ML city averages from 15,841 jobs if available
+    from app.services.salary_ml import get_city_averages
+    ml_city_avg = get_city_averages()
+    for c_name, c_val in ml_city_avg.items():
+        if c_name not in salary_by_city and c_val > 0:
+            salary_by_city[c_name] = c_val
+
+
     best_fit_roles = [k for k, _ in sorted(role_counter.items(), key=lambda x: x[1], reverse=True)[:8]]
 
     return TrendsResponse(
@@ -102,3 +110,25 @@ def get_market_trends() -> TrendsResponse:
 def get_role_details(role_id: int) -> dict | None:
     jobs = _load_json("jobs_snapshot.json")
     return next((j for j in jobs if j["id"] == role_id), None)
+
+
+def get_all_roles(query: str = "", city: str = "", limit: int = 50) -> list[dict]:
+    """Retrieve jobs snapshot filtered by title/skill query and city."""
+    jobs = _load_json("jobs_snapshot.json")
+    q = query.lower().strip()
+    c = city.lower().strip()
+    filtered = []
+    for j in jobs:
+        if q:
+            title_match = q in j.get("title", "").lower()
+            skill_match = any(q in s.lower() for s in j.get("required_skills", []))
+            if not (title_match or skill_match):
+                continue
+        if c and c != "all":
+            if c not in j.get("city", "").lower():
+                continue
+        filtered.append(j)
+        if len(filtered) >= limit:
+            break
+    return filtered
+

@@ -176,10 +176,71 @@ export const assessApi = {
   },
 }
 
+export interface PredictSalaryRequest {
+  role: string
+  experience_years: number
+  skills?: string[]
+  city?: string
+}
+
+export interface PredictSalaryResponse {
+  predicted_salary_lpa: number
+  salary_min_lpa: number
+  salary_max_lpa: number
+  salary_bracket: string
+  confidence_score: number
+  bracket_probabilities: Record<string, number>
+  percentile: number
+  city_benchmark?: number | null
+  top_skills: string[]
+  role: string
+  city: string
+  experience_years: number
+}
+
+export interface ModelInfoResponse {
+  dataset_records: number
+  exact_bracket_accuracy_pct: number
+  within_bracket_accuracy_pct: number
+  mae_lpa: number
+  r2_score: number
+  trained_at: string
+  model_version: string
+}
+
+export interface MarketJobItem {
+  id: number
+  title: string
+  city: string
+  salary_min_lpa: number
+  salary_max_lpa: number
+  salary_bracket?: string
+  required_skills: string[]
+  exp_min: number
+  exp_max: number
+  remote: boolean
+  posted_month: string
+}
+
 export const marketApi = {
   trends: () => request<TrendsResponse>('/api/market/trends'),
   getRole: (roleId: number) => request<Record<string, unknown>>(`/api/market/roles/${roleId}`),
+  roles: (params?: { q?: string; city?: string; limit?: number }) => {
+    const query = new URLSearchParams()
+    if (params?.q) query.set('q', params.q)
+    if (params?.city) query.set('city', params.city)
+    if (params?.limit) query.set('limit', String(params.limit))
+    const qs = query.toString() ? `?${query.toString()}` : ''
+    return request<MarketJobItem[]>(`/api/market/roles${qs}`)
+  },
+  predictSalary: (data: PredictSalaryRequest) =>
+    request<PredictSalaryResponse>('/api/market/predict-salary', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  getModelInfo: () => request<ModelInfoResponse>('/api/market/model-info'),
 }
+
 
 export const pathwayApi = {
   get: (profileId: string) => request<PathwayResponse>(`/api/pathway/${profileId}`),

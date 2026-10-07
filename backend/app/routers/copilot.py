@@ -37,14 +37,26 @@ def _generate_contextual_fallback(
     lower = message.lower()
 
     if any(k in lower for k in ["salary", "pay", "underpaid", "compensation", "earn", "ctc"]):
-        base_salary = float(salary) if salary else 8.0
-        target_salary = round(base_salary * 1.35, 1)
+        from app.services.salary_ml import predict_salary
+        exp_val = float(p.get("experience_years") or 3.0)
+        ml_res = predict_salary(
+            role=target_role or current_role,
+            experience_years=exp_val,
+            skills=skills if isinstance(skills, list) else [],
+            city=city,
+        )
+        pred_lpa = ml_res["predicted_salary_lpa"]
+        min_lpa = ml_res["salary_min_lpa"]
+        max_lpa = ml_res["salary_max_lpa"]
+        bracket = ml_res["salary_bracket"]
+        pct = ml_res["percentile"]
+        
         return CopilotChatResponse(
-            reply=f"Here is your compensation diagnostic for {current_role} in {city}:",
+            reply=f"Here is your ML-verified compensation diagnostic for {target_role or current_role} in {city} (based on 15,841 real Indian job postings):",
             actions=[
-                f"Market Benchmark: Median pay for {target_role} in {city} is ₹{target_salary}–{round(target_salary * 1.25, 1)} LPA.",
+                f"ML Predicted Compensation: ₹{pred_lpa} LPA (Expected bracket: ₹{min_lpa}–{max_lpa} LPA, {bracket}).",
+                f"Market Standing: At ₹{pred_lpa} LPA, you rank in the top {round(100 - pct, 1)}% of tech earners in {city}.",
                 f"Immediate Leverage: Adding modern AI workflows to your existing skills ({skills_str}) commands a 30–40% premium.",
-                f"Purchasing Power: Use our City Parity calculator before deciding between Tier-1 and Tier-2 offers.",
             ],
             quick_replies=[
                 "What adjacent roles can I target?",
@@ -52,6 +64,7 @@ def _generate_contextual_fallback(
                 "How to prepare for tech interviews?",
             ],
         )
+
 
     if any(k in lower for k in ["adjacent", "role", "switch", "pivot", "career change", "target"]):
         if user_type == "laid_off" or "qa" in current_role.lower():
@@ -148,6 +161,19 @@ async def copilot_chat(req: CopilotChatRequest) -> CopilotChatResponse:
     user_msg = req.message.strip()
     p = req.profile or {}
     
+    # Query ML salary model for ground-truth compensation benchmarks
+    from app.services.salary_ml import predict_salary
+    try:
+        ml_bench = predict_salary(
+            role=p.get('target_role') or p.get('current_role') or 'Software Engineer',
+            experience_years=float(p.get('experience_years') or 3.0),
+            skills=p.get('skills_raw') or [],
+            city=p.get('city') or 'Bengaluru',
+        )
+        ml_context = f"ML Predicted Market Compensation: ₹{ml_bench['predicted_salary_lpa']} LPA (Range: ₹{ml_bench['salary_min_lpa']}-{ml_bench['salary_max_lpa']} LPA, {ml_bench['salary_bracket']}, percentile {ml_bench['percentile']}%)"
+    except Exception:
+        ml_context = "ML Predicted Compensation: Market standard"
+
     # Build prompt for LLM
     prompt = f"""You are the Punarshuru AI Career Copilot, an elite career intelligence advisor for Indian professionals in Bharat 2.0.
 Candidate Profile:
@@ -159,8 +185,10 @@ Candidate Profile:
 - Current Salary: ₹{p.get('current_salary_lpa', 'N/A')} LPA
 - Skills: {p.get('skills_raw', [])}
 - Disruption Score: {p.get('disruption_score', 65)}/100
+- Grounded ML Salary Intelligence: {ml_context}
 
 User message: "{user_msg}"
+
 
 Respond with ONLY valid JSON with this exact schema:
 {{
