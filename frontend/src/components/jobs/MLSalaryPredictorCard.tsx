@@ -97,24 +97,45 @@ export default function MLSalaryPredictorCard({
         city,
       })
       setPrediction(res)
-    } catch {
       // Graceful local computation fallback if network interrupted
       const base = 6.0 + experience * 1.5
+      const predLpa = Math.round(base * 10) / 10
+      const getBracket = (s: number) => {
+        if (s < 3) return '0to3'
+        if (s < 6) return '3to6'
+        if (s < 10) return '6to10'
+        if (s < 15) return '10to15'
+        if (s < 25) return '15to25'
+        return '25to50'
+      }
+      const bKey = getBracket(predLpa)
+      const bBounds: Record<string, [number, number]> = {
+        '0to3': [0, 3],
+        '3to6': [3, 6],
+        '6to10': [6, 10],
+        '10to15': [10, 15],
+        '15to25': [15, 25],
+        '25to50': [25, 50],
+      }
+      const [bMin, bMax] = bBounds[bKey] || [0, 50]
+      const salMin = Math.max(bMin, Math.round((predLpa - 2.5) * 10) / 10)
+      const salMax = Math.min(bMax, Math.round((predLpa + 2.5) * 10) / 10)
+
       setPrediction({
-        predicted_salary_lpa: Math.round(base * 10) / 10,
-        salary_min_lpa: Math.round((base - 2) * 10) / 10,
-        salary_max_lpa: Math.round((base + 3.5) * 10) / 10,
-        salary_bracket: '10to15',
+        predicted_salary_lpa: predLpa,
+        salary_min_lpa: salMin,
+        salary_max_lpa: salMax,
+        salary_bracket: bKey,
         confidence_score: 0.85,
         bracket_probabilities: {
-          '0to3': 0.05,
-          '3to6': 0.15,
-          '6to10': 0.25,
-          '10to15': 0.4,
-          '15to25': 0.12,
-          '25to50': 0.03,
+          '0to3': bKey === '0to3' ? 0.6 : 0.05,
+          '3to6': bKey === '3to6' ? 0.6 : 0.1,
+          '6to10': bKey === '6to10' ? 0.6 : 0.15,
+          '10to15': bKey === '10to15' ? 0.6 : 0.15,
+          '15to25': bKey === '15to25' ? 0.6 : 0.1,
+          '25to50': bKey === '25to50' ? 0.6 : 0.05,
         },
-        percentile: 65,
+        percentile: Math.min(95, Math.round((predLpa / 35) * 100)),
         city_benchmark: 13.2,
         top_skills: skills,
         role,
@@ -334,7 +355,10 @@ export default function MLSalaryPredictorCard({
 
                 <div className="text-right space-y-1">
                   <span className="px-2.5 py-1 rounded-full text-[11px] font-black bg-blue-100 dark:bg-blue-950 text-[#0B4F9C] dark:text-sky-300 inline-block">
-                    {prediction.salary_bracket} Bracket
+                    {(prediction.salary_bracket || '').includes('to')
+                      ? `${prediction.salary_bracket.replace('to', '–')}L`
+                      : prediction.salary_bracket}{' '}
+                    Bracket
                   </span>
                   <div className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-end gap-1">
                     <TrendingUp size={12} />
