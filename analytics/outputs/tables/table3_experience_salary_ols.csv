@@ -1,0 +1,2 @@
+independent_var,dependent_var,intercept,slope_per_year_lpa,r_squared,adj_r_squared,f_pvalue,sample_size
+Experience (Years),Salary (LPA),1.718,1.638,0.434,0.434,0.0,14591

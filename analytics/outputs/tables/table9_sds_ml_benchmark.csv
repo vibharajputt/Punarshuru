@@ -1,0 +1,5 @@
+model,accuracy_mean,accuracy_sd,precision_mean,precision_sd,recall_mean,recall_sd,f1_mean,f1_sd,roc_auc_mean,roc_auc_sd
+Random Forest (Depth=4),0.95,0.042,0.943,0.034,0.965,0.071,0.952,0.043,0.995,0.011
+XGBoost (Depth=3),0.931,0.054,0.924,0.05,0.953,0.094,0.935,0.055,0.979,0.026
+ElasticNet Logistic Reg,0.907,0.059,0.892,0.068,0.941,0.064,0.914,0.055,0.949,0.048
+Logistic Regression (L2),0.907,0.059,0.892,0.068,0.941,0.064,0.914,0.055,0.949,0.049
