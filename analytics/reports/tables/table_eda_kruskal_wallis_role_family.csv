@@ -1,0 +1,2 @@
+test_name,factor,dependent_var,h_statistic,degrees_of_freedom,p_value,test_assumption
+Kruskal-Wallis H Test (One-Way Non-Parametric ANOVA),role_family,avg_salary,568.72,5,1.1585161140498405e-120,Non-parametric rank test chosen due to positive skewness and heteroscedasticity across role families (Levene test p < 0.001).

@@ -1,0 +1,6 @@
+trait,vif,collinearity_status
+neuroticism,1.079,Low / Healthy (VIF < 5.0)
+extraversion,1.369,Low / Healthy (VIF < 5.0)
+openness_to_experience,1.377,Low / Healthy (VIF < 5.0)
+agreeableness,1.15,Low / Healthy (VIF < 5.0)
+conscientiousness,1.423,Low / Healthy (VIF < 5.0)

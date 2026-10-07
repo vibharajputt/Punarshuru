@@ -1,0 +1,11 @@
+role_family,seniority,count,mean,std,median,iqr,min,max
+Architecture,Senior,50,25.09,7.41,24.25,8.93,11.2,50.6
+Business Analysis,Non-senior,188,8.95,3.27,8.3,4.32,1.7,19.5
+Business Analysis,Senior,187,13.17,4.53,13.0,5.75,3.0,28.3
+Data Analysis,Non-senior,187,5.71,3.12,5.0,3.65,1.4,17.2
+Data Analysis,Senior,187,9.57,4.7,8.6,6.55,1.9,29.0
+Data Engineering,Non-senior,188,11.81,5.68,10.85,5.43,2.1,45.3
+Data Engineering,Senior,183,19.0,7.85,17.6,7.5,3.4,68.3
+Data Science,Non-senior,188,13.53,5.43,12.8,6.38,4.5,33.6
+Data Science,Senior,185,22.29,8.63,21.2,8.4,8.5,82.0
+ML,Non-senior,59,9.85,5.31,9.1,6.6,3.6,24.8

@@ -1,0 +1,6 @@
+trait,high_success_mean,high_success_std,high_success_median,high_success_iqr,low_success_mean,low_success_std,low_success_median,low_success_iqr,mann_whitney_u,p_value,rank_biserial_r,stat_significant,test_assumption
+neuroticism,36.13,9.63,35.0,13.0,35.89,13.16,32.5,18.0,3130.5,0.368065264393845,-0.085,NO DIFFERENCE (p >= 0.05),Mann-Whitney U applied due to bounded trait scale (0-100) and ordinal psychometric properties.
+agreeableness,47.73,5.04,48.0,5.0,41.12,14.71,39.5,24.75,3789.5,0.0008636627112258182,-0.313,Yes (p < 0.05),Mann-Whitney U applied due to bounded trait scale (0-100) and ordinal psychometric properties.
+extraversion,49.0,7.65,50.0,9.75,37.23,13.21,35.0,19.0,4488.0,3.5051131689562126e-09,-0.555,Yes (p < 0.05),Mann-Whitney U applied due to bounded trait scale (0-100) and ordinal psychometric properties.
+conscientiousness,53.76,6.31,54.5,8.75,36.01,12.64,34.5,19.0,5043.0,1.8202036700124687e-15,-0.747,Yes (p < 0.05),Mann-Whitney U applied due to bounded trait scale (0-100) and ordinal psychometric properties.
+openness_to_experience,48.53,5.8,47.5,8.75,33.31,10.68,31.0,16.75,5105.0,2.7668576657567145e-16,-0.769,Yes (p < 0.05),Mann-Whitney U applied due to bounded trait scale (0-100) and ordinal psychometric properties.
