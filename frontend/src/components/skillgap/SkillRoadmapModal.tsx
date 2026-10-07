@@ -1227,6 +1227,10 @@ export default function SkillRoadmapModal({ skillName, isOpen, onClose }: SkillR
                     )
                   })}
                 </div>
+
+                <div className="pt-2 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                  <span>📚 <strong className="text-slate-700 dark:text-slate-300">Data source:</strong> Free video lectures & certifications verified directly with NPTEL (IIT Madras/Kharagpur), SWAYAM, and freeCodeCamp.</span>
+                </div>
               </div>
             )}
 

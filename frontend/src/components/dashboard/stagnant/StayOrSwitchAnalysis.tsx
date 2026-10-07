@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   Scale,
   Sparkles,
@@ -21,7 +21,9 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import { useProfileStore } from '@/store/profileStore'
+import { useUserProfile } from '@/store/userProfileStore'
 
 interface ActiveJobOpening {
   id: string
@@ -300,11 +302,18 @@ const ALL_AVAILABLE_SKILLS = [
 ]
 
 export default function StayOrSwitchAnalysis() {
+  const { t } = useTranslation()
   const profile = useProfileStore((s) => s.profile)
+  const { currentSalaryLPA, targetHikePercent, setCurrentSalaryLPA, setTargetHikePercent } = useUserProfile()
 
-  const [currentCTC, setCurrentCTC] = useState<number>(profile?.current_salary_lpa || 6.8)
+  const [currentCTC, setCurrentCTC] = useState<number>(currentSalaryLPA)
   const [internalHikePct, setInternalHikePct] = useState<number>(8)
-  const [switchHikePct, setSwitchHikePct] = useState<number>(45)
+  const [switchHikePct, setSwitchHikePct] = useState<number>(targetHikePercent)
+
+  useEffect(() => {
+    setCurrentCTC(currentSalaryLPA)
+    setSwitchHikePct(targetHikePercent)
+  }, [currentSalaryLPA, targetHikePercent])
   const [selectedSkills, setSelectedSkills] = useState<string[]>([
     'Python & Scripting',
     'FastAPI / REST',
@@ -399,20 +408,20 @@ export default function StayOrSwitchAnalysis() {
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-blue-50 to-emerald-50 dark:from-blue-950/60 dark:to-emerald-950/60 text-[#0B4F9C] dark:text-sky-300 text-xs font-black mb-1.5 border border-blue-200/50">
             <Scale size={13} className="text-[#0B4F9C]" />
-            <span>Stay vs Switch Strategic Decision Suite</span>
+            <span>{t('features.stay-or-switch.sidebar', 'Stay vs Switch Strategic Decision Suite')}</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            Internal Growth vs External Lateral Switch Simulator
+            {t('features.stay-or-switch.heading', 'Internal Growth vs External Lateral Switch Simulator')}
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl font-medium">
-            Compare 3-year compounding earnings between staying in your current band vs targeting an external lateral switch (+45% to +85% hike). Click any company below to view active verified openings and apply directly.
+            {t('features.stay-or-switch.subtitle', 'Compare 3-year compounding earnings between staying in your current band vs targeting an external lateral switch (+45% to +85% hike). Click any company below to view active verified openings and apply directly.')}
           </p>
         </div>
 
         <div className="flex items-center gap-3 bg-gradient-to-br from-emerald-50 to-blue-50 dark:from-emerald-950/40 dark:to-slate-800 p-3 rounded-2xl border border-emerald-200 dark:border-emerald-800 shrink-0">
           <div className="text-right px-2">
             <div className="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-300">
-              3-Year Wealth Upside
+              {t('features.stay-or-switch.three_year_gain', '3-Year Wealth Upside')}
             </div>
             <div className="text-lg font-black text-emerald-600 dark:text-emerald-400">
               +₹{differenceWealth} Lakhs
@@ -430,7 +439,7 @@ export default function StayOrSwitchAnalysis() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs font-bold">
-              <span className="text-slate-600 dark:text-slate-300">Current Salary</span>
+              <span className="text-slate-600 dark:text-slate-300">{t('compensation.title', 'Current Salary')}</span>
               <span className="text-slate-900 dark:text-white font-black">₹{currentCTC} LPA</span>
             </div>
             <input
@@ -439,14 +448,18 @@ export default function StayOrSwitchAnalysis() {
               max="15.0"
               step="0.2"
               value={currentCTC}
-              onChange={(e) => setCurrentCTC(parseFloat(e.target.value))}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value)
+                setCurrentCTC(val)
+                setCurrentSalaryLPA(val)
+              }}
               className="w-full accent-[#0B4F9C] cursor-pointer"
             />
           </div>
 
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs font-bold">
-              <span className="text-slate-600 dark:text-slate-300">Internal Annual Hike</span>
+              <span className="text-slate-600 dark:text-slate-300">{t('features.stay-or-switch.stay_internal_label', 'Internal Annual Hike')}</span>
               <span className="text-slate-700 dark:text-slate-300 font-bold">{internalHikePct}% (₹{internalNewCTC} LPA)</span>
             </div>
             <input
@@ -462,7 +475,7 @@ export default function StayOrSwitchAnalysis() {
 
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs font-bold">
-              <span className="text-slate-600 dark:text-slate-300">External Switch Hike</span>
+              <span className="text-slate-600 dark:text-slate-300">{t('features.stay-or-switch.switch_external_label', 'External Switch Hike')}</span>
               <span className="text-emerald-600 font-black">+{switchHikePct}% (₹{switchNewCTC} LPA)</span>
             </div>
             <input
@@ -471,7 +484,11 @@ export default function StayOrSwitchAnalysis() {
               max="80"
               step="5"
               value={switchHikePct}
-              onChange={(e) => setSwitchHikePct(parseInt(e.target.value))}
+              onChange={(e) => {
+                const val = parseInt(e.target.value)
+                setSwitchHikePct(val)
+                setTargetHikePercent(val)
+              }}
               className="w-full accent-emerald-600 cursor-pointer"
             />
           </div>
@@ -486,7 +503,7 @@ export default function StayOrSwitchAnalysis() {
             <div className="flex items-center gap-2">
               <Building2 size={18} className="text-amber-400" />
               <h4 className="text-sm font-black uppercase tracking-wider text-amber-400">
-                Target Companies Matching Your Skills (Click Any Card to Open Details & Apply)
+                {t('features.stay-or-switch.tab_companies', 'Target Companies Matching Your Skills (Click Any Card to Open Details & Apply)')}
               </h4>
             </div>
             <p className="text-xs text-slate-300 mt-1 max-w-2xl font-medium">
@@ -569,11 +586,11 @@ export default function StayOrSwitchAnalysis() {
               <Filter size={11} /> Filter:
             </span>
             {[
-              { id: 'all', label: 'All Targets' },
+              { id: 'all', label: t('features.stay-or-switch.filter_all', 'All Targets') },
               { id: 'high_match', label: 'High Match (≥60%)' },
-              { id: 'product', label: 'Product Unicorns' },
-              { id: 'gcc', label: 'Global GCCs' },
-              { id: 'ai', label: 'GenAI & Next-Gen' },
+              { id: 'product', label: t('features.stay-or-switch.filter_unicorn', 'Product Unicorns') },
+              { id: 'gcc', label: t('features.stay-or-switch.filter_gcc', 'Global GCCs') },
+              { id: 'ai', label: t('features.stay-or-switch.filter_ai', 'GenAI & Next-Gen') },
             ].map((f) => (
               <button
                 key={f.id}

@@ -102,18 +102,35 @@ export default function CompanySalaryProjection({
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => navigate('/path')}
-                  className="px-3 py-1 rounded-xl bg-white dark:bg-slate-900 text-[#0B4F9C] dark:text-sky-300 border border-slate-200 dark:border-slate-700 font-bold text-xs shrink-0 hover:border-[#0B4F9C]"
-                >
-                  Start
-                </button>
+                {crs.url ? (
+                  <a
+                    href={crs.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1 rounded-xl bg-white dark:bg-slate-900 text-[#0B4F9C] dark:text-sky-300 border border-slate-200 dark:border-slate-700 font-bold text-xs shrink-0 hover:border-[#0B4F9C] flex items-center gap-1"
+                  >
+                    <span>Open Syllabus</span>
+                    <ArrowRight size={11} />
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => navigate('/path')}
+                    className="px-3 py-1 rounded-xl bg-white dark:bg-slate-900 text-[#0B4F9C] dark:text-sky-300 border border-slate-200 dark:border-slate-700 font-bold text-xs shrink-0 hover:border-[#0B4F9C]"
+                  >
+                    Start
+                  </button>
+                )}
               </div>
             ))}
           </div>
         </div>
       )}
+
+      {/* Citable Data Source Footnote */}
+      <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between gap-2">
+        <span>📊 <strong className="text-slate-700 dark:text-slate-300">Data source:</strong> Aggregated tech compensation datasets (AmbitionBox & Levels.fyi verified engineering datapoints 2025). Course links verified with official NPTEL/SWAYAM/Skill India portals.</span>
+      </div>
     </div>
   )
 }

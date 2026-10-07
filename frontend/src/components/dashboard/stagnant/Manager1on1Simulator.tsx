@@ -1,5 +1,7 @@
-import { useState, useId } from 'react'
+import { useState, useId, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { useUserProfile } from '@/store/userProfileStore'
 import {
   MessageSquare,
   Sparkles,
@@ -162,13 +164,21 @@ export default function Manager1on1Simulator() {
   const [activeTab, setActiveTab] = useState<'custom' | 'preset'>('custom')
   const [activeStep, setActiveStep] = useState<1 | 2 | 3>(1)
 
+  const { t } = useTranslation()
+  const { currentSalaryLPA, targetSalaryLPA, setCurrentSalaryLPA, setTargetHikePercent } = useUserProfile()
+
   // Custom Simulator State
-  const [currentCtc, setCurrentCtc] = useState<number>(10)
-  const [targetCtc, setTargetCtc] = useState<number>(13.5)
+  const [currentCtc, setCurrentCtc] = useState<number>(currentSalaryLPA)
+  const [targetCtc, setTargetCtc] = useState<number>(targetSalaryLPA)
   const [managerType, setManagerType] = useState<string>('budget_tight')
   const [userWins, setUserWins] = useState<string>(
     'Automated ticket triage webhook (saved ₹4.2L) & delivered ChromaDB search with 99.9% uptime'
   )
+
+  useEffect(() => {
+    setCurrentCtc(currentSalaryLPA)
+    setTargetCtc(targetSalaryLPA)
+  }, [currentSalaryLPA, targetSalaryLPA])
 
   // Preset State
   const [selectedPresetIdx, setSelectedPresetIdx] = useState<number>(0)
@@ -193,6 +203,27 @@ export default function Manager1on1Simulator() {
     setCopiedScript(true)
     setTimeout(() => setCopiedScript(false), 2000)
   }
+
+  // Dynamic Preset Scenarios referencing live targetCtc
+  const dynamicPresets = useMemo(() => {
+    return PRESET_SCENARIOS.map((sc) => {
+      if (sc.id === 'budget_tight') {
+        return {
+          ...sc,
+          options: sc.options.map((opt) =>
+            opt.isBest
+              ? {
+                  ...opt,
+                  text: `"I understand the team budget cap. However, this quarter I built the automated triage system that saved 650 team hours (₹4.2L value). Based on this direct savings, can we propose an exception approval for ₹${targetCtc} LPA tied to leading our Q3 automation roadmap?"`,
+                }
+              : opt
+          ),
+          goldScript: `I appreciate the department allocation constraints. Over the past 6 months, beyond standard ticket resolution, I built our automated ticket deflection system that saved ₹4.2 Lakhs in team effort. Given this measurable ROI, I would like to propose a band realignment to ₹${targetCtc} LPA tied to leading our Q3 automation roadmap.`,
+        }
+      }
+      return sc
+    })
+  }, [targetCtc])
 
   // Simple Custom Script Generator
   const customScript = `“I completely respect the department budget constraints. However, over the past months, my deliverables include: ${userWins}. Given market standards for this scope (₹${targetCtc} LPA) and considering external hiring costs reach ~₹${replaceCost}L, I would like to propose a band realignment to ₹${targetCtc} LPA (+${hikePercent}%), or establish a 90-day milestone agreement to fast-track this review.”`
@@ -231,13 +262,13 @@ export default function Manager1on1Simulator() {
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#0B4F9C] dark:text-sky-300 text-xs font-black mb-1 border border-blue-200/50">
             <MessageSquare size={13} />
-            <span>Appraisal 1:1 Assistant</span>
+            <span>{t('features.manager-1on1.sidebar', 'Appraisal 1:1 Assistant')}</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            Manager 1:1 Negotiation Coach
+            {t('features.manager-1on1.heading', 'Manager 1:1 Negotiation Coach')}
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            Apni situation choose karein aur 1-click me exact script aur logic paayein jo manager ko convince kare.
+            {t('features.manager-1on1.subtitle', 'Apni situation choose karein aur 1-click me exact script aur logic paayein jo manager ko convince kare.')}
           </p>
         </div>
 
@@ -253,7 +284,7 @@ export default function Manager1on1Simulator() {
             }`}
           >
             <Sliders size={13} />
-            <span>My Custom Situation</span>
+            <span>{t('features.manager-1on1.tab_roleplay', 'My Custom Situation')}</span>
           </button>
           <button
             type="button"
@@ -265,7 +296,7 @@ export default function Manager1on1Simulator() {
             }`}
           >
             <BookOpen size={13} />
-            <span>Ready Examples ({PRESET_SCENARIOS.length})</span>
+            <span>{t('features.manager-1on1.tab_scripts', 'Ready Examples')} ({PRESET_SCENARIOS.length})</span>
           </button>
         </div>
       </div>
@@ -278,8 +309,8 @@ export default function Manager1on1Simulator() {
           {/* Step Navigation */}
           <div className="grid grid-cols-3 gap-2">
             {[
-              { num: 1, title: '1. Apni Detail', desc: 'Salary & Wins' },
-              { num: 2, title: '2. Exact Script', desc: 'Kya Bolna Hai' },
+              { num: 1, title: '1. Detail', desc: 'Salary & Wins' },
+              { num: 2, title: '2. Script', desc: 'Kya Bolna Hai' },
               { num: 3, title: '3. Practice', desc: 'AI Score' },
             ].map((s) => (
               <button
@@ -314,9 +345,13 @@ export default function Manager1on1Simulator() {
                     id={currentCtcId}
                     type="number"
                     value={currentCtc}
-                    onChange={(e) => setCurrentCtc(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = Number(e.target.value)
+                      setCurrentCtc(val)
+                      setCurrentSalaryLPA(val)
+                    }}
                     className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-[#0B4F9C] outline-none"
-                    placeholder="10"
+                    placeholder={String(currentSalaryLPA)}
                   />
                 </div>
 
@@ -328,9 +363,16 @@ export default function Manager1on1Simulator() {
                     id={targetCtcId}
                     type="number"
                     value={targetCtc}
-                    onChange={(e) => setTargetCtc(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = Number(e.target.value)
+                      setTargetCtc(val)
+                      if (currentCtc > 0) {
+                        const hike = Math.round(((val - currentCtc) / currentCtc) * 100)
+                        setTargetHikePercent(hike)
+                      }
+                    }}
                     className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-[#0B4F9C] outline-none"
-                    placeholder="13.5"
+                    placeholder={String(targetSalaryLPA)}
                   />
                 </div>
               </div>
@@ -586,7 +628,7 @@ export default function Manager1on1Simulator() {
               <span>Manager's Statement:</span>
             </div>
             <p className="text-xs sm:text-sm text-slate-200 italic font-mono bg-slate-950 p-3 rounded-xl">
-              {PRESET_SCENARIOS[selectedPresetIdx].managerOpening}
+              {dynamicPresets[selectedPresetIdx].managerOpening}
             </p>
           </div>
 
@@ -595,7 +637,7 @@ export default function Manager1on1Simulator() {
             <div className="text-xs font-black uppercase text-slate-500">
               Aapka Jawab Kya Hona Chahiye? (Select to test):
             </div>
-            {PRESET_SCENARIOS[selectedPresetIdx].options.map((opt) => {
+            {dynamicPresets[selectedPresetIdx].options.map((opt) => {
               const isSelected = selectedOptionId === opt.id
               return (
                 <div
@@ -650,14 +692,14 @@ export default function Manager1on1Simulator() {
               </span>
               <button
                 type="button"
-                onClick={() => handleCopy(PRESET_SCENARIOS[selectedPresetIdx].goldScript)}
+                onClick={() => handleCopy(dynamicPresets[selectedPresetIdx].goldScript)}
                 className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 cursor-pointer shadow-2xs"
               >
                 {copiedScript ? 'Copied!' : 'Copy Script'}
               </button>
             </div>
             <p className="text-xs text-slate-800 dark:text-slate-200 font-mono bg-white/80 dark:bg-slate-950/80 p-3 rounded-xl">
-              "{PRESET_SCENARIOS[selectedPresetIdx].goldScript}"
+              "{dynamicPresets[selectedPresetIdx].goldScript}"
             </p>
           </div>
         </div>

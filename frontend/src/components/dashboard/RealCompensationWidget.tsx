@@ -8,6 +8,8 @@ import {
   Sparkles,
   Zap,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { useUserProfile } from '@/store/userProfileStore'
 
 export interface CityCostData {
   city: string
@@ -34,14 +36,23 @@ const INDIAN_CITIES: CityCostData[] = [
 ]
 
 export default function RealCompensationWidget({
-  initialSalary = 12.0,
-  initialCity = 'Bengaluru',
+  initialSalary,
+  initialCity,
 }: {
   initialSalary?: number
   initialCity?: string
 }) {
-  const [nominalSalaryLPA, setNominalSalaryLPA] = useState<number>(initialSalary)
-  const [selectedCityA, setSelectedCityA] = useState<string>(initialCity)
+  const { t, i18n } = useTranslation()
+  const isHi = (i18n.resolvedLanguage || i18n.language || 'en').startsWith('hi')
+  const { currentSalaryLPA, currentCity, setCurrentSalaryLPA, setCurrentCity } = useUserProfile()
+
+  const defaultSalary = initialSalary !== undefined ? initialSalary : currentSalaryLPA
+  const defaultCity = initialCity || currentCity || 'Bengaluru'
+
+  const [nominalSalaryLPA, setNominalSalaryLPA] = useState<number>(defaultSalary)
+  const [selectedCityA, setSelectedCityA] = useState<string>(
+    INDIAN_CITIES.some((c) => c.city === defaultCity) ? defaultCity : 'Bengaluru'
+  )
   const [selectedCityB, setSelectedCityB] = useState<string>('Pune')
   const [rentType, setRentType] = useState<'1bhk' | '2bhk' | 'shared'>('1bhk')
 
@@ -89,13 +100,13 @@ export default function RealCompensationWidget({
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-[#0B4F9C] dark:text-sky-300 text-xs font-black mb-2">
             <Calculator size={13} />
-            <span>AI Real Compensation & City Parity Engine</span>
+            <span>{t('features.purchasing-power.badge', 'AI Real Compensation & City Parity Engine')}</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            Nominal CTC vs Real In-Hand Purchasing Power
+            {t('features.purchasing-power.heading', 'Nominal CTC vs Real In-Hand Purchasing Power')}
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl font-medium mt-1">
-            A high CTC in Tier-1 metros often evaporates under ₹30,000+ rent and 2-hour daily traffic. Discover your true disposable savings across Indian tech cities.
+            {t('features.purchasing-power.subtitle', 'A high CTC in Tier-1 metros often evaporates under ₹30,000+ rent and 2-hour daily traffic. Discover your true disposable savings across Indian tech cities.')}
           </p>
         </div>
 
@@ -125,14 +136,14 @@ export default function RealCompensationWidget({
       {/* 2. Interactive Input Controls */}
       <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-5">
         <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">
-          Step 1: Set Your Compensation Parameters
+          {t('features.purchasing-power.step1', 'Step 1: Set Your Compensation Parameters')}
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Salary Slider & Input */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              Nominal CTC Offer (LPA)
+              {t('features.purchasing-power.nominal_salary', 'Nominal CTC Offer (LPA)')}
             </label>
             <div className="relative">
               <span className="absolute left-3 top-2.5 text-slate-400 font-bold">₹</span>
@@ -142,7 +153,11 @@ export default function RealCompensationWidget({
                 min="2"
                 max="80"
                 value={nominalSalaryLPA}
-                onChange={(e) => setNominalSalaryLPA(Number(e.target.value) || 2)}
+                onChange={(e) => {
+                  const val = Number(e.target.value) || 2
+                  setNominalSalaryLPA(val)
+                  setCurrentSalaryLPA(val)
+                }}
                 className="w-full pl-7 pr-12 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-extrabold text-sm text-slate-900 dark:text-white"
               />
               <span className="absolute right-3 top-2.5 text-slate-400 font-bold text-xs">LPA</span>
@@ -153,7 +168,11 @@ export default function RealCompensationWidget({
               max="50"
               step="0.5"
               value={nominalSalaryLPA}
-              onChange={(e) => setNominalSalaryLPA(Number(e.target.value))}
+              onChange={(e) => {
+                const val = Number(e.target.value)
+                setNominalSalaryLPA(val)
+                setCurrentSalaryLPA(val)
+              }}
               className="w-full accent-[#0B4F9C] h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
             />
           </div>
@@ -161,11 +180,15 @@ export default function RealCompensationWidget({
           {/* Offer City A */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              City A (Current / Baseline Offer)
+              {t('features.purchasing-power.city_a', 'City A (Current / Baseline Offer)')}
             </label>
             <select
               value={selectedCityA}
-              onChange={(e) => setSelectedCityA(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value
+                setSelectedCityA(val)
+                setCurrentCity(val)
+              }}
               className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold text-xs text-slate-900 dark:text-white"
             >
               {INDIAN_CITIES.map((c) => (
@@ -180,7 +203,7 @@ export default function RealCompensationWidget({
           {/* Comparison City B */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              City B (Target Comparison City)
+              {t('features.purchasing-power.city_b', 'City B (Target Comparison City)')}
             </label>
             <select
               value={selectedCityB}
@@ -199,13 +222,13 @@ export default function RealCompensationWidget({
           {/* Housing Style */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              Housing Preference
+              {t('features.purchasing-power.housing_pref', 'Housing Preference')}
             </label>
             <div className="grid grid-cols-3 gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
               {[
                 { id: '1bhk', label: '1 BHK' },
                 { id: '2bhk', label: '2 BHK' },
-                { id: 'shared', label: 'Shared' },
+                { id: 'shared', label: isHi ? 'साझा' : 'Shared' },
               ].map((h) => (
                 <button
                   key={h.id}
@@ -220,7 +243,7 @@ export default function RealCompensationWidget({
                 </button>
               ))}
             </div>
-            <p className="text-[10px] text-slate-400">Affects rent expense calculations</p>
+            <p className="text-[10px] text-slate-400">{t('features.purchasing-power.housing_note', 'Affects rent expense calculations')}</p>
           </div>
         </div>
       </div>
@@ -235,9 +258,9 @@ export default function RealCompensationWidget({
                 <MapPin size={16} className="text-[#0B4F9C]" />
                 <div>
                   <h3 className="text-sm font-black text-slate-900 dark:text-white">
-                    Offer A: {selectedCityA}
+                    {t('features.purchasing-power.offer_a', `Offer A: ${selectedCityA}`, { city: selectedCityA })}
                   </h3>
-                  <span className="text-[10px] text-slate-400 font-bold">Cost of Living: {cityDataA.colIndex}x</span>
+                  <span className="text-[10px] text-slate-400 font-bold">{t('features.purchasing-power.col_label', `Cost of Living: ${cityDataA.colIndex}x`, { col: cityDataA.colIndex })}</span>
                 </div>
               </div>
               <span className="text-lg font-black text-slate-900 dark:text-white">
@@ -248,23 +271,23 @@ export default function RealCompensationWidget({
             {/* Expenses List */}
             <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
               <div className="flex justify-between py-1">
-                <span>Gross Monthly Take-Home:</span>
+                <span>{t('features.purchasing-power.gross_monthly', 'Gross Monthly Take-Home:')}</span>
                 <span className="font-mono font-bold text-slate-900 dark:text-white">₹{Math.round(grossMonthlyInr).toLocaleString()}</span>
               </div>
               <div className="flex justify-between py-1 text-slate-500">
-                <span>Estimated Tax & PF (8%):</span>
+                <span>{t('features.purchasing-power.tax_pf', 'Estimated Tax & PF (8%):')}</span>
                 <span>- ₹{taxMonthlyInr.toLocaleString()}</span>
               </div>
               <div className="flex justify-between py-1 text-rose-500 bg-rose-50/50 dark:bg-rose-950/30 px-2 rounded-lg">
-                <span className="flex items-center gap-1.5"><Home size={12} /> Rent ({rentType.toUpperCase()}):</span>
+                <span className="flex items-center gap-1.5"><Home size={12} /> {t('features.purchasing-power.rent', `Rent (${rentType.toUpperCase()}):`, { type: rentType.toUpperCase() })}</span>
                 <span className="font-bold">- ₹{rentA.toLocaleString()}</span>
               </div>
               <div className="flex justify-between py-1 text-rose-500 bg-rose-50/50 dark:bg-rose-950/30 px-2 rounded-lg">
-                <span className="flex items-center gap-1.5"><Clock size={12} /> Commute ({cityDataA.avgCommuteMin} min/day):</span>
+                <span className="flex items-center gap-1.5"><Clock size={12} /> {t('features.purchasing-power.commute', `Commute (${cityDataA.avgCommuteMin} min/day):`, { min: cityDataA.avgCommuteMin })}</span>
                 <span className="font-bold">- ₹{commuteCostA.toLocaleString()}</span>
               </div>
               <div className="flex justify-between py-1 text-rose-500 bg-rose-50/50 dark:bg-rose-950/30 px-2 rounded-lg">
-                <span className="flex items-center gap-1.5"><TrendingUp size={12} /> Food, Utilities & Misc:</span>
+                <span className="flex items-center gap-1.5"><TrendingUp size={12} /> {t('features.purchasing-power.food_misc', 'Food, Utilities & Misc:')}</span>
                 <span className="font-bold">- ₹{livingCostA.toLocaleString()}</span>
               </div>
             </div>
@@ -272,13 +295,13 @@ export default function RealCompensationWidget({
 
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
             <div>
-              <p className="text-[10px] uppercase font-bold text-slate-400">Net Monthly Savings</p>
+              <p className="text-[10px] uppercase font-bold text-slate-400">{t('features.purchasing-power.net_monthly_savings', 'Net Monthly Savings')}</p>
               <p className="text-base font-black text-emerald-600 dark:text-emerald-400">
-                ₹{Math.round(netSavingsA).toLocaleString()} / Month
+                ₹{Math.round(netSavingsA).toLocaleString()} {isHi ? '/ माह' : '/ Month'}
               </p>
             </div>
             <span className="text-[11px] font-bold text-slate-500">
-              {Math.round((netSavingsA / inHandMonthlyA) * 100)}% of In-Hand
+              {t('features.purchasing-power.pct_inhand', '{{pct}}% of In-Hand', { pct: Math.round((netSavingsA / inHandMonthlyA) * 100) })}
             </span>
           </div>
         </div>
@@ -291,10 +314,10 @@ export default function RealCompensationWidget({
                 <MapPin size={16} className="text-emerald-600" />
                 <div>
                   <h3 className="text-sm font-black text-slate-900 dark:text-white">
-                    Parity Equivalent in {selectedCityB}
+                    {t('features.purchasing-power.parity_equiv', `Parity Equivalent in ${selectedCityB}`, { city: selectedCityB })}
                   </h3>
                   <span className="text-[10px] text-emerald-700 dark:text-emerald-300 font-bold">
-                    Cost of Living: {cityDataB.colIndex}x
+                    {t('features.purchasing-power.col_label', `Cost of Living: ${cityDataB.colIndex}x`, { col: cityDataB.colIndex })}
                   </span>
                 </div>
               </div>
@@ -302,27 +325,35 @@ export default function RealCompensationWidget({
                 <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
                   ₹{equivalentSalaryLPAB} LPA
                 </span>
-                <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400">Matching Offer</p>
+                <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400">{t('features.purchasing-power.matching_offer', 'Matching Offer')}</p>
               </div>
             </div>
 
             <p className="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
-              An offer of just <strong className="text-slate-900 dark:text-white font-black">₹{equivalentSalaryLPAB} LPA in {selectedCityB}</strong> gives you the <em>exact same in-pocket bank savings</em> as ₹{nominalSalaryLPA} LPA in {selectedCityA}, because you save ₹{(rentA - rentB).toLocaleString()} on rent and ₹{(commuteCostA - commuteCostB).toLocaleString()} on transit every month!
+              {isHi ? (
+                <>
+                  <strong className="text-slate-900 dark:text-white font-black">{selectedCityB} में मात्र ₹{equivalentSalaryLPAB} LPA</strong> का ऑफर आपको {selectedCityA} में ₹{nominalSalaryLPA} LPA के बराबर शुद्ध बैंक बचत देता है, क्योंकि आप हर महीने ₹{(rentA - rentB).toLocaleString()} किराए पर और ₹{(commuteCostA - commuteCostB).toLocaleString()} यात्रा पर बचाते हैं!
+                </>
+              ) : (
+                <>
+                  An offer of just <strong className="text-slate-900 dark:text-white font-black">₹{equivalentSalaryLPAB} LPA in {selectedCityB}</strong> gives you the <em>exact same in-pocket bank savings</em> as ₹{nominalSalaryLPA} LPA in {selectedCityA}, because you save ₹{(rentA - rentB).toLocaleString()} on rent and ₹{(commuteCostA - commuteCostB).toLocaleString()} on transit every month!
+                </>
+              )}
             </p>
 
             {/* Highlighted Differences */}
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
-                <p className="text-[10px] text-slate-400 font-bold uppercase">Rent Savings</p>
+                <p className="text-[10px] text-slate-400 font-bold uppercase">{t('features.purchasing-power.rent_savings', 'Rent Savings')}</p>
                 <p className="text-xs font-black text-emerald-600 dark:text-emerald-400">
-                  + ₹{Math.max(0, (rentA - rentB) * 12).toLocaleString()} / Yr
+                  + ₹{Math.max(0, (rentA - rentB) * 12).toLocaleString()} {isHi ? '/ वर्ष' : '/ Yr'}
                 </p>
               </div>
 
               <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700">
-                <p className="text-[10px] text-slate-400 font-bold uppercase">Transit Time Saved</p>
+                <p className="text-[10px] text-slate-400 font-bold uppercase">{t('features.purchasing-power.transit_saved', 'Transit Time Saved')}</p>
                 <p className="text-xs font-black text-[#0B4F9C] dark:text-sky-400">
-                  ~{hoursSavedPerYear} Hrs / Yr
+                  ~{hoursSavedPerYear} {isHi ? 'घंटे / वर्ष' : 'Hrs / Yr'}
                 </p>
               </div>
             </div>
@@ -332,14 +363,14 @@ export default function RealCompensationWidget({
             <div className="flex items-center gap-2">
               <Sparkles size={16} className="text-emerald-700 dark:text-emerald-300" />
               <div>
-                <p className="text-[10px] font-bold uppercase text-emerald-800 dark:text-emerald-200">Purchasing Power Multiplier</p>
+                <p className="text-[10px] font-bold uppercase text-emerald-800 dark:text-emerald-200">{t('features.purchasing-power.power_multiplier', 'Purchasing Power Multiplier')}</p>
                 <p className="text-xs font-black text-emerald-900 dark:text-white">
-                  {purchasingPowerMultiplier}x Higher Value in {selectedCityB}
+                  {t('features.purchasing-power.power_value', `${purchasingPowerMultiplier}x Higher Value in ${selectedCityB}`, { val: purchasingPowerMultiplier, city: selectedCityB })}
                 </p>
               </div>
             </div>
             <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300">
-              {Number(purchasingPowerMultiplier) > 1 ? '💰 High Savings' : '⚖️ Equal'}
+              {Number(purchasingPowerMultiplier) > 1 ? t('features.purchasing-power.high_savings', '💰 High Savings') : t('features.purchasing-power.equal', '⚖️ Equal')}
             </span>
           </div>
         </div>
@@ -349,14 +380,27 @@ export default function RealCompensationWidget({
       <div className="p-6 rounded-3xl bg-slate-900 text-white shadow-lg space-y-3">
         <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase">
           <Zap size={14} />
-          <span>AI Relocation & CTC Negotiation Insight</span>
+          <span>{t('features.purchasing-power.decision_badge', 'AI Relocation & CTC Negotiation Insight')}</span>
         </div>
         <h4 className="text-base font-bold">
-          Should you relocate for a higher nominal package?
+          {t('features.purchasing-power.decision_heading', 'Should you relocate for a higher nominal package?')}
         </h4>
         <p className="text-xs text-slate-300 leading-relaxed max-w-4xl">
-          When negotiating job offers across Indian metros, always calculate your <strong>Quality of Life Multiplier (QLM)</strong>. If a Bangalore or Gurgaon company offers you ₹{nominalSalaryLPA} LPA, but you have a ₹{equivalentSalaryLPAB} LPA offer in Pune, Chandigarh, or Hyderabad, you preserve greater in-hand savings, gain back hundreds of commute hours, and enjoy lower cost-per-square-foot living.
+          {isHi ? (
+            <>
+              भारतीय महानगरों में नौकरी के प्रस्तावों पर बातचीत करते समय, हमेशा अपने जीवन की गुणवत्ता गुणक की गणना करें। यदि बेंगलुरु या गुड़गांव की कोई कंपनी आपको ₹{nominalSalaryLPA} LPA ऑफर करती है, लेकिन आपके पास पुणे, चंडीगढ़ या हैदराबाद में ₹{equivalentSalaryLPAB} LPA का ऑफर है, तो आप अधिक बचत करते हैं, सैकड़ों घंटे की यात्रा बचाते हैं और बेहतर जीवन शैली का आनंद लेते हैं।
+            </>
+          ) : (
+            <>
+              When negotiating job offers across Indian metros, always calculate your <strong>Quality of Life Multiplier (QLM)</strong>. If a Bangalore or Gurgaon company offers you ₹{nominalSalaryLPA} LPA, but you have a ₹{equivalentSalaryLPAB} LPA offer in Pune, Chandigarh, or Hyderabad, you preserve greater in-hand savings, gain back hundreds of commute hours, and enjoy lower cost-per-square-foot living.
+            </>
+          )}
         </p>
+      </div>
+
+      {/* Citable Data Source Footnote */}
+      <div className="pt-2 px-1 text-[11px] text-slate-500 dark:text-slate-400 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-slate-200/80 dark:border-slate-800">
+        <span>📊 <strong className="text-slate-700 dark:text-slate-300">Data source:</strong> Numbeo Cost of Living Index (India Metros 2025) and MagicBricks Rental Trend Index Q4 2025 across Tier-1 & Tier-2 tech corridors.</span>
       </div>
     </div>
   )

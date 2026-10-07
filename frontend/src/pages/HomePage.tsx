@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
@@ -26,7 +26,11 @@ import { useTranslation } from 'react-i18next'
 import { useProfileStore } from '@/store/profileStore'
 import { useAuthStore } from '@/store/authStore'
 import { useActiveProfile } from '@/hooks/useActiveProfile'
-import { assessApi, profileApi } from '@/lib/api'
+import { useSkillGap } from '@/hooks/useSkillGap'
+import { useUserProfile } from '@/store/userProfileStore'
+import { assessApi, profileApi, compensationApi } from '@/lib/api'
+import { calculateRealSalaryLpa, getDefaultNominalSalaryLpa } from '@/lib/compensation'
+import { computeRiskScore } from '@/lib/riskScore'
 
 // Existing Core Dashboard Components
 import CareerRiskCard from '@/components/home/CareerRiskCard'
@@ -327,7 +331,11 @@ const ROLE_DASHBOARD_CONFIG: Record<
         icon: TrendingUp,
         accent: 'text-emerald-600',
         label: 'Projected Hike',
-        getValue: () => '+45% (₹12.5 LPA Target)',
+        getValue: (p) => {
+          const base = p?.current_salary_lpa && !isNaN(Number(p.current_salary_lpa)) ? Number(p.current_salary_lpa) : 10
+          const target = Number((base * 1.45).toFixed(1))
+          return `+45% (₹${target} LPA Target)`
+        },
       },
     ],
     milestones: {
@@ -499,11 +507,38 @@ export default function HomePage() {
     enabled: !!profileId,
   })
 
-  const { data: gapData } = useQuery({
-    queryKey: ['skill-gap', profileId],
-    queryFn: () => assessApi.gap(profileId),
-    enabled: !!profileId,
+  const userProfile = useUserProfile()
+  const targetRole = userProfile.targetRole || activeProfile?.target_role || 'GenAI Engineer'
+
+  // Single source-of-truth skill gap computation across all components
+  const { gap } = useSkillGap(targetRole)
+
+  // User's current nominal salary and current city for real purchasing power calculation
+  const userNominalSalary =
+    userProfile.currentSalaryLPA > 0
+      ? userProfile.currentSalaryLPA
+      : (activeProfile?.current_salary_lpa !== undefined && activeProfile?.current_salary_lpa !== null
+          ? Math.max(0, Number(activeProfile.current_salary_lpa))
+          : getDefaultNominalSalaryLpa(userType))
+
+  const userCity = userProfile.currentCity || activeProfile?.current_city || activeProfile?.city || 'Bengaluru'
+
+  // Query backend real salary calculator API, synchronized with live formula
+  const { data: realSalaryData } = useQuery({
+    queryKey: ['compensation-real', userNominalSalary, userCity],
+    queryFn: () => compensationApi.real({ salary_lpa: userNominalSalary, city: userCity, bhk: 1 }),
+    enabled: userNominalSalary > 0,
+    staleTime: 5 * 60 * 1000,
   })
+
+  // Real purchasing power salary: strictly cost-of-living adjusted (<= nominal current salary)
+  const realSalaryLPA = useMemo(() => {
+    if (userNominalSalary <= 0) return 0
+    if (realSalaryData?.real_salary_lpa != null) {
+      return Math.min(userNominalSalary, Number(realSalaryData.real_salary_lpa.toFixed(1)))
+    }
+    return calculateRealSalaryLpa(userNominalSalary, userCity, 1)
+  }, [userNominalSalary, userCity, realSalaryData])
 
   if (isAuthSession && isCachedProfileInvalid && isProfileLoading) {
     return (
@@ -519,12 +554,12 @@ export default function HomePage() {
     return <Navigate to="/onboarding" replace />
   }
 
-  const currentScore = activeProfile?.disruption_score || disruptionData?.score || 72
-  const targetRole = activeProfile?.target_role || 'GenAI Engineer'
-  const matchPct = gapData?.match_pct || 42
-  const missingSkills = gapData?.missing_skills || ['Python & Vector Embeddings', 'LangChain', 'RAG']
+  const calculatedRisk = useMemo(() => computeRiskScore(activeProfile), [activeProfile])
+  const currentScore = userProfile.careerRiskScore || activeProfile?.disruption_score || disruptionData?.score || calculatedRisk.score
+  const matchPct = gap.match_pct
+  const missingSkills = userProfile.skillsMissing?.length ? userProfile.skillsMissing : gap.missing_skills
   const topMissing = missingSkills[0] || 'Python & Vector Embeddings'
-  const firstName = activeProfile?.name ? activeProfile.name.split(' ')[0] : (authUser?.name ? authUser.name.split(' ')[0] : 'Candidate')
+  const firstName = (userProfile.name || activeProfile?.name || authUser?.name || 'Candidate').split(' ')[0]
 
   const currentArchetypeInfo = ARCHETYPES.find((a) => a.type === userType) || ARCHETYPES[0]
   const ArchetypeIcon = currentArchetypeInfo.icon
@@ -548,11 +583,11 @@ export default function HomePage() {
             </h1>
             <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-extrabold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Active Intelligence
+              {t('home.active_intel', 'Active Intelligence')}
             </span>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Personalized career continuity roadmap & AI disruption defense.
+            {t('home.subheading', 'Personalized career continuity roadmap & AI disruption defense.')}
           </p>
         </div>
 
@@ -570,7 +605,7 @@ export default function HomePage() {
           >
             <ArchetypeIcon size={14} className={currentArchetypeInfo.accent} />
             <span>{currentArchetypeInfo.title}</span>
-            <span className="text-[10px] text-[#F26B1D] font-extrabold ml-0.5">Switch ▾</span>
+            <span className="text-[10px] text-[#F26B1D] font-extrabold ml-0.5">{t('home.switch', 'Switch ▾')}</span>
           </button>
         </div>
       </div>
@@ -586,19 +621,19 @@ export default function HomePage() {
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-black uppercase tracking-wider text-[#0B4F9C] dark:text-sky-400">
-                  {roleConfig.cockpitBadge}
+                  {t(`home.${userType}_cockpit`, roleConfig.cockpitBadge)}
                 </span>
                 <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-[#0B4F9C] dark:text-sky-300 border border-blue-200/50">
-                  Target: {targetRole}
+                  {t('home.target_role', `Target: ${targetRole}`, { role: targetRole })}
                 </span>
               </div>
 
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                {roleConfig.heading}
+                {t(`home.${userType}_heading`, roleConfig.heading)}
               </h2>
 
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl font-medium leading-relaxed">
-                {roleConfig.tagline}
+                {t(`home.${userType}_tagline`, roleConfig.tagline)}
               </p>
             </div>
           </div>
@@ -608,7 +643,7 @@ export default function HomePage() {
               onClick={() => navigate('/path')}
               className="px-5 py-2.5 rounded-2xl bg-[#0B4F9C] hover:bg-blue-800 text-white text-xs font-black transition-all shadow-md flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
             >
-              <span>{roleConfig.roadmapCta}</span>
+              <span>{t('home.follow_path', roleConfig.roadmapCta)}</span>
               <ArrowRight size={14} />
             </button>
             <button
@@ -616,7 +651,7 @@ export default function HomePage() {
               className="text-[11px] font-bold text-slate-500 dark:text-slate-400 hover:text-[#0B4F9C] dark:hover:text-white flex items-center gap-1 cursor-pointer transition"
             >
               <SlidersHorizontal size={11} />
-              <span>Change Career Persona</span>
+              <span>{t('home.switch_persona', 'Change Career Persona')}</span>
             </button>
           </div>
         </div>
@@ -901,7 +936,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
           <CareerRiskCard
             score={currentScore}
-            breakdown={disruptionData?.breakdown || (activeProfile as any)?.disruption_breakdown}
+            breakdown={disruptionData?.breakdown || (activeProfile as any)?.disruption_breakdown || calculatedRisk.breakdown}
           />
           <NextStepCard
             targetRole={targetRole}
@@ -913,20 +948,13 @@ export default function HomePage() {
         <HomeShortcutCards
           matchPct={matchPct}
           targetRole={targetRole}
-          haveCount={gapData?.have_skills?.length || 4}
+          haveCount={gap.have_skills.length}
           missingCount={missingSkills.length}
           pathName={roleConfig.pathName}
           pathWeeks={roleConfig.pathWeeks}
-          estimatedSalaryLPA={
-            activeProfile?.current_salary_lpa
-              ? Number((activeProfile.current_salary_lpa * (userType === 'stagnant' ? 1.45 : userType === 'returner' ? 1.5 : 1.2)).toFixed(1))
-              : userType === 'gig'
-              ? 5.5
-              : userType === 'student'
-              ? 8.0
-              : 14.5
-          }
-          city={activeProfile?.city || 'Bengaluru'}
+          realSalaryLPA={realSalaryLPA}
+          nominalSalaryLPA={userNominalSalary}
+          city={userCity}
         />
 
         {/* ── 3.5 Persona-Specific Innovation Spotlight ── */}
@@ -939,17 +967,17 @@ export default function HomePage() {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-black uppercase tracking-wider text-teal-700 dark:text-teal-300">
-                    Returner Innovation Suite
+                    {t('home.returner_suite', 'Returner Innovation Suite')}
                   </span>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200">
                     Amazon, Google & Microsoft
                   </span>
                 </div>
                 <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight mt-0.5">
-                  India Tech Returnships Hub & 5-Min Code Muscle Gym
+                  {t('home.returner_sub', 'India Tech Returnships Hub & 5-Min Code Muscle Gym')}
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Explore verified paid returnships (₹60k–₹1.25L/mo stipend) and practice 5-minute daily syntax warm-ups.
+                  {t('home.returner_desc', 'Explore verified paid returnships (₹60k–₹1.25L/mo stipend) and practice 5-minute daily syntax warm-ups.')}
                 </p>
               </div>
             </div>
@@ -959,14 +987,14 @@ export default function HomePage() {
                 to="/features/returnships"
                 className="px-4 py-2.5 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5"
               >
-                <span>View Returnships</span>
+                <span>{t('home.view_returnships', 'View Returnships')}</span>
                 <ArrowRight size={13} />
               </Link>
               <Link
                 to="/features/muscle-memory"
                 className="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-200 text-xs font-bold transition border border-slate-200 dark:border-slate-700 shadow-2xs"
               >
-                <span>Code Gym 🔥</span>
+                <span>{t('home.code_gym_cta', 'Code Gym 🔥')}</span>
               </Link>
             </div>
           </div>
@@ -981,17 +1009,17 @@ export default function HomePage() {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                    Stagnation Breakout Suite
+                    {t('home.stagnant_suite', 'Stagnation Breakout Suite')}
                   </span>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200">
-                    Notice Trap Breaker
+                    {t('home.notice_trap_breaker', 'Notice Trap Breaker')}
                   </span>
                 </div>
                 <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight mt-0.5">
-                  90-Day Notice Buyout Simulator & Manager 1:1 Negotiation
+                  {t('home.stagnant_sub', '90-Day Notice Buyout Simulator & Manager 1:1 Negotiation')}
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Calculate buyout ROI (+₹8.4L net profit), view buyout-friendly employers, and practice appraisal counter-offers.
+                  {t('home.stagnant_desc', 'Calculate buyout ROI (+₹8.4L net profit), view buyout-friendly employers, and practice appraisal counter-offers.')}
                 </p>
               </div>
             </div>
@@ -1001,14 +1029,14 @@ export default function HomePage() {
                 to="/features/notice-buyout"
                 className="px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5"
               >
-                <span>Notice Buyout ROI</span>
+                <span>{t('home.notice_buyout_roi', 'Notice Buyout ROI')}</span>
                 <ArrowRight size={13} />
               </Link>
               <Link
                 to="/features/manager-1on1"
                 className="px-3.5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-200 text-xs font-bold transition border border-slate-200 dark:border-slate-700 shadow-2xs"
               >
-                <span>Manager 1:1 Roleplay</span>
+                <span>{t('home.manager_roleplay', 'Manager 1:1 Roleplay')}</span>
               </Link>
             </div>
           </div>
@@ -1023,17 +1051,17 @@ export default function HomePage() {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
-                    Senior Mentorship Network
+                    {t('home.student_suite', 'Senior Mentorship Network')}
                   </span>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200">
-                    18 Online
+                    {t('home.online_count', '18 Online', { count: 18 })}
                   </span>
                 </div>
                 <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-tight mt-0.5">
-                  Talk Directly with Recently Placed Seniors at Amazon & Razorpay
+                  {t('home.student_sub', 'Talk Directly with Recently Placed Seniors at Amazon & Razorpay')}
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-300">
-                  Book free 15-minute 1-on-1 resume reviews and simulated placement technical mock rounds.
+                  {t('home.student_desc', 'Book free 15-minute 1-on-1 resume reviews and simulated placement technical mock rounds.')}
                 </p>
               </div>
             </div>
@@ -1042,7 +1070,7 @@ export default function HomePage() {
               to="/features/senior-mentorship"
               className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5 shrink-0"
             >
-              <span>Connect with Seniors</span>
+              <span>{t('home.connect_seniors', 'Connect with Seniors')}</span>
               <ArrowRight size={13} />
             </Link>
           </div>
@@ -1055,7 +1083,7 @@ export default function HomePage() {
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
-              {roleConfig.milestones.title}
+              {t('home.milestones_title', roleConfig.milestones.title)}
             </h3>
           </div>
           <span className="text-xs font-bold text-[#0B4F9C] dark:text-sky-400">
@@ -1117,7 +1145,7 @@ export default function HomePage() {
           <div className="flex items-center gap-2">
             <Zap size={16} className="text-amber-400" />
             <h3 className="text-sm font-black uppercase tracking-wider text-amber-400">
-              {roleConfig.hiringPulse.title}
+              {t('home.hiring_pulse_title', roleConfig.hiringPulse.title)}
             </h3>
           </div>
           <span className="text-[11px] text-slate-400 font-mono">
@@ -1145,13 +1173,13 @@ export default function HomePage() {
 
         <div className="pt-2 flex items-center justify-between text-xs">
           <span className="text-slate-400">
-            Explore live opportunities, verified market parity, and role roadmaps in Jobs & Salary.
+            {t('home.hiring_pulse_sub', 'Explore live opportunities, verified market parity, and role roadmaps in Jobs & Salary.')}
           </span>
           <Link
             to="/jobs"
             className="font-bold text-sky-400 hover:text-white flex items-center gap-1 transition"
           >
-            <span>{roleConfig.hiringPulse.linkText}</span>
+            <span>{t('home.hiring_pulse_cta', roleConfig.hiringPulse.linkText)}</span>
             <ArrowRight size={13} />
           </Link>
         </div>

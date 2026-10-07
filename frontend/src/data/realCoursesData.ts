@@ -1,0 +1,253 @@
+/**
+ * Real Govt & Verified Open Course Catalog
+ * Links directly to live course enrollment and syllabus pages on:
+ * - NPTEL (IIT Madras / IIT Kharagpur / IIT Bombay)
+ * - SWAYAM (Ministry of Education, Government of India)
+ * - Skill India Digital (National Skill Development Corporation, MSDE)
+ * - freeCodeCamp (Non-Profit Technical Certification)
+ */
+
+export interface RealCourseItem {
+  id: string
+  title: string
+  provider: 'NPTEL' | 'SWAYAM' | 'Skill India' | 'freeCodeCamp'
+  institution?: string
+  weeks: number
+  lang: 'en' | 'hi'
+  level: 'beginner' | 'intermediate' | 'advanced'
+  free: boolean
+  url: string
+  certificate: boolean
+  description: string
+}
+
+export const REAL_COURSES_CATALOG: Record<string, RealCourseItem> = {
+  // ── Programming & Core Engineering ──
+  'nptel-java': {
+    id: 'nptel-java',
+    title: 'Programming in Java',
+    provider: 'NPTEL',
+    institution: 'IIT Kharagpur',
+    weeks: 12,
+    lang: 'en',
+    level: 'intermediate',
+    free: true,
+    certificate: true,
+    url: 'https://nptel.ac.in/courses/106105191',
+    description: 'Comprehensive core Java, OOPs, multi-threading, collections, and modern design patterns by Prof. Debasis Samanta.',
+  },
+  'nptel-python': {
+    id: 'nptel-python',
+    title: 'The Joy of Computing using Python',
+    provider: 'NPTEL',
+    institution: 'IIT Madras',
+    weeks: 12,
+    lang: 'en',
+    level: 'beginner',
+    free: true,
+    certificate: true,
+    url: 'https://nptel.ac.in/courses/106106182',
+    description: 'Practical Python programming, algorithms, and libraries by Prof. Sudarshan Iyengar at IIT Madras.',
+  },
+  'nptel-dsa-python': {
+    id: 'nptel-dsa-python',
+    title: 'Data Structures and Algorithms using Python',
+    provider: 'NPTEL',
+    institution: 'IIT Madras',
+    weeks: 8,
+    lang: 'en',
+    level: 'intermediate',
+    free: true,
+    certificate: true,
+    url: 'https://nptel.ac.in/courses/106106145',
+    description: 'Asymptotic complexity, sorting, trees, graphs, and dynamic programming by Prof. Madhavan Mukund.',
+  },
+  'nptel-dbms': {
+    id: 'nptel-dbms',
+    title: 'Database Management Systems',
+    provider: 'NPTEL',
+    institution: 'IIT Kharagpur',
+    weeks: 8,
+    lang: 'en',
+    level: 'beginner',
+    free: true,
+    certificate: true,
+    url: 'https://nptel.ac.in/courses/106105175',
+    description: 'Relational algebra, SQL, indexing, transaction processing, and concurrency control by Prof. P.P. Das.',
+  },
+  'nptel-software-testing': {
+    id: 'nptel-software-testing',
+    title: 'Software Testing & Automation',
+    provider: 'NPTEL',
+    institution: 'IIT Kharagpur',
+    weeks: 12,
+    lang: 'en',
+    level: 'intermediate',
+    free: true,
+    certificate: true,
+    url: 'https://nptel.ac.in/courses/106105150',
+    description: 'Unit testing, regression automation, Selenium test scripts, mutation testing, and integration verification.',
+  },
+
+  // ── Cloud, DevOps & Distributed Systems ──
+  'nptel-cloud': {
+    id: 'nptel-cloud',
+    title: 'Cloud Computing & Virtualization',
+    provider: 'NPTEL',
+    institution: 'IIT Kharagpur',
+    weeks: 8,
+    lang: 'en',
+    level: 'intermediate',
+    free: true,
+    certificate: true,
+    url: 'https://nptel.ac.in/courses/106105167',
+    description: 'Cloud architecture, Docker, Kubernetes, AWS/Azure service models, and distributed storage by Prof. Soumya K. Ghosh.',
+  },
+  'swayam-cloud-arch': {
+    id: 'swayam-cloud-arch',
+    title: 'Cloud Computing & SaaS Architectures',
+    provider: 'SWAYAM',
+    institution: 'AICTE / IIT Kharagpur',
+    weeks: 8,
+    lang: 'en',
+    level: 'intermediate',
+    free: true,
+    certificate: true,
+    url: 'https://swayam.gov.in/nd1_noc20_cs68',
+    description: 'Govt-recognized cloud computing certification for enterprise SaaS and microservice deployments.',
+  },
+
+  // ── AI, GenAI & Machine Learning ──
+  'nptel-nlp': {
+    id: 'nptel-nlp',
+    title: 'Natural Language Processing',
+    provider: 'NPTEL',
+    institution: 'IIT Bombay',
+    weeks: 12,
+    lang: 'en',
+    level: 'advanced',
+    free: true,
+    certificate: true,
+    url: 'https://nptel.ac.in/courses/106101247',
+    description: 'Text representation, embeddings, transformer architectures, and generative language modeling by Prof. Pushpak Bhattacharyya.',
+  },
+  'nptel-deep-learning': {
+    id: 'nptel-deep-learning',
+    title: 'Deep Learning with PyTorch',
+    provider: 'NPTEL',
+    institution: 'IIT Ropar',
+    weeks: 12,
+    lang: 'en',
+    level: 'advanced',
+    free: true,
+    certificate: true,
+    url: 'https://nptel.ac.in/courses/106106211',
+    description: 'Neural networks, backprop, CNNs, RNNs, attention mechanisms, and fine-tuning open weights.',
+  },
+  'swayam-python-ds': {
+    id: 'swayam-python-ds',
+    title: 'Python for Data Science & AI',
+    provider: 'SWAYAM',
+    institution: 'IIT Madras',
+    weeks: 4,
+    lang: 'en',
+    level: 'beginner',
+    free: true,
+    certificate: true,
+    url: 'https://swayam.gov.in/nd2_noc20_cs56',
+    description: 'NumPy, Pandas, Matplotlib, and statistical exploratory data analysis for industry practitioners.',
+  },
+  'skillindia-ai': {
+    id: 'skillindia-ai',
+    title: 'Artificial Intelligence Foundations',
+    provider: 'Skill India',
+    institution: 'NSDC / Microsoft',
+    weeks: 6,
+    lang: 'hi',
+    level: 'beginner',
+    free: true,
+    certificate: true,
+    url: 'https://www.skillindiadigital.gov.in/courses/detail/7614d3b6-aeec-4eb9-a789-f53833d7bfa5',
+    description: 'Government Skill India Digital AI literacy, prompt engineering, and intelligent workflow automation in Hindi & English.',
+  },
+
+  // ── Full-Stack & Developer Practical Certifications ──
+  'fcc-backend-apis': {
+    id: 'fcc-backend-apis',
+    title: 'Back End Development and APIs',
+    provider: 'freeCodeCamp',
+    institution: 'freeCodeCamp',
+    weeks: 10,
+    lang: 'en',
+    level: 'intermediate',
+    free: true,
+    certificate: true,
+    url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/',
+    description: 'Build production Node.js, Express, and MongoDB backends with 5 verified deployable projects.',
+  },
+  'fcc-js-dsa': {
+    id: 'fcc-js-dsa',
+    title: 'JavaScript Algorithms and Data Structures',
+    provider: 'freeCodeCamp',
+    institution: 'freeCodeCamp',
+    weeks: 8,
+    lang: 'en',
+    level: 'beginner',
+    free: true,
+    certificate: true,
+    url: 'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/',
+    description: 'Modern ES6+ JavaScript, functional programming, recursion, and algorithmic problem solving.',
+  },
+  'fcc-scientific-python': {
+    id: 'fcc-scientific-python',
+    title: 'Scientific Computing with Python',
+    provider: 'freeCodeCamp',
+    institution: 'freeCodeCamp',
+    weeks: 6,
+    lang: 'en',
+    level: 'beginner',
+    free: true,
+    certificate: true,
+    url: 'https://www.freecodecamp.org/learn/scientific-computing-with-python/',
+    description: 'Hands-on Python scripting, automation webhooks, and regex with verifiable certification projects.',
+  },
+  'skillindia-software-dev': {
+    id: 'skillindia-software-dev',
+    title: 'IT-ITeS Associate Software Developer',
+    provider: 'Skill India',
+    institution: 'NASSCOM Sector Skills Council',
+    weeks: 8,
+    lang: 'hi',
+    level: 'intermediate',
+    free: true,
+    certificate: true,
+    url: 'https://www.skillindiadigital.gov.in/courses/detail/5ef58e99-4d82-4fcf-85d0-4bf69c2d1b7b',
+    description: 'NASSCOM FutureSkills aligned government certification for corporate software engineering roles.',
+  },
+  'swayam-agile': {
+    id: 'swayam-agile',
+    title: 'Agile Software Development & Jira Workflows',
+    provider: 'SWAYAM',
+    institution: 'IIT Roorkee',
+    weeks: 6,
+    lang: 'en',
+    level: 'intermediate',
+    free: true,
+    certificate: true,
+    url: 'https://swayam.gov.in/nd2_noc21_mg57',
+    description: 'Scrum methodology, sprint velocity tracking, CI/CD pipeline handoffs, and stakeholder management.',
+  },
+  'swayam-communication': {
+    id: 'swayam-communication',
+    title: 'Effective Speaking & Technical Presentation Skills',
+    provider: 'SWAYAM',
+    institution: 'IIT Roorkee',
+    weeks: 6,
+    lang: 'en',
+    level: 'beginner',
+    free: true,
+    certificate: true,
+    url: 'https://swayam.gov.in/nd2_noc20_hs22',
+    description: 'Appraisal negotiation, executive reporting, and cross-functional engineering communication.',
+  },
+}

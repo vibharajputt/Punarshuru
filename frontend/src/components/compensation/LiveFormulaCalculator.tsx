@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Calculator, MapPin, DollarSign, Home, Car } from 'lucide-react'
 import { compensationApi } from '@/lib/api'
+import { useUserProfile } from '@/store/userProfileStore'
 import type { RealCompResponse } from '@/types'
 
 const cities = [
@@ -19,8 +20,9 @@ const cities = [
 ]
 
 export default function LiveFormulaCalculator() {
-  const [salaryLpa, setSalaryLpa] = useState<number>(18)
-  const [city, setCity] = useState<string>('Bengaluru')
+  const { currentSalaryLPA, currentCity, setCurrentSalaryLPA, setCurrentCity } = useUserProfile()
+  const [salaryLpa, setSalaryLpa] = useState<number>(currentSalaryLPA || 18)
+  const [city, setCity] = useState<string>(cities.includes(currentCity) ? currentCity : 'Bengaluru')
   const [bhk, setBhk] = useState<number>(1)
   const [result, setResult] = useState<RealCompResponse | null>(null)
 
@@ -71,7 +73,11 @@ export default function LiveFormulaCalculator() {
             min={2}
             max={120}
             value={salaryLpa}
-            onChange={(e) => setSalaryLpa(Number(e.target.value))}
+            onChange={(e) => {
+              const val = Number(e.target.value)
+              setSalaryLpa(val)
+              setCurrentSalaryLPA(val)
+            }}
             className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-900 dark:text-white focus:outline-[#0B4F9C]"
           />
         </div>
@@ -82,7 +88,11 @@ export default function LiveFormulaCalculator() {
           </label>
           <select
             value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value
+              setCity(val)
+              setCurrentCity(val)
+            }}
             className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-900 dark:text-white focus:outline-[#0B4F9C]"
           >
             {cities.map((c) => (
@@ -173,6 +183,10 @@ export default function LiveFormulaCalculator() {
           </div>
           <p className="text-[10px] text-slate-400">₹{Math.round(annualCommute / 12).toLocaleString('en-IN')} / month</p>
         </div>
+      </div>
+
+      <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between gap-2">
+        <span>📊 <strong className="text-slate-700 dark:text-slate-300">Data source:</strong> Numbeo Cost of Living Index (India 2025) & MagicBricks Rental Trend Report Q4 2025.</span>
       </div>
     </div>
   )

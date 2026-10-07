@@ -2,18 +2,35 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { Profile } from '@/types'
 
+export interface VerificationArtifact {
+  method: 'github' | 'certificate' | 'quiz'
+  title: string
+  verifiedAt: string
+  githubUrl?: string
+  repoFullName?: string
+  stars?: number
+  language?: string
+  fileName?: string
+  fileSize?: number
+  filePreview?: string
+  quizScore?: string
+  summary?: string
+}
+
 interface ProfileState {
   profile: Profile | null
   isLoading: boolean
   error: string | null
   completedMilestones: string[]
+  milestoneArtifacts: Record<string, VerificationArtifact>
   completedCourses: number[]
   baselineDisruptionScore: number | null
   setProfile: (profile: Profile | null) => void
   clearProfile: () => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
-  toggleMilestone: (stepKey: string, skillsCovered?: string[]) => void
+  toggleMilestone: (stepKey: string, skillsCovered?: string[], artifact?: VerificationArtifact) => void
+  setMilestoneArtifact: (stepKey: string, artifact: VerificationArtifact) => void
   toggleCourse: (courseId: number) => void
   resetMilestones: () => void
 }
@@ -25,6 +42,7 @@ export const useProfileStore = create<ProfileState>()(
       isLoading: false,
       error: null,
       completedMilestones: [],
+      milestoneArtifacts: {},
       completedCourses: [],
       baselineDisruptionScore: null,
 
@@ -49,16 +67,26 @@ export const useProfileStore = create<ProfileState>()(
       setLoading: (isLoading) => set({ isLoading }),
       setError: (error) => set({ error }),
 
-      toggleMilestone: (stepKey: string, skillsCovered: string[] = []) => {
+      toggleMilestone: (stepKey: string, skillsCovered: string[] = [], artifact?: VerificationArtifact) => {
         const state = get()
         const isCompleted = state.completedMilestones.includes(stepKey)
         const newMilestones = isCompleted
           ? state.completedMilestones.filter((k) => k !== stepKey)
           : [...state.completedMilestones, stepKey]
 
+        const currentArtifacts = { ...(state.milestoneArtifacts || {}) }
+        if (isCompleted) {
+          delete currentArtifacts[stepKey]
+        } else if (artifact) {
+          currentArtifacts[stepKey] = artifact
+        }
+
         const profile = state.profile
         if (!profile) {
-          set({ completedMilestones: newMilestones })
+          set({
+            completedMilestones: newMilestones,
+            milestoneArtifacts: currentArtifacts,
+          })
           return
         }
 
@@ -79,11 +107,22 @@ export const useProfileStore = create<ProfileState>()(
 
         set({
           completedMilestones: newMilestones,
+          milestoneArtifacts: currentArtifacts,
           baselineDisruptionScore: baseline,
           profile: {
             ...profile,
             disruption_score: updatedDisruptionScore,
             skills_raw: updatedSkills,
+          },
+        })
+      },
+
+      setMilestoneArtifact: (stepKey: string, artifact: VerificationArtifact) => {
+        const state = get()
+        set({
+          milestoneArtifacts: {
+            ...(state.milestoneArtifacts || {}),
+            [stepKey]: artifact,
           },
         })
       },
@@ -102,6 +141,7 @@ export const useProfileStore = create<ProfileState>()(
         const baseline = state.baselineDisruptionScore
         set({
           completedMilestones: [],
+          milestoneArtifacts: {},
           completedCourses: [],
           profile: state.profile
             ? {

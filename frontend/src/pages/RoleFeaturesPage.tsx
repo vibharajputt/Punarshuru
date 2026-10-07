@@ -6,6 +6,7 @@ import {
   SlidersHorizontal,
   Sparkles,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { useProfileStore } from '@/store/profileStore'
 import { ARCHETYPES } from '@/components/dashboard/RoleSelectorModal'
@@ -253,9 +254,9 @@ export const ROLE_FEATURES: Record<string, FeatureDefinition[]> = {
       description: 'Diagnose tenure drag, promotion lag, and skill freshness with 3-year opportunity cost math.',
       component: (p) => (
         <CareerGrowthDashboard
-          currentRole={p?.current_role || 'Support Engineer'}
+          currentRole={p?.current_role || undefined}
           experienceYears={p?.experience_years || 3.2}
-          currentSalary={p?.current_salary_lpa || 6.8}
+          currentSalary={p?.current_salary_lpa || undefined}
         />
       ),
     },
@@ -283,8 +284,7 @@ export const ROLE_FEATURES: Record<string, FeatureDefinition[]> = {
       description: 'Calculate notice buyout costs, investment breakeven, and explore buyout-friendly tech firms.',
       component: (p) => (
         <NoticePeriodBuyoutSimulator
-          defaultCurrentCTC={p?.current_salary_lpa || 6.8}
-          defaultTargetCTC={14.5}
+          defaultCurrentCTC={p?.current_salary_lpa || undefined}
         />
       ),
     },
@@ -358,6 +358,7 @@ export const ROLE_FEATURES: Record<string, FeatureDefinition[]> = {
 }
 
 export default function RoleFeaturesPage() {
+  const { t } = useTranslation()
   const { featureKey } = useParams<{ featureKey?: string }>()
   const { profile } = useActiveProfile()
   const storeProfile = useProfileStore((s) => s.profile)
@@ -386,10 +387,10 @@ export default function RoleFeaturesPage() {
               <ArrowLeft size={18} />
             </Link>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              {currentArchetype.title} Diagnostic Suite
+              {currentArchetype.title} {t('features.diagnostic_suite', 'Diagnostic Suite')}
             </h1>
             <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/70 text-[#0B4F9C] dark:text-sky-300 border border-blue-200/60">
-              Role Focused
+              {t('features.role_focused', 'Role Focused')}
             </span>
           </div>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 pl-8">
@@ -404,7 +405,7 @@ export default function RoleFeaturesPage() {
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-[#0B4F9C] transition cursor-pointer shadow-2xs"
           >
             <SlidersHorizontal size={13} className="text-[#0B4F9C]" />
-            <span>Switch Persona</span>
+            <span>{t('dashboard.switch_persona', 'Switch Persona')}</span>
           </button>
         </div>
       </div>
@@ -414,42 +415,42 @@ export default function RoleFeaturesPage() {
         <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-teal-50 via-blue-50 to-indigo-50 dark:from-slate-800/90 dark:via-teal-950/40 dark:to-slate-900 border border-teal-200/80 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs shadow-xs">
           <div className="flex items-center gap-2 font-black text-slate-900 dark:text-white">
             <Sparkles size={14} className="text-teal-600 dark:text-teal-400" />
-            <span>Returnee 5-Step Launchpad:</span>
+            <span>{t('features.returner_launchpad', 'Returnee 5-Step Launchpad:')}</span>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 flex-wrap">
             <Link
               to="/features/gap-analyzer"
               className={`hover:text-teal-600 transition ${activeFeature.key === 'gap-analyzer' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
             >
-              1. Gap Audit
+              {t('features.gap-analyzer.sidebar', '1. Gap Audit')}
             </Link>
             <span className="text-slate-300 dark:text-slate-600">→</span>
             <Link
               to="/features/muscle-memory"
               className={`hover:text-teal-600 transition ${activeFeature.key === 'muscle-memory' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
             >
-              2. Code Gym Drills
+              {t('features.muscle-memory.sidebar', '2. Code Gym Drills')}
             </Link>
             <span className="text-slate-300 dark:text-slate-600">→</span>
             <Link
               to="/features/resume-rebuilder"
               className={`hover:text-teal-600 transition ${activeFeature.key === 'resume-rebuilder' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
             >
-              3. ATS Resume Studio
+              {t('features.resume-rebuilder.sidebar', '3. ATS Resume Studio')}
             </Link>
             <span className="text-slate-300 dark:text-slate-600">→</span>
             <Link
               to="/features/gap-to-strength"
               className={`hover:text-teal-600 transition ${activeFeature.key === 'gap-to-strength' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
             >
-              4. 1:1 Voice AI Pitch
+              {t('features.gap-to-strength.sidebar', '4. 1:1 Voice AI Pitch')}
             </Link>
             <span className="text-slate-300 dark:text-slate-600">→</span>
             <Link
               to="/features/returnships"
               className={`hover:text-teal-600 transition ${activeFeature.key === 'returnships' ? 'text-teal-600 dark:text-teal-400 font-black underline' : ''}`}
             >
-              5. Returnships Hub
+              {t('features.returnships.sidebar', '5. Returnships Hub')}
             </Link>
           </div>
         </div>
@@ -460,35 +461,35 @@ export default function RoleFeaturesPage() {
         <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 via-amber-50 to-emerald-50 dark:from-slate-800/80 dark:via-blue-950/40 dark:to-slate-900 border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs shadow-xs">
           <div className="flex items-center gap-2 font-black text-slate-900 dark:text-white">
             <Sparkles size={14} className="text-[#0B4F9C]" />
-            <span>Stagnation Breakout Blueprint:</span>
+            <span>{t('features.blueprint', 'Stagnation Breakout Blueprint:')}</span>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 flex-wrap">
             <Link
               to="/features/career-growth"
               className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'career-growth' ? 'text-[#0B4F9C] font-black underline' : ''}`}
             >
-              1. Growth Audit
+              {t('features.career-growth.sidebar', '1. Growth Audit')}
             </Link>
             <span className="text-slate-300 dark:text-slate-600">→</span>
             <Link
               to="/features/stay-or-switch"
               className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'stay-or-switch' ? 'text-[#0B4F9C] font-black underline' : ''}`}
             >
-              2. Stay vs Switch
+              {t('features.stay-or-switch.sidebar', '2. Stay vs Switch')}
             </Link>
             <span className="text-slate-300 dark:text-slate-600">→</span>
             <Link
               to="/features/manager-1on1"
               className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'manager-1on1' ? 'text-[#0B4F9C] font-black underline' : ''}`}
             >
-              3. Manager 1:1
+              {t('features.manager-1on1.sidebar', '3. Manager 1:1')}
             </Link>
             <span className="text-slate-300 dark:text-slate-600">→</span>
             <Link
               to="/features/notice-buyout"
               className={`hover:text-[#0B4F9C] transition ${activeFeature.key === 'notice-buyout' ? 'text-[#0B4F9C] font-black underline' : ''}`}
             >
-              4. Buyout Calculator
+              {t('features.notice-buyout.sidebar', '4. Buyout Calculator')}
             </Link>
           </div>
         </div>

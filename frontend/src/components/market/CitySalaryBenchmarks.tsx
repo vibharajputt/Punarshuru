@@ -62,6 +62,10 @@ export default function CitySalaryBenchmarks({
           )
         })}
       </div>
+
+      <div className="pt-2 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <span>📊 <strong className="text-slate-700 dark:text-slate-300">Data source:</strong> Numbeo Cost of Living Index (India 2025) & AmbitionBox verified Indian tech compensation reports.</span>
+      </div>
     </div>
   )
 }

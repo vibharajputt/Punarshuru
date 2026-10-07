@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Briefcase, Calculator, Building2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useUserProfile } from '@/store/userProfileStore'
 import JobsForYouTab from '@/components/jobs/JobsForYouTab'
 import RealSalaryCalculatorTab from '@/components/jobs/RealSalaryCalculatorTab'
 import CompanyFitTab from '@/components/jobs/CompanyFitTab'
@@ -9,6 +10,7 @@ type JobTab = 'jobs' | 'salary' | 'fit'
 
 export default function JobsPage() {
   const { t } = useTranslation()
+  const userProfile = useUserProfile()
   const [activeTab, setActiveTab] = useState<JobTab>('jobs')
 
   const tabs: { id: JobTab; label: string; icon: typeof Briefcase }[] = [
@@ -32,6 +34,7 @@ export default function JobsPage() {
           </div>
           <p className="text-xs text-slate-500">
             {t('market.subtitle', 'Explore live role demand, calculate real purchasing power after expenses, and evaluate your company tier fit.')}
+            {userProfile.targetRole ? ` • Curated for ${userProfile.targetRole} in ${userProfile.currentCity}` : ''}
           </p>
         </div>
       </div>

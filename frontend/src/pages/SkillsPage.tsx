@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { ArrowRight, RefreshCw, Zap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useActiveProfile } from '@/hooks/useActiveProfile'
-import { assessApi } from '@/lib/api'
+import { useSkillGap } from '@/hooks/useSkillGap'
+import { useUserProfile } from '@/store/userProfileStore'
 import SkillCategorizationCards from '@/components/skillgap/SkillCategorizationCards'
 import HiddenStrengthsCard from '@/components/skillgap/HiddenStrengthsCard'
 import Skeleton from '@/components/common/Skeleton'
@@ -21,25 +21,21 @@ const benchmarkRoles = [
 export default function SkillsPage() {
   const { t } = useTranslation()
   const { profile } = useActiveProfile()
+  const { targetRole: storeTargetRole, setTargetRole } = useUserProfile()
   const [selectedRole, setSelectedRole] = useState<string>(
-    profile?.target_role || 'GenAI Engineer'
+    storeTargetRole || profile?.target_role || 'GenAI Engineer'
   )
 
-  const profileId = profile?.id || 'demo-priya'
-
-  const { data: gapData, isLoading, refetch, isFetching } = useQuery({
-    queryKey: ['gap', profileId, selectedRole],
-    queryFn: () => (profileId ? assessApi.gap(profileId, selectedRole) : null),
-    enabled: !!profileId,
-    staleTime: 60_000,
-  })
-
-  const matchPct = gapData?.match_pct || 42
-  const haveSkills = gapData?.have_skills || profile?.skills_raw || ['Java', 'MySQL', 'REST APIs', 'Git']
-  const partialSkills = gapData?.partial_skills || [
-    { skill: 'Python', matched_with: 'Java', similarity: 0.82 },
-  ]
-  const missingSkills = gapData?.missing_skills || ['LangChain', 'Vector Databases', 'Prompt Engineering', 'RAG']
+  const {
+    gap: gapData,
+    matchPct,
+    haveSkills,
+    partialSkills,
+    missingSkills,
+    refetch,
+    isFetching,
+    isLoading,
+  } = useSkillGap(selectedRole)
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12">
@@ -100,7 +96,10 @@ export default function SkillsPage() {
               <button
                 key={role}
                 type="button"
-                onClick={() => setSelectedRole(role)}
+                onClick={() => {
+                  setSelectedRole(role)
+                  setTargetRole(role)
+                }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                   active
                     ? 'bg-[#0B4F9C] text-white border-[#0B4F9C] shadow-xs'

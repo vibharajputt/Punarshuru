@@ -1,6 +1,8 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Zap, Map, IndianRupee } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { calculateRealSalaryLpa } from '@/lib/compensation'
 
 interface HomeShortcutCardsProps {
   matchPct?: number
@@ -10,6 +12,8 @@ interface HomeShortcutCardsProps {
   pathName?: string
   pathWeeks?: number
   estimatedSalaryLPA?: number
+  realSalaryLPA?: number
+  nominalSalaryLPA?: number
   city?: string
 }
 
@@ -20,7 +24,9 @@ export default function HomeShortcutCards({
   missingCount = 4,
   pathName = 'Stretch Path',
   pathWeeks = 16,
-  estimatedSalaryLPA = 12.5,
+  estimatedSalaryLPA,
+  realSalaryLPA,
+  nominalSalaryLPA,
   city = 'Bengaluru',
 }: HomeShortcutCardsProps) {
   const { t, i18n } = useTranslation()
@@ -33,6 +39,24 @@ export default function HomeShortcutCards({
       ? 'उच्च वृद्धि मार्ग (Stretch)'
       : 'स्विच मार्ग (Switch)'
     : pathName
+
+  const effectiveRealSalary = useMemo(() => {
+    let val: number
+    if (realSalaryLPA !== undefined && realSalaryLPA !== null) {
+      val = Number(realSalaryLPA)
+    } else if (estimatedSalaryLPA !== undefined && estimatedSalaryLPA !== null) {
+      val = Number(estimatedSalaryLPA)
+    } else if (nominalSalaryLPA !== undefined && nominalSalaryLPA !== null) {
+      val = calculateRealSalaryLpa(nominalSalaryLPA, city)
+    } else {
+      val = 7.9
+    }
+    // Strict invariant: Real purchasing power salary must always be <= nominal salary if nominal is specified
+    if (nominalSalaryLPA !== undefined && nominalSalaryLPA !== null) {
+      val = Math.min(Math.max(0, Number(nominalSalaryLPA)), val)
+    }
+    return val
+  }, [realSalaryLPA, estimatedSalaryLPA, nominalSalaryLPA, city])
 
   const cards = [
     {
@@ -59,7 +83,7 @@ export default function HomeShortcutCards({
     },
     {
       title: t('dashboard.shortcuts.real_salary_title', 'Real Salary'),
-      value: `₹${estimatedSalaryLPA} LPA`,
+      value: `₹${effectiveRealSalary} LPA`,
       subtitle: isHi ? `${city} में किराया व यात्रा खर्च के बाद` : `After rent & travel in ${city}`,
       desc: t('dashboard.shortcuts.salary_desc', 'Calculated using local cost-of-living indices'),
       link: '/jobs',

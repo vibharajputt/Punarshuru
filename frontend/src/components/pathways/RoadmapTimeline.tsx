@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpen, Sparkles, RotateCcw, Trophy, ArrowDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { PathwayOption } from '@/types'
-import { useProfileStore } from '@/store/profileStore'
+import { useProfileStore, type VerificationArtifact } from '@/store/profileStore'
 import { useActiveProfile } from '@/hooks/useActiveProfile'
 import RoadmapStepItem from '@/components/pathways/RoadmapStepItem'
+import MilestoneVerificationModal from '@/components/verification/MilestoneVerificationModal'
 
 interface RoadmapTimelineProps {
   pathway: PathwayOption
@@ -17,11 +18,18 @@ export default function RoadmapTimeline({ pathway }: RoadmapTimelineProps) {
 
   const { profile } = useActiveProfile()
   const completedMilestones = useProfileStore((s) => s.completedMilestones)
+  const milestoneArtifacts = useProfileStore((s) => s.milestoneArtifacts)
   const baselineScore = useProfileStore((s) => s.baselineDisruptionScore) ?? profile?.disruption_score ?? 72
   const toggleMilestone = useProfileStore((s) => s.toggleMilestone)
   const resetMilestones = useProfileStore((s) => s.resetMilestones)
 
   const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const [verifyingStep, setVerifyingStep] = useState<{
+    idx: number
+    title: string
+    description?: string
+    skills: string[]
+  } | null>(null)
 
   const totalSteps = pathway.roadmap.length
   const completedStepCount = pathway.roadmap.filter((_, idx) =>
@@ -45,6 +53,32 @@ export default function RoadmapTimeline({ pathway }: RoadmapTimelineProps) {
       )
       setTimeout(() => setToastMessage(null), 3500)
     }
+  }
+
+  const handleOpenVerification = (idx: number, stepTitle: string, description?: string, skills: string[] = []) => {
+    setVerifyingStep({ idx, title: stepTitle, description, skills })
+  }
+
+  const handleVerifyComplete = (artifact: VerificationArtifact) => {
+    if (!verifyingStep) return
+    const key = `${pathway.type}-${verifyingStep.idx}`
+    toggleMilestone(key, verifyingStep.skills, artifact)
+    setToastMessage(
+      isHi
+        ? `माइलस्टोन "${verifyingStep.title}" सत्यापित व पूर्ण! करियर रिस्क स्कोर में -8 अंकों की कमी हुई।`
+        : `Milestone "${verifyingStep.title}" verified & completed! Career Risk Score reduced by -8 points.`
+    )
+    setTimeout(() => setToastMessage(null), 3500)
+    setVerifyingStep(null)
+  }
+
+  const handleRemoveVerification = () => {
+    if (!verifyingStep) return
+    const key = `${pathway.type}-${verifyingStep.idx}`
+    if (completedMilestones.includes(key)) {
+      toggleMilestone(key, verifyingStep.skills)
+    }
+    setVerifyingStep(null)
   }
 
   return (
@@ -138,17 +172,48 @@ export default function RoadmapTimeline({ pathway }: RoadmapTimelineProps) {
 
         {/* Steps List */}
         <div className="pt-2">
-          {pathway.roadmap.map((step, idx) => (
-            <RoadmapStepItem
-              key={step.title}
-              step={step}
-              stepIndex={idx}
-              isDone={completedMilestones.includes(`${pathway.type}-${idx}`)}
-              onToggle={() => handleStepToggle(idx, step.title, step.skills_covered || [])}
-            />
-          ))}
+          {pathway.roadmap.map((step, idx) => {
+            const key = `${pathway.type}-${idx}`
+            const isDone = completedMilestones.includes(key)
+            const artifact = milestoneArtifacts?.[key]
+
+            return (
+              <RoadmapStepItem
+                key={step.title}
+                step={step}
+                stepIndex={idx}
+                isDone={isDone}
+                artifact={artifact}
+                onToggle={() => {
+                  if (!isDone) {
+                    handleOpenVerification(idx, step.title, step.description, step.skills_covered || [])
+                  } else {
+                    handleStepToggle(idx, step.title, step.skills_covered || [])
+                  }
+                }}
+                onOpenVerification={() => handleOpenVerification(idx, step.title, step.description, step.skills_covered || [])}
+              />
+            )
+          })}
+        </div>
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between gap-2">
+          <span>📚 <strong className="text-slate-700 dark:text-slate-300">Data source:</strong> Course links point directly to public curriculum pages on NPTEL (IITs/IISc), SWAYAM (Ministry of Education), Skill India Digital (MSDE), and freeCodeCamp.</span>
         </div>
       </div>
+
+      {/* Lightweight Verification Modal */}
+      {verifyingStep && (
+        <MilestoneVerificationModal
+          isOpen={Boolean(verifyingStep)}
+          onClose={() => setVerifyingStep(null)}
+          milestoneTitle={verifyingStep.title}
+          topicDescription={verifyingStep.description}
+          skills={verifyingStep.skills}
+          existingArtifact={milestoneArtifacts?.[`${pathway.type}-${verifyingStep.idx}`]}
+          onVerify={handleVerifyComplete}
+          onRemove={handleRemoveVerification}
+        />
+      )}
     </div>
   )
 }

@@ -45,3 +45,17 @@ def test_fastembed_similarity_and_partial_matching():
     )
     assert isinstance(partial, list)
     assert "FastAPI" in missing or "RAG" in missing
+
+
+def test_gap_analysis_identical_inputs_identical_output(personas_data):
+    """Calling skill gap analysis twice with identical inputs must return identical output."""
+    priya = next(p for p in personas_data if p["key"] == "priya")
+    res1 = analyze_skill_gap(priya, target_role="GenAI Engineer")
+    res2 = analyze_skill_gap(priya, target_role="GenAI Engineer")
+
+    assert res1.match_pct == res2.match_pct
+    assert res1.have_skills == res2.have_skills
+    assert res1.missing_skills == res2.missing_skills
+    assert res1.role_required_skills == res2.role_required_skills
+    assert [p.skill for p in res1.partial_skills] == [p.skill for p in res2.partial_skills]
+

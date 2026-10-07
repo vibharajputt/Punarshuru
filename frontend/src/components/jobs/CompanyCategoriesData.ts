@@ -6,7 +6,7 @@ export interface RoleData {
   requiredSkills: string[]
   resilienceScore: number
   hiringDemand: string
-  courses: { title: string; provider: string; weeks: number }[]
+  courses: { title: string; provider: string; weeks: number; url?: string }[]
 }
 
 export interface CompanyCategory {
@@ -40,7 +40,7 @@ export const companyCategoriesList: CompanyCategory[] = [
         requiredSkills: ['Java', 'Spring Boot', 'MySQL', 'Docker', 'AWS'],
         resilienceScore: 80,
         hiringDemand: 'High Volume (+28% YoY)',
-        courses: [{ title: 'Java Cloud Modernization', provider: 'Skill India', weeks: 8 }],
+        courses: [{ title: 'Programming in Java (IIT Kharagpur)', provider: 'NPTEL', weeks: 12, url: 'https://nptel.ac.in/courses/106105191' }],
       },
       {
         id: 'it-automation-sde',
@@ -50,7 +50,7 @@ export const companyCategoriesList: CompanyCategory[] = [
         requiredSkills: ['Python', 'LangChain', 'FastAPI', 'SQL'],
         resilienceScore: 89,
         hiringDemand: 'Rapid Growth (+65% YoY)',
-        courses: [{ title: 'Applied AI for Enterprise', provider: 'NPTEL', weeks: 12 }],
+        courses: [{ title: 'Artificial Intelligence Foundations', provider: 'Skill India', weeks: 6, url: 'https://www.skillindiadigital.gov.in/courses/detail/7614d3b6-aeec-4eb9-a789-f53833d7bfa5' }],
       },
     ],
   },
@@ -72,7 +72,7 @@ export const companyCategoriesList: CompanyCategory[] = [
         requiredSkills: ['Java', 'Spring Boot', 'Kafka', 'Microservices', 'Kubernetes'],
         resilienceScore: 92,
         hiringDemand: 'Surging Hub Demand (+45% YoY)',
-        courses: [{ title: 'Microservices & Distributed Systems', provider: 'NPTEL', weeks: 12 }],
+        courses: [{ title: 'Cloud Computing & Virtualization (IIT Kharagpur)', provider: 'NPTEL', weeks: 8, url: 'https://nptel.ac.in/courses/106105167' }],
       },
     ],
   },
@@ -94,7 +94,7 @@ export const companyCategoriesList: CompanyCategory[] = [
         requiredSkills: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Docker'],
         resilienceScore: 85,
         hiringDemand: 'High (+32% YoY)',
-        courses: [{ title: 'Full Stack Node & React Architectures', provider: 'SWAYAM', weeks: 10 }],
+        courses: [{ title: 'Back End Development and APIs', provider: 'freeCodeCamp', weeks: 10, url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/' }],
       },
     ],
   },
@@ -116,7 +116,7 @@ export const companyCategoriesList: CompanyCategory[] = [
         requiredSkills: ['Java', 'Spring Boot', 'Kafka', 'Redis', 'PostgreSQL'],
         resilienceScore: 91,
         hiringDemand: 'Very High (+42% YoY)',
-        courses: [{ title: 'High-Concurrency Backend Systems', provider: 'NPTEL', weeks: 12 }],
+        courses: [{ title: 'Database Management Systems (IIT Kharagpur)', provider: 'NPTEL', weeks: 8, url: 'https://nptel.ac.in/courses/106105175' }],
       },
     ],
   },
@@ -138,7 +138,7 @@ export const companyCategoriesList: CompanyCategory[] = [
         requiredSkills: ['Python', 'LangChain', 'Vector DBs', 'RAG', 'FastAPI'],
         resilienceScore: 96,
         hiringDemand: 'Surging Demand (+60% YoY)',
-        courses: [{ title: 'LLMs & RAG Deployment', provider: 'NPTEL', weeks: 12 }],
+        courses: [{ title: 'Natural Language Processing (IIT Bombay)', provider: 'NPTEL', weeks: 12, url: 'https://nptel.ac.in/courses/106101247' }],
       },
     ],
   },

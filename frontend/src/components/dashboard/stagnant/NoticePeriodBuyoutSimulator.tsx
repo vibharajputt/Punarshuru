@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   IndianRupee,
   Building2,
@@ -11,6 +11,8 @@ import {
   Mail,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { useUserProfile } from '@/store/userProfileStore'
 
 interface BuyoutCompany {
   name: string
@@ -87,17 +89,29 @@ const BUYOUT_COMPANIES: BuyoutCompany[] = [
 ]
 
 export default function NoticePeriodBuyoutSimulator({
-  defaultCurrentCTC = 6.8,
-  defaultTargetCTC = 14.5,
+  defaultCurrentCTC,
+  defaultTargetCTC,
 }: {
   defaultCurrentCTC?: number
   defaultTargetCTC?: number
 }) {
-  const [currentCTC, setCurrentCTC] = useState<number>(defaultCurrentCTC)
+  const { t } = useTranslation()
+  const { currentSalaryLPA, targetSalaryLPA, setCurrentSalaryLPA, setTargetHikePercent } = useUserProfile()
+
+  const [currentCTC, setCurrentCTC] = useState<number>(defaultCurrentCTC ?? currentSalaryLPA)
   const [noticeDays, setNoticeDays] = useState<number>(90)
-  const [targetCTC, setTargetCTC] = useState<number>(defaultTargetCTC)
+  const [targetCTC, setTargetCTC] = useState<number>(defaultTargetCTC ?? targetSalaryLPA)
   const [negotiatedEarlyDays, setNegotiatedEarlyDays] = useState<number>(30)
   const [copiedTemplate, setCopiedTemplate] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (defaultCurrentCTC === undefined) {
+      setCurrentCTC(currentSalaryLPA)
+    }
+    if (defaultTargetCTC === undefined) {
+      setTargetCTC(targetSalaryLPA)
+    }
+  }, [defaultCurrentCTC, defaultTargetCTC, currentSalaryLPA, targetSalaryLPA])
 
   // Calculations
   const monthlyCurrentGross = Math.round((currentCTC * 100000) / 12)
@@ -153,18 +167,18 @@ Warm regards,
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-50 to-rose-50 dark:from-amber-950/60 dark:to-rose-950/60 text-amber-700 dark:text-amber-300 text-xs font-black mb-1.5 border border-amber-200/50">
             <Clock size={13} className="text-amber-600" />
-            <span>90-Day Notice Period Trap Breaker & Buyout ROI</span>
+            <span>{t('features.notice-buyout.sidebar', '90-Day Notice Period Trap Breaker & Buyout ROI')}</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            Notice Period Buyout & Early Release Financial Simulator
+            {t('features.notice-buyout.heading', 'Notice Period Buyout & Early Release Financial Simulator')}
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl font-medium">
-            Don't lose high-paying product offers due to rigid 90-day policies. Calculate exact buyout cost, break-even days, and explore buyout-friendly employers.
+            {t('features.notice-buyout.subtitle', 'Don\'t lose high-paying product offers due to rigid 90-day policies. Calculate exact buyout cost, break-even days, and explore buyout-friendly employers.')}
           </p>
         </div>
 
         <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-right shrink-0">
-          <div className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 uppercase">Year-1 Net Gain Post-Buyout</div>
+          <div className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 uppercase">{t('features.notice-buyout.year1_profit', 'Year-1 Net Gain Post-Buyout')}</div>
           <div className="text-xl font-black text-emerald-600 dark:text-emerald-400">
             +₹{(netYear1Profit / 100000).toFixed(1)} Lakhs
           </div>
@@ -190,11 +204,15 @@ Warm regards,
             </div>
             <input
               type="range"
-              min="4.0"
-              max="20.0"
+              min="2.0"
+              max="30.0"
               step="0.2"
               value={currentCTC}
-              onChange={(e) => setCurrentCTC(parseFloat(e.target.value))}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value)
+                setCurrentCTC(val)
+                setCurrentSalaryLPA(val)
+              }}
               className="w-full accent-slate-600 cursor-pointer"
             />
             <div className="text-[10px] text-slate-400">Gross: ₹{monthlyCurrentGross.toLocaleString('en-IN')}/mo</div>
@@ -232,11 +250,18 @@ Warm regards,
             </div>
             <input
               type="range"
-              min="8.0"
-              max="30.0"
+              min="3.0"
+              max="50.0"
               step="0.5"
               value={targetCTC}
-              onChange={(e) => setTargetCTC(parseFloat(e.target.value))}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value)
+                setTargetCTC(val)
+                if (currentCTC > 0) {
+                  const hike = Math.round(((val - currentCTC) / currentCTC) * 100)
+                  setTargetHikePercent(hike)
+                }
+              }}
               className="w-full accent-emerald-600 cursor-pointer"
             />
             <div className="text-[10px] text-emerald-600 font-bold">
