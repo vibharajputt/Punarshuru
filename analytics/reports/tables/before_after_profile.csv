@@ -1,0 +1,9 @@
+dataset,stage,rows,total_nulls,duplicate_rows,columns_count,dtypes_summary
+DataScience_Jobs,Before,1602,0,0,8,reference_no: int64; company_name: str; job_title: str; min_experience: int64; avg_salary: str; min_salary: str; max_salary: str; num_of_jobs: int64
+DataScience_Jobs,After,1602,0,0,13,job_id: int64; reference_no: int64; company_name: str; job_title: str; role_family: str; seniority: str; min_experience: int64; exp_outlier: bool; avg_salary: float64; min_salary: float64; max_salary: float64; num_of_jobs: int64; log_num_of_jobs: float64
+Analytics_Jobs,Before,15841,15520,0,8,s_no: int64; experience: str; job_description: str; job_desig: str; job_type: str; key_skills: str; location: str; salary: str
+Analytics_Jobs,After,14840,3371,0,19,job_id: int64; s_no: int64; job_desig: str; role_family: str; experience: str; exp_min: float64; exp_max: float64; exp_mid: float64; salary: str; salary_band: int64; band_mid_lpa: float64; job_type: str; primary_city: str; city_list: str; is_multi_city: bool; key_skills_clean: str; skill_count: int64; is_remote_or_wfh: bool; job_description: str
+JDS_Skill_Traits,Before,139,0,0,7,id: int64; big_data_skills: float64; maths-stats_skills: float64; coding_skills: float64; ai_and_ml_skills: float64; dashboard_and_storytelling_skills: float64; salary_hike_high_or_low: int64
+JDS_Skill_Traits,After,137,0,0,7,id: int64; big_data_skills: float64; maths_stats_skills: float64; coding_skills: float64; ai_and_ml_skills: float64; dashboard_and_storytelling_skills: float64; high_hike: int64
+SDS_Personality_Traits,Before,161,0,0,7,id: int64; neuroticism: int64;  extraversion: int64; openness_to_experience: int64; agreeableness: int64; conscientiousness: int64; success_ classification_ high_low: int64
+SDS_Personality_Traits,After,152,0,0,7,id: int64; neuroticism: float64; extraversion: float64; openness_to_experience: float64; agreeableness: float64; conscientiousness: float64; high_success: int64
