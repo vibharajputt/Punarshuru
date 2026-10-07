@@ -26,13 +26,13 @@
       21
     ],
     "description": "Ex-Java developer from Pune with 4-year career break post maternity. Returning to tech and targeting GenAI roles.",
-    "disruption_score": 72,
+    "disruption_score": 74,
     "disruption_breakdown": {
-      "skill_decay": 20,
-      "automation_risk": 22,
-      "career_gap": 12,
-      "stagnation": 8,
-      "market_mismatch": 10,
+      "skill_decay": 24,
+      "automation_risk": 14,
+      "career_gap": 15,
+      "stagnation": 6,
+      "market_mismatch": 15,
       "top_risks": [
         "4-year gap has led to skill decay in Java ecosystem",
         "Java demand stable but GenAI gap is wide"
@@ -70,9 +70,9 @@
       52
     ],
     "description": "Gig delivery worker from Lucknow with 3 years on app-based platforms. Wants to transition into tech operations or logistics analytics.",
-    "disruption_score": 85,
+    "disruption_score": 78,
     "disruption_breakdown": {
-      "skill_decay": 25,
+      "skill_decay": 18,
       "automation_risk": 30,
       "career_gap": 0,
       "stagnation": 15,
@@ -115,13 +115,13 @@
       30
     ],
     "description": "Laid-off manual QA professional from Bengaluru after company downsizing. 6 years experience but manual QA is rapidly declining due to AI automation.",
-    "disruption_score": 78,
+    "disruption_score": 73,
     "disruption_breakdown": {
-      "skill_decay": 15,
+      "skill_decay": 13,
       "automation_risk": 30,
       "career_gap": 3,
       "stagnation": 15,
-      "market_mismatch": 15,
+      "market_mismatch": 12,
       "top_risks": [
         "Manual QA declining rapidly",
         "AI test tools replacing manual work",
@@ -162,10 +162,10 @@
       39
     ],
     "description": "Customer support executive from Noida, 3 years stagnant in the same role with no salary growth. Wants to transition into AI/product roles.",
-    "disruption_score": 68,
+    "disruption_score": 76,
     "disruption_breakdown": {
-      "skill_decay": 10,
-      "automation_risk": 28,
+      "skill_decay": 16,
+      "automation_risk": 30,
       "career_gap": 0,
       "stagnation": 15,
       "market_mismatch": 15,
@@ -211,13 +211,13 @@
       21
     ],
     "description": "Final year BTech CSE student from Mohali (Punjab) targeting software or ML engineering roles at startups or MNCs.",
-    "disruption_score": 22,
+    "disruption_score": 27,
     "disruption_breakdown": {
       "skill_decay": 0,
       "automation_risk": 10,
       "career_gap": 0,
       "stagnation": 5,
-      "market_mismatch": 7,
+      "market_mismatch": 12,
       "top_risks": [
         "No industry experience yet",
         "Strong competition from tier-1 colleges"

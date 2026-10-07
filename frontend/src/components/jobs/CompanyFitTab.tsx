@@ -1,7 +1,9 @@
 import { useState, useMemo } from 'react'
 import { CheckCircle2, Building2, Briefcase } from 'lucide-react'
 import { useActiveProfile } from '@/hooks/useActiveProfile'
+import { useSkillGap } from '@/hooks/useSkillGap'
 import { useProfileStore } from '@/store/profileStore'
+import { useUserProfile } from '@/store/userProfileStore'
 import { companyCategoriesList, type CompanyCategory, type RoleData } from './CompanyCategoriesData'
 import CompanyCategoryCard from './CompanyCategoryCard'
 import CompanyRoleFitCard from './CompanyRoleFitCard'
@@ -11,18 +13,20 @@ const categoryFilters = ['All', 'IT Services', 'GCCs', 'Product SaaS', 'FinTech'
 
 export default function CompanyFitTab() {
   const { profile } = useActiveProfile()
+  const userProfile = useUserProfile()
+  const { gap } = useSkillGap(userProfile.targetRole || profile?.target_role)
   const setProfile = useProfileStore((s) => s.setProfile)
 
   const [selectedCategory, setSelectedCategory] = useState<CompanyCategory>(companyCategoriesList[0])
   const [selectedRole, setSelectedRole] = useState<RoleData>(companyCategoriesList[0].roles[0])
   const [filter, setFilter] = useState<string>('All')
 
-  // Pull skills from active profile (respects demo mode first)
+  // Pull skills from single source of truth (respects userProfileStore / profileStore / demoStore / gap)
   const userSkills = useMemo(() => {
-    return profile?.skills_raw?.length
-      ? profile.skills_raw
-      : ['Java', 'Spring Boot', 'MySQL', 'REST APIs', 'Git']
-  }, [profile?.skills_raw])
+    return userProfile.skillsHave?.length
+      ? userProfile.skillsHave
+      : (profile?.skills_raw?.length ? profile.skills_raw : gap.have_skills)
+  }, [userProfile.skillsHave, profile?.skills_raw, gap.have_skills])
 
   const filteredCategories = useMemo(() => {
     return filter === 'All' ? companyCategoriesList : companyCategoriesList.filter((c) => c.category === filter)
@@ -36,6 +40,7 @@ export default function CompanyFitTab() {
   const handleSimulateLearnSkill = (skill: string) => {
     if (!userSkills.includes(skill)) {
       const updated = [...userSkills, skill]
+      userProfile.setSkillsHave(updated)
       if (profile) setProfile({ ...profile, skills_raw: updated })
     }
   }
@@ -50,7 +55,7 @@ export default function CompanyFitTab() {
               Candidate Profile Skills:
             </span>
             <span className="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold">
-              {profile?.name || 'Active Candidate'}
+              {userProfile.name || profile?.name || 'Active Candidate'}
             </span>
           </div>
           <div className="flex flex-wrap gap-1.5 pt-0.5">

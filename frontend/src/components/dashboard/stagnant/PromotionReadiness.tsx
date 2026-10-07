@@ -5,7 +5,12 @@ import {
   FileText,
   Copy,
   Award,
+  ShieldCheck,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { useUserProfile } from '@/store/userProfileStore'
+import type { VerificationArtifact } from '@/store/profileStore'
+import MilestoneVerificationModal from '@/components/verification/MilestoneVerificationModal'
 
 export interface MissingCompetency {
   id: string
@@ -14,14 +19,18 @@ export interface MissingCompetency {
   howToDemonstrate: string
   done: boolean
   businessImpact: string
+  artifact?: VerificationArtifact
 }
 
 export default function PromotionReadiness({
-  nextRole = 'Senior AI Support & Chatbot Operations Lead',
+  nextRole: propNextRole,
 }: {
   nextRole?: string
   matchPct?: number
 }) {
+  const { t } = useTranslation()
+  const { targetRole } = useUserProfile()
+  const nextRole = propNextRole || targetRole || 'Senior AI Support & Chatbot Operations Lead'
   const [competencies, setCompetencies] = useState<MissingCompetency[]>([
     {
       id: 'c1',
@@ -30,6 +39,16 @@ export default function PromotionReadiness({
       howToDemonstrate: 'Build a standalone FastAPI webhook script categorizing L2 tickets and auto-suggesting resolution runbooks.',
       done: true,
       businessImpact: 'Saves ~6.5 hours of manual triage every week across the pod.',
+      artifact: {
+        method: 'github',
+        title: 'developer/fastapi-triage-webhook',
+        repoFullName: 'developer/fastapi-triage-webhook',
+        githubUrl: 'https://github.com/developer/fastapi-triage-webhook',
+        stars: 6,
+        language: 'Python',
+        verifiedAt: new Date(Date.now() - 7 * 86400000).toISOString(),
+        summary: 'FastAPI webhook script categorizing L2 tickets and auto-suggesting runbooks.',
+      },
     },
     {
       id: 'c2',
@@ -54,15 +73,46 @@ export default function PromotionReadiness({
       howToDemonstrate: 'Package ticket deflection statistics into a monthly dashboard deck for engineering directors.',
       done: true,
       businessImpact: 'Provides indisputable quantifiable proof for band elevation.',
+      artifact: {
+        method: 'certificate',
+        title: 'Executive_ROI_Q4_Deck.pdf',
+        fileName: 'Executive_ROI_Q4_Deck.pdf',
+        fileSize: 1850000,
+        verifiedAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+        summary: 'Packaged ticket deflection metrics deck for director appraisal review.',
+      },
     },
   ])
 
   const [copiedScript, setCopiedScript] = useState(false)
+  const [verifyingComp, setVerifyingComp] = useState<MissingCompetency | null>(null)
 
-  const toggleCompetency = (id: string) => {
+  const handleOpenVerification = (comp: MissingCompetency) => {
+    setVerifyingComp(comp)
+  }
+
+  const handleVerifyComplete = (artifact: VerificationArtifact) => {
+    if (!verifyingComp) return
     setCompetencies((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, done: !c.done } : c))
+      prev.map((c) =>
+        c.id === verifyingComp.id
+          ? { ...c, done: true, artifact }
+          : c
+      )
     )
+    setVerifyingComp(null)
+  }
+
+  const handleRemoveVerification = () => {
+    if (!verifyingComp) return
+    setCompetencies((prev) =>
+      prev.map((c) =>
+        c.id === verifyingComp.id
+          ? { ...c, done: false, artifact: undefined }
+          : c
+      )
+    )
+    setVerifyingComp(null)
   }
 
   const completedCount = competencies.filter((c) => c.done).length
@@ -88,21 +138,21 @@ Given that I have been operating with senior-level architectural ownership and m
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/60 dark:to-blue-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-black mb-1.5 border border-emerald-200/50">
             <Target size={13} className="text-emerald-600" />
-            <span>Feature 2 • Internal Promotion & Band Elevation Analyzer</span>
+            <span>{t('features.promotion-readiness.sidebar', 'Promotion Readiness')}</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            Next Level Elevation Rubric ({nextRole})
+            {t('features.promotion-readiness.heading', 'Next Level Elevation Rubric')} ({nextRole})
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl font-medium">
-            Unpacking the unstated technical evidence, business ROI, and leadership signals required to secure your next band promotion.
+            {t('features.promotion-readiness.subtitle', 'Unpacking the unstated technical evidence, business ROI, and leadership signals required to secure your next band promotion.')}
           </p>
         </div>
 
         <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0">
           <div className="text-right">
-            <div className="text-[10px] font-bold text-slate-400 uppercase">Live Promotion Score</div>
+            <div className="text-[10px] font-bold text-slate-400 uppercase">{t('features.promotion-readiness.completed', 'Live Promotion Score')}</div>
             <div className="text-xl font-black text-emerald-600 dark:text-emerald-400">
-              {liveReadiness}% Ready
+              {liveReadiness}% {t('features.promotion-readiness.completed', 'Ready')}
             </div>
           </div>
         </div>
@@ -124,7 +174,7 @@ Given that I have been operating with senior-level architectural ownership and m
           {competencies.map((comp) => (
             <div
               key={comp.id}
-              onClick={() => toggleCompetency(comp.id)}
+              onClick={() => handleOpenVerification(comp)}
               className={`p-4 rounded-2xl border transition-all cursor-pointer space-y-2.5 ${
                 comp.done
                   ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/80 shadow-xs'
@@ -170,6 +220,26 @@ Given that I have been operating with senior-level architectural ownership and m
                   {comp.done ? '✅ Proof Ready' : '⏳ In Progress'}
                 </span>
               </div>
+
+              {/* Verified Proof Banner */}
+              {comp.done && (
+                <div className="p-2.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/30 border border-emerald-300 dark:border-emerald-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-600 text-white font-black text-[10px] uppercase flex items-center gap-1 shrink-0">
+                      <ShieldCheck size={11} /> Proof Ready
+                    </span>
+                    <span className="font-mono text-xs text-slate-800 dark:text-slate-200 truncate font-semibold">
+                      {comp.artifact?.method === 'github' && `🔗 GitHub: ${comp.artifact.repoFullName || comp.artifact.title}`}
+                      {comp.artifact?.method === 'certificate' && `📜 Proof: ${comp.artifact.fileName || comp.artifact.title}`}
+                      {comp.artifact?.method === 'quiz' && `🧠 Quiz Passed: ${comp.artifact.quizScore || '3/3'}`}
+                      {!comp.artifact && 'Verified Proof Attached'}
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-bold text-[#0B4F9C] dark:text-sky-300 hover:underline shrink-0 text-left sm:text-right">
+                    Inspect Evidence ↗
+                  </span>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -191,7 +261,7 @@ Given that I have been operating with senior-level architectural ownership and m
             className="px-3 py-1 rounded-xl bg-[#0B4F9C] hover:bg-blue-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
           >
             {copiedScript ? <Check size={13} /> : <Copy size={13} />}
-            <span>{copiedScript ? 'Copied to Clipboard!' : 'Copy Script'}</span>
+            <span>{copiedScript ? t('features.promotion-readiness.dossier_copied', 'Copied to Clipboard!') : t('features.manager-1on1.copy_script', 'Copy Script')}</span>
           </button>
         </div>
 
@@ -203,6 +273,17 @@ Given that I have been operating with senior-level architectural ownership and m
           {proposalScript}
         </div>
       </div>
+
+      {verifyingComp && (
+        <MilestoneVerificationModal
+          isOpen={Boolean(verifyingComp)}
+          onClose={() => setVerifyingComp(null)}
+          milestoneTitle={verifyingComp.name}
+          existingArtifact={verifyingComp.artifact}
+          onVerify={handleVerifyComplete}
+          onRemove={handleRemoveVerification}
+        />
+      )}
     </div>
   )
 }

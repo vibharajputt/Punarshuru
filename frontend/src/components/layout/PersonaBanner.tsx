@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { Sparkles, User, RefreshCw } from 'lucide-react'
 import { useProfileStore } from '@/store/profileStore'
 import { useDemoStore } from '@/store/demoStore'
+import { useUserProfileStore } from '@/store/userProfileStore'
 import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { demoApi } from '@/lib/api'
 import { DEMO_PERSONAS } from '@/components/demo/DemoModal'
@@ -53,6 +54,7 @@ export default function PersonaBanner() {
           updated_at: new Date().toISOString(),
         }
         setProfile(enriched)
+        useUserProfileStore.getState().syncWithProfile(enriched)
       }
       navigate('/home')
     } catch {

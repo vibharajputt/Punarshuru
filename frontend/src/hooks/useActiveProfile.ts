@@ -1,6 +1,8 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 import { useDemoStore } from '@/store/demoStore'
 import { useProfileStore } from '@/store/profileStore'
+import { useUserProfileStore } from '@/store/userProfileStore'
+import { computeRiskScore } from '@/lib/riskScore'
 import { DEMO_PERSONAS } from '@/components/demo/DemoModal'
 import { PERSONA_FACTOR_DEFAULTS } from '@/components/home/CareerRiskCard'
 import type { Profile } from '@/types'
@@ -76,8 +78,11 @@ export function useActiveProfile() {
         disruption_score:
           isStoreProfileMatchingDemo && storeProfile?.disruption_score != null
             ? storeProfile.disruption_score
-            : demoItem.disruption,
-        disruption_breakdown: (PERSONA_FACTOR_DEFAULTS[demoItem.disruption] || null) as any,
+            : computeRiskScore(demoItem).score,
+        disruption_breakdown:
+          (storeProfile?.disruption_breakdown as any) ||
+          (computeRiskScore(demoItem).breakdown as any) ||
+          (PERSONA_FACTOR_DEFAULTS[computeRiskScore(demoItem).score] || null) as any,
         created_at: storeProfile?.created_at || '2026-01-01T00:00:00.000Z',
         updated_at: storeProfile?.updated_at || new Date().toISOString(),
       }
@@ -87,6 +92,22 @@ export function useActiveProfile() {
 
     return storeProfile
   }, [isDemo, personaKey, personaName, personaRole, personaCity, storeProfile])
+
+  useEffect(() => {
+    if (profile) {
+      useUserProfileStore.getState().syncWithProfile(profile)
+    }
+  }, [
+    profile?.id,
+    profile?.name,
+    profile?.current_role,
+    profile?.city,
+    profile?.current_salary_lpa,
+    profile?.target_role,
+    profile?.user_type,
+    profile?.skills_raw?.length,
+    profile?.disruption_score,
+  ])
 
   return {
     profile,

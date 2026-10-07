@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bot, Send, X, AlertCircle, RefreshCw, Sparkles } from 'lucide-react'
 import { useActiveProfile } from '@/hooks/useActiveProfile'
+import { useSkillGap } from '@/hooks/useSkillGap'
+import { useUserProfile } from '@/store/userProfileStore'
 import { copilotApi } from '@/lib/api'
 import type { Profile } from '@/types'
 
@@ -138,7 +140,10 @@ function getLocalCopilotFallback(message: string, profile: Profile | null) {
 }
 
 export default function AICareerCopilot() {
+  const userProfile = useUserProfile()
   const { profile } = useActiveProfile()
+  const targetRole = userProfile.targetRole || profile?.target_role || 'GenAI Engineer'
+  const { gap } = useSkillGap(targetRole)
   const [isOpen, setIsOpen] = useState(false)
   const [inputMsg, setInputMsg] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -146,15 +151,22 @@ export default function AICareerCopilot() {
   const [lastFailedMessage, setLastFailedMessage] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
+  const activeSkills = userProfile.skillsHave?.length
+    ? userProfile.skillsHave
+    : (profile?.skills_raw || gap.have_skills)
+  const detectedCount = activeSkills.length
+  const detectedSummary = activeSkills.slice(0, 3).join(', ')
+  const candidateName = (userProfile.name || profile?.name || 'there').split(' ')[0]
+
   const [messages, setMessages] = useState<MessageItem[]>([
     {
       id: 'initial',
       sender: 'bot',
-      text: `Hello ${profile?.name ? profile.name.split(' ')[0] : 'there'}! I am your Punarshuru Career Copilot. I've audited your active profile for ${profile?.target_role || 'target roles'}.`,
+      text: `Hello ${candidateName}! I am your Punarshuru Career Copilot. I've audited your active profile for ${targetRole}.`,
       structuredActions: [
-        `Current Skills Detected: ${profile?.skills_raw?.length || 5} skills`,
-        `Market-Aligned: ${Math.max(3, (profile?.skills_raw?.length || 5) - 2)} skills`,
-        `Priority Focus: Bridge ${profile?.target_role ? profile.target_role : 'Target Stack'} with 1 portfolio project`,
+        `Current Skills Detected: ${detectedCount} skills (${detectedSummary || 'Ready'})`,
+        `Market-Aligned: ${gap.have_skills.length} core skills verified (${gap.match_pct}% Match)`,
+        `Priority Focus: Bridge ${userProfile.skillsMissing?.[0] || gap.missing_skills[0] || 'Target Stack'} with 1 portfolio project`,
         `Recommended First Action: Complete Week 1 milestone in your learning roadmap`,
       ],
       quickReplies: [
@@ -166,20 +178,18 @@ export default function AICareerCopilot() {
     },
   ])
 
-  // Sync initial message when profile changes
+  // Sync initial message when profile or gap changes
   useEffect(() => {
     if (messages.length === 1 && messages[0].sender === 'bot') {
-      const candidateName = profile?.name ? profile.name.split(' ')[0] : 'there'
-      const targetRole = profile?.target_role || 'target tech roles'
       setMessages([
         {
           id: 'initial',
           sender: 'bot',
           text: `Hello ${candidateName}! I am your Punarshuru Career Copilot. I've audited your active profile for ${targetRole}.`,
           structuredActions: [
-            `Current Skills Detected: ${profile?.skills_raw?.length || 5} skills`,
-            `Market-Aligned: ${Math.max(3, (profile?.skills_raw?.length || 5) - 2)} skills`,
-            `Priority Focus: Bridge ${targetRole} with 1 portfolio project`,
+            `Current Skills Detected: ${detectedCount} skills (${detectedSummary || 'Ready'})`,
+            `Market-Aligned: ${gap.have_skills.length} core skills verified (${gap.match_pct}% Match)`,
+            `Priority Focus: Bridge ${userProfile.skillsMissing?.[0] || gap.missing_skills[0] || targetRole} with 1 portfolio project`,
             `Recommended First Action: Complete Week 1 milestone in your learning roadmap`,
           ],
           quickReplies: [
@@ -191,7 +201,7 @@ export default function AICareerCopilot() {
         },
       ])
     }
-  }, [profile?.name, profile?.target_role, profile?.skills_raw?.length])
+  }, [candidateName, targetRole, gap.match_pct, gap.have_skills.length, detectedCount, detectedSummary, userProfile.skillsMissing])
 
   // Auto-scroll on new messages or loading change
   useEffect(() => {
@@ -243,7 +253,17 @@ export default function AICareerCopilot() {
     } catch {
       // 2. Intelligent Client-Side Fallback if backend API is unreachable or times out
       try {
-        const fallback = getLocalCopilotFallback(textToSend, profile)
+        const mergedProfile: Profile = {
+          ...(profile || ({} as any)),
+          name: userProfile.name,
+          city: userProfile.currentCity,
+          current_role: userProfile.currentRole,
+          target_role: targetRole,
+          current_salary_lpa: userProfile.currentSalaryLPA,
+          skills_raw: activeSkills,
+          disruption_score: userProfile.careerRiskScore,
+        }
+        const fallback = getLocalCopilotFallback(textToSend, mergedProfile)
         const botMessage: MessageItem = {
           id: `bot-${Date.now()}`,
           sender: 'bot',

@@ -22,11 +22,15 @@ export const FACTOR_CONFIG = [
 ] as const
 
 export const PERSONA_FACTOR_DEFAULTS: Record<number, Record<string, number>> = {
-  72: { skill_decay: 20, automation_risk: 22, career_gap: 12, stagnation: 8, market_mismatch: 10 },
-  85: { skill_decay: 25, automation_risk: 30, career_gap: 0, stagnation: 15, market_mismatch: 15 },
-  78: { skill_decay: 15, automation_risk: 30, career_gap: 3, stagnation: 15, market_mismatch: 15 },
-  68: { skill_decay: 10, automation_risk: 28, career_gap: 0, stagnation: 15, market_mismatch: 15 },
-  22: { skill_decay: 0, automation_risk: 10, career_gap: 0, stagnation: 5, market_mismatch: 7 },
+  74: { skill_decay: 24, automation_risk: 14, career_gap: 15, stagnation: 6, market_mismatch: 15 },
+  72: { skill_decay: 24, automation_risk: 14, career_gap: 15, stagnation: 6, market_mismatch: 15 },
+  78: { skill_decay: 18, automation_risk: 30, career_gap: 0, stagnation: 15, market_mismatch: 15 },
+  85: { skill_decay: 18, automation_risk: 30, career_gap: 0, stagnation: 15, market_mismatch: 15 },
+  73: { skill_decay: 13, automation_risk: 30, career_gap: 3, stagnation: 15, market_mismatch: 12 },
+  76: { skill_decay: 16, automation_risk: 30, career_gap: 0, stagnation: 15, market_mismatch: 15 },
+  68: { skill_decay: 16, automation_risk: 30, career_gap: 0, stagnation: 15, market_mismatch: 15 },
+  27: { skill_decay: 0, automation_risk: 10, career_gap: 0, stagnation: 5, market_mismatch: 12 },
+  22: { skill_decay: 0, automation_risk: 10, career_gap: 0, stagnation: 5, market_mismatch: 12 },
 }
 
 export function computeCappedFactors(breakdown?: DisruptionBreakdown, targetScore?: number) {

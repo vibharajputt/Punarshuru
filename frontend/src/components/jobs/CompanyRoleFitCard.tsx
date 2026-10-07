@@ -16,13 +16,19 @@ export default function CompanyRoleFitCard({
   onSelectRole,
   onSimulateLearnSkill,
 }: CompanyRoleFitCardProps) {
-  const matched = role.requiredSkills.filter((req) =>
-    userSkills.some((s) => s.toLowerCase().trim() === req.toLowerCase().trim())
-  )
-  const missing = role.requiredSkills.filter(
-    (req) => !userSkills.some((s) => s.toLowerCase().trim() === req.toLowerCase().trim())
-  )
-  const matchPct = Math.round((matched.length / role.requiredSkills.length) * 100)
+  const userSkillsNorm = new Set(userSkills.map((s) => s.toLowerCase().trim()))
+  const matched = role.requiredSkills.filter((req) => {
+    const r = req.toLowerCase().trim()
+    return (
+      userSkillsNorm.has(r) ||
+      (r === 'sql' && (userSkillsNorm.has('mysql') || userSkillsNorm.has('postgresql') || userSkillsNorm.has('sql basics'))) ||
+      (r === 'python' && (userSkillsNorm.has('py') || userSkillsNorm.has('python3'))) ||
+      (r === 'git' && (userSkillsNorm.has('github') || userSkillsNorm.has('gitlab'))) ||
+      (r === 'rest apis' && (userSkillsNorm.has('rest api') || userSkillsNorm.has('rest')))
+    )
+  })
+  const missing = role.requiredSkills.filter((req) => !matched.includes(req))
+  const matchPct = Math.round((matched.length / Math.max(1, role.requiredSkills.length)) * 100)
   const isUnlocked = matchPct >= 75
 
   return (

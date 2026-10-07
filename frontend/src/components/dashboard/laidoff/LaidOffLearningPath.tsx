@@ -19,9 +19,9 @@ export default function LaidOffLearningPath() {
       title: 'Phase 1: Playwright / Cypress Automation Fundamentals',
       skillsTaught: ['Playwright Test Runner', 'Page Object Model', 'Async Assertions'],
       freeCourse: {
-        title: 'Playwright Full Course 2026',
+        title: 'Back End Development and APIs (Automation & Testing)',
         provider: 'freeCodeCamp',
-        url: 'https://www.freecodecamp.org',
+        url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/',
       },
       handsOnRepo: 'github.com/punarshuru-templates/playwright-e2e-starter',
       outcome: 'Write first 15 automated test specs for an e-commerce checkout flow.',
@@ -31,9 +31,9 @@ export default function LaidOffLearningPath() {
       title: 'Phase 2: API Contract Automation & Mock Servers',
       skillsTaught: ['REST Assured / Supertest', 'JSON Schema Validation', 'Mockoon / WireMock'],
       freeCourse: {
-        title: 'API Testing & Automation Masterclass',
+        title: 'Cloud Computing & SaaS Architectures',
         provider: 'SWAYAM',
-        url: 'https://swayam.gov.in',
+        url: 'https://swayam.gov.in/nd1_noc20_cs68',
       },
       handsOnRepo: 'github.com/punarshuru-templates/api-contract-testing',
       outcome: 'Automate 50+ backend microservice API integration endpoints.',
@@ -43,9 +43,9 @@ export default function LaidOffLearningPath() {
       title: 'Phase 3: CI/CD Pipeline Integration with GitHub Actions',
       skillsTaught: ['GitHub Actions Workflows', 'Headless Browser Execution', 'HTML Test Reporting'],
       freeCourse: {
-        title: 'CI/CD Pipelines for Test Automation',
+        title: 'Software Testing & Automation (IIT Kharagpur)',
         provider: 'NPTEL',
-        url: 'https://nptel.ac.in',
+        url: 'https://nptel.ac.in/courses/106105150',
       },
       handsOnRepo: 'github.com/punarshuru-templates/github-actions-qa-runner',
       outcome: 'Automatically trigger test runs on every pull request with visual diff artifacts.',
@@ -159,6 +159,10 @@ export default function LaidOffLearningPath() {
             </div>
           )
         })}
+      </div>
+
+      <div className="pt-2 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <span>📚 <strong className="text-slate-700 dark:text-slate-300">Data source:</strong> Course links point directly to public curriculum pages on NPTEL (IIT Kharagpur), SWAYAM (Ministry of Education), and freeCodeCamp.</span>
       </div>
     </div>
   )

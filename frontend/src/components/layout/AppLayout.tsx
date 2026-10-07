@@ -80,9 +80,9 @@ function getPageTitle(pathname: string, userType: string, t: (key: string, fallb
     const features = ROLE_FEATURES[userType] || ROLE_FEATURES.returner
     if (featureKey) {
       const match = features.find((f) => f.key === featureKey)
-      if (match) return match.title
+      if (match) return t(`features.${featureKey}.title`, match.title)
     }
-    return 'Role Toolkit'
+    return t('features.toolkit', 'Role Toolkit')
   }
   return t('app_name', 'Punarshuru')
 }
@@ -158,6 +158,7 @@ function BottomNavLink({ item }: { item: NavItem }) {
 
 /* ── Avatar dropdown ──────────────────────────────────────────────────────── */
 function AvatarMenu({ onOpenDemoModal }: { onOpenDemoModal?: () => void }) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
@@ -262,7 +263,7 @@ function AvatarMenu({ onOpenDemoModal }: { onOpenDemoModal?: () => void }) {
             </div>
           ) : user ? (
             <div className="px-4 py-3 border-b border-[#E2E8F0] dark:border-slate-700">
-              <p className="text-xs text-[#64748B] dark:text-slate-400">Signed in as</p>
+              <p className="text-xs text-[#64748B] dark:text-slate-400">{t('common.signed_in_as', 'Signed in as')}</p>
               <p className="text-sm font-semibold text-[#0F172A] dark:text-white truncate" title={user.email}>
                 {user.email}
               </p>
@@ -280,7 +281,7 @@ function AvatarMenu({ onOpenDemoModal }: { onOpenDemoModal?: () => void }) {
               className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-[#0B4F9C] dark:text-sky-400 hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors font-medium cursor-pointer"
             >
               <RefreshCw size={15} />
-              <span>Switch Demo Persona</span>
+              <span>{t('dashboard.switch_persona', 'Switch Demo Persona')}</span>
             </button>
           )}
 
@@ -291,7 +292,7 @@ function AvatarMenu({ onOpenDemoModal }: { onOpenDemoModal?: () => void }) {
             className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-[#0F172A] dark:text-slate-200 hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <Award size={15} className="text-[#0B4F9C] dark:text-sky-400" />
-            <span>Skill Passport</span>
+            <span>{t('nav.passport', 'Skill Passport')}</span>
           </button>
 
           {!isDemoActive && (
@@ -302,7 +303,7 @@ function AvatarMenu({ onOpenDemoModal }: { onOpenDemoModal?: () => void }) {
               className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-[#0F172A] dark:text-slate-200 hover:bg-[#E8F3FF] dark:hover:bg-slate-800 transition-colors cursor-pointer"
             >
               <User size={15} />
-              <span>Edit profile</span>
+              <span>{t('common.edit_profile', 'Edit profile')}</span>
             </button>
           )}
 
@@ -316,7 +317,7 @@ function AvatarMenu({ onOpenDemoModal }: { onOpenDemoModal?: () => void }) {
               className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-colors font-semibold cursor-pointer"
             >
               <LogOut size={15} />
-              <span>Exit Demo Mode</span>
+              <span>{t('dashboard.exit_demo', 'Exit Demo Mode')}</span>
             </button>
           ) : (
             <button
@@ -326,7 +327,7 @@ function AvatarMenu({ onOpenDemoModal }: { onOpenDemoModal?: () => void }) {
               className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors cursor-pointer"
             >
               <LogOut size={15} />
-              <span>Log out</span>
+              <span>{t('common.logout', 'Log out')}</span>
             </button>
           )}
         </div>
@@ -460,6 +461,7 @@ export default function AppLayout() {
             {roleFeatures.map((feat) => {
               const targetPath = `/features/${feat.key}`
               const Icon = FEATURE_ICONS[feat.key] || Zap
+              const label = t(`features.${feat.key}.sidebar`, feat.shortTitle || feat.title)
               return (
                 <NavLink
                   key={feat.key}
@@ -475,7 +477,7 @@ export default function AppLayout() {
                   }
                 >
                   <Icon size={18} />
-                  <span>{feat.shortTitle}</span>
+                  <span>{label}</span>
                 </NavLink>
               )
             })}

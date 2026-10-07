@@ -5,6 +5,8 @@ import { X, Sparkles, MapPin, Briefcase, ArrowRight, RefreshCw, ShieldCheck } fr
 import { demoApi } from '@/lib/api'
 import { useProfileStore } from '@/store/profileStore'
 import { useDemoStore } from '@/store/demoStore'
+import { useUserProfileStore } from '@/store/userProfileStore'
+import { computeRiskScore } from '@/lib/riskScore'
 import type { Profile, UserType } from '@/types'
 
 export interface DemoPersonaItem {
@@ -32,7 +34,7 @@ export const DEMO_PERSONAS: DemoPersonaItem[] = [
     city: 'Pune',
     current_role: 'Ex-Java Developer (4yr Gap)',
     target_role: 'GenAI Engineer',
-    disruption: 72,
+    disruption: 74,
     skills: ['Java', 'Spring Boot', 'MySQL', 'REST APIs'],
     quote: 'Returning to tech post-maternity break; need to bridge the GenAI and modern cloud gap.',
     career_gap_years: 4,
@@ -46,7 +48,7 @@ export const DEMO_PERSONAS: DemoPersonaItem[] = [
     city: 'Lucknow',
     current_role: 'Swiggy Delivery Partner (3yr)',
     target_role: 'Logistics Tech Analyst',
-    disruption: 85,
+    disruption: 78,
     skills: ['Operations', 'Route Optimization', 'Customer Service'],
     quote: 'Algorithms cap delivery earnings; transitioning high-grit logistics intuition into tech ops.',
     career_gap_years: 0,
@@ -60,7 +62,7 @@ export const DEMO_PERSONAS: DemoPersonaItem[] = [
     city: 'Bengaluru',
     current_role: 'Manual QA Engineer (6yr)',
     target_role: 'Automation QA / SDET',
-    disruption: 78,
+    disruption: 73,
     skills: ['Manual QA', 'JIRA', 'Agile', 'SQL Basics'],
     quote: 'Manual QA roles shrinking fast; urgent need to master Playwright, Python & CI/CD automation.',
     career_gap_years: 0.5,
@@ -74,7 +76,7 @@ export const DEMO_PERSONAS: DemoPersonaItem[] = [
     city: 'Noida',
     current_role: 'Customer Support Executive (5yr)',
     target_role: 'AI Chatbot Trainer / Product Analyst',
-    disruption: 68,
+    disruption: 76,
     skills: ['Support Ops', 'CRM', 'Zendesk', 'Bilingual EN/HI'],
     quote: '3 years in the same support band; moving into prompt evaluation and product ops.',
     career_gap_years: 0,
@@ -88,7 +90,7 @@ export const DEMO_PERSONAS: DemoPersonaItem[] = [
     city: 'Mohali',
     current_role: 'BTech CSE Final Year',
     target_role: 'Software / ML Engineer',
-    disruption: 22,
+    disruption: 27,
     skills: ['Python', 'C++', 'Data Structures', 'SQL'],
     quote: 'Fresher targeting high-ROI Tier-2/Tier-1 software roles with verified GitHub proofs.',
     career_gap_years: 0,
@@ -138,7 +140,8 @@ export function activateDemoPersona(
         : 4.5,
     skills_raw: persona.skills,
     skills_taxonomy_ids: [1, 2, 3],
-    disruption_score: persona.disruption,
+    disruption_score: computeRiskScore(persona).score,
+    disruption_breakdown: computeRiskScore(persona).breakdown as any,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   }
@@ -150,6 +153,7 @@ export function activateDemoPersona(
     career_gap_years: fallbackProfile.career_gap_years,
   })
   useProfileStore.getState().setProfile(fallbackProfile)
+  useUserProfileStore.getState().syncWithProfile(fallbackProfile)
 
   // 2. Immediately navigate to /home (instant responsive UI)
   if (navigate) {
@@ -179,8 +183,10 @@ export function activateDemoPersona(
             ? (data.skills_raw as string[])
             : fallbackProfile.skills_raw,
           disruption_score: Number(data.disruption_score ?? fallbackProfile.disruption_score),
+          disruption_breakdown: (data.disruption_breakdown || fallbackProfile.disruption_breakdown) as any,
         }
         useProfileStore.getState().setProfile(enriched)
+        useUserProfileStore.getState().syncWithProfile(enriched)
       }
     })
     .catch(() => {
@@ -292,7 +298,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                       <div className="text-left sm:text-right">
                         <p className="text-[10px] font-medium text-slate-400">Career Risk Score</p>
                         <p className="text-sm font-black font-mono text-[#0B4F9C] dark:text-sky-400">
-                          {p.disruption}/100
+                          {computeRiskScore(p).score}/100
                         </p>
                       </div>
 

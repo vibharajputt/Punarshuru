@@ -29,11 +29,11 @@ export const returnerPathways: PathwayOption[] = [
         courses: [
           {
             id: 1,
-            title: 'Java Programming & Modern Design',
+            title: 'Programming in Java (IIT Kharagpur)',
             provider: 'NPTEL',
             weeks: 12,
             lang: 'en',
-            url: 'https://nptel.ac.in',
+            url: 'https://nptel.ac.in/courses/106105191',
             level: 'beginner',
             certificate: true,
           },
@@ -58,11 +58,11 @@ export const returnerPathways: PathwayOption[] = [
         courses: [
           {
             id: 2,
-            title: 'Python for Everybody',
+            title: 'Python for Data Science (IIT Madras)',
             provider: 'SWAYAM',
             weeks: 12,
             lang: 'en',
-            url: 'https://swayam.gov.in',
+            url: 'https://swayam.gov.in/nd2_noc20_cs56',
             level: 'beginner',
             certificate: true,
           },
@@ -76,11 +76,11 @@ export const returnerPathways: PathwayOption[] = [
         courses: [
           {
             id: 3,
-            title: 'Deep Learning Specialization',
+            title: 'Back End Development and APIs',
             provider: 'freeCodeCamp',
             weeks: 16,
             lang: 'en',
-            url: 'https://freecodecamp.org',
+            url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/',
             level: 'intermediate',
             certificate: true,
           },
@@ -94,11 +94,11 @@ export const returnerPathways: PathwayOption[] = [
         courses: [
           {
             id: 4,
-            title: 'Cloud Computing & DevOps',
+            title: 'Artificial Intelligence Foundations',
             provider: 'Skill India',
             weeks: 6,
             lang: 'hi',
-            url: 'https://skillindia.gov.in',
+            url: 'https://www.skillindiadigital.gov.in/courses/detail/7614d3b6-aeec-4eb9-a789-f53833d7bfa5',
             level: 'beginner',
             certificate: true,
           },
@@ -123,11 +123,11 @@ export const returnerPathways: PathwayOption[] = [
         courses: [
           {
             id: 5,
-            title: 'DevOps Fundamentals',
+            title: 'IT-ITeS Associate Software Developer',
             provider: 'Skill India',
             weeks: 6,
             lang: 'hi',
-            url: 'https://skillindia.gov.in',
+            url: 'https://www.skillindiadigital.gov.in/courses/detail/5ef58e99-4d82-4fcf-85d0-4bf69c2d1b7b',
             level: 'beginner',
             certificate: true,
           },
@@ -156,11 +156,11 @@ export const studentPathways: PathwayOption[] = [
         courses: [
           {
             id: 101,
-            title: 'Programming & Data Structures',
+            title: 'Data Structures and Algorithms using Python (IIT Madras)',
             provider: 'NPTEL',
             weeks: 8,
             lang: 'en',
-            url: 'https://nptel.ac.in',
+            url: 'https://nptel.ac.in/courses/106106145',
             level: 'beginner',
             certificate: true,
           },
@@ -174,11 +174,11 @@ export const studentPathways: PathwayOption[] = [
         courses: [
           {
             id: 102,
-            title: 'Full Stack Web Development',
+            title: 'JavaScript Algorithms and Data Structures',
             provider: 'freeCodeCamp',
             weeks: 10,
             lang: 'en',
-            url: 'https://www.freecodecamp.org',
+            url: 'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/',
             level: 'beginner',
             certificate: true,
           },
@@ -192,11 +192,11 @@ export const studentPathways: PathwayOption[] = [
         courses: [
           {
             id: 103,
-            title: 'Placement Preparation & Mock Rounds',
+            title: 'IT-ITeS Associate Software Developer',
             provider: 'Skill India',
             weeks: 4,
             lang: 'hi',
-            url: 'https://skillindia.gov.in',
+            url: 'https://www.skillindiadigital.gov.in/courses/detail/5ef58e99-4d82-4fcf-85d0-4bf69c2d1b7b',
             level: 'beginner',
             certificate: true,
           },
@@ -221,11 +221,11 @@ export const studentPathways: PathwayOption[] = [
         courses: [
           {
             id: 104,
-            title: 'Python for Data & AI',
+            title: 'Python for Data Science (IIT Madras)',
             provider: 'SWAYAM',
             weeks: 8,
             lang: 'en',
-            url: 'https://swayam.gov.in',
+            url: 'https://swayam.gov.in/nd2_noc20_cs56',
             level: 'beginner',
             certificate: true,
           },
@@ -239,11 +239,11 @@ export const studentPathways: PathwayOption[] = [
         courses: [
           {
             id: 105,
-            title: 'LangChain for LLM Application Development',
-            provider: 'DeepLearning.AI',
+            title: 'Natural Language Processing (IIT Bombay)',
+            provider: 'NPTEL',
             weeks: 6,
             lang: 'en',
-            url: 'https://deeplearning.ai',
+            url: 'https://nptel.ac.in/courses/106101247',
             level: 'intermediate',
             certificate: true,
           },
@@ -257,11 +257,11 @@ export const studentPathways: PathwayOption[] = [
         courses: [
           {
             id: 106,
-            title: 'Cloud Infrastructure Essentials',
+            title: 'Cloud Computing & Virtualization (IIT Kharagpur)',
             provider: 'NPTEL',
             weeks: 8,
             lang: 'en',
-            url: 'https://nptel.ac.in',
+            url: 'https://nptel.ac.in/courses/106105167',
             level: 'intermediate',
             certificate: true,
           },
@@ -286,11 +286,11 @@ export const studentPathways: PathwayOption[] = [
         courses: [
           {
             id: 107,
-            title: 'Database Management & SQL',
+            title: 'Database Management Systems (IIT Kharagpur)',
             provider: 'NPTEL',
             weeks: 8,
             lang: 'en',
-            url: 'https://nptel.ac.in',
+            url: 'https://nptel.ac.in/courses/106105175',
             level: 'beginner',
             certificate: true,
           },
@@ -304,11 +304,11 @@ export const studentPathways: PathwayOption[] = [
         courses: [
           {
             id: 108,
-            title: 'Data Engineering Fundamentals',
+            title: 'Scientific Computing with Python',
             provider: 'freeCodeCamp',
             weeks: 8,
             lang: 'en',
-            url: 'https://www.freecodecamp.org',
+            url: 'https://www.freecodecamp.org/learn/scientific-computing-with-python/',
             level: 'intermediate',
             certificate: true,
           },
@@ -337,11 +337,11 @@ export const stagnantPathways: PathwayOption[] = [
         courses: [
           {
             id: 201,
-            title: 'Automating Processes with Python',
+            title: 'Python for Data Science (IIT Madras)',
             provider: 'SWAYAM',
             weeks: 8,
             lang: 'en',
-            url: 'https://swayam.gov.in',
+            url: 'https://swayam.gov.in/nd2_noc20_cs56',
             level: 'intermediate',
             certificate: true,
           },
@@ -355,11 +355,11 @@ export const stagnantPathways: PathwayOption[] = [
         courses: [
           {
             id: 202,
-            title: 'Building AI Search Systems',
+            title: 'Back End Development and APIs',
             provider: 'freeCodeCamp',
             weeks: 6,
             lang: 'en',
-            url: 'https://www.freecodecamp.org',
+            url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/',
             level: 'intermediate',
             certificate: true,
           },
@@ -373,11 +373,11 @@ export const stagnantPathways: PathwayOption[] = [
         courses: [
           {
             id: 203,
-            title: 'Leadership & Business Communication',
-            provider: 'NPTEL',
+            title: 'Effective Speaking & Technical Presentation (IIT Roorkee)',
+            provider: 'SWAYAM',
             weeks: 4,
             lang: 'en',
-            url: 'https://nptel.ac.in',
+            url: 'https://swayam.gov.in/nd2_noc20_hs22',
             level: 'beginner',
             certificate: true,
           },
@@ -402,11 +402,11 @@ export const stagnantPathways: PathwayOption[] = [
         courses: [
           {
             id: 204,
-            title: 'Fullstack Microservices Architecture',
+            title: 'Back End Development and APIs',
             provider: 'freeCodeCamp',
             weeks: 8,
             lang: 'en',
-            url: 'https://www.freecodecamp.org',
+            url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/',
             level: 'intermediate',
             certificate: true,
           },
@@ -420,11 +420,11 @@ export const stagnantPathways: PathwayOption[] = [
         courses: [
           {
             id: 205,
-            title: 'Production GenAI Applications',
-            provider: 'DeepLearning.AI',
+            title: 'Natural Language Processing (IIT Bombay)',
+            provider: 'NPTEL',
             weeks: 6,
             lang: 'en',
-            url: 'https://deeplearning.ai',
+            url: 'https://nptel.ac.in/courses/106101247',
             level: 'intermediate',
             certificate: true,
           },
@@ -438,11 +438,11 @@ export const stagnantPathways: PathwayOption[] = [
         courses: [
           {
             id: 206,
-            title: 'Cloud Computing & DevOps Practice',
-            provider: 'Skill India',
+            title: 'Cloud Computing & Virtualization (IIT Kharagpur)',
+            provider: 'NPTEL',
             weeks: 6,
             lang: 'hi',
-            url: 'https://skillindia.gov.in',
+            url: 'https://nptel.ac.in/courses/106105167',
             level: 'intermediate',
             certificate: true,
           },
@@ -467,11 +467,11 @@ export const stagnantPathways: PathwayOption[] = [
         courses: [
           {
             id: 207,
-            title: 'Linux Administration for Developers',
-            provider: 'NPTEL',
+            title: 'Cloud Computing & SaaS Architectures',
+            provider: 'SWAYAM',
             weeks: 8,
             lang: 'en',
-            url: 'https://nptel.ac.in',
+            url: 'https://swayam.gov.in/nd1_noc20_cs68',
             level: 'beginner',
             certificate: true,
           },
@@ -485,11 +485,11 @@ export const stagnantPathways: PathwayOption[] = [
         courses: [
           {
             id: 208,
-            title: 'Kubernetes for SREs',
+            title: 'Back End Development and APIs',
             provider: 'freeCodeCamp',
             weeks: 8,
             lang: 'en',
-            url: 'https://www.freecodecamp.org',
+            url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/',
             level: 'intermediate',
             certificate: true,
           },
@@ -518,11 +518,11 @@ export const laidOffPathways: PathwayOption[] = [
         courses: [
           {
             id: 301,
-            title: 'Fullstack Fast-Track for Experienced SWEs',
+            title: 'Back End Development and APIs',
             provider: 'freeCodeCamp',
             weeks: 4,
             lang: 'en',
-            url: 'https://www.freecodecamp.org',
+            url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/',
             level: 'intermediate',
             certificate: true,
           },
@@ -536,11 +536,11 @@ export const laidOffPathways: PathwayOption[] = [
         courses: [
           {
             id: 302,
-            title: 'Technical Interview Strategy',
+            title: 'Data Structures and Algorithms (IIT Madras)',
             provider: 'NPTEL',
             weeks: 4,
             lang: 'en',
-            url: 'https://nptel.ac.in',
+            url: 'https://nptel.ac.in/courses/106106145',
             level: 'intermediate',
             certificate: true,
           },
@@ -554,11 +554,11 @@ export const laidOffPathways: PathwayOption[] = [
         courses: [
           {
             id: 303,
-            title: 'Career Transition Mastery',
+            title: 'IT-ITeS Associate Software Developer',
             provider: 'Skill India',
             weeks: 2,
             lang: 'hi',
-            url: 'https://skillindia.gov.in',
+            url: 'https://www.skillindiadigital.gov.in/courses/detail/5ef58e99-4d82-4fcf-85d0-4bf69c2d1b7b',
             level: 'beginner',
             certificate: true,
           },
@@ -583,11 +583,11 @@ export const laidOffPathways: PathwayOption[] = [
         courses: [
           {
             id: 304,
-            title: 'Scalable Systems Architecture',
+            title: 'Back End Development and APIs',
             provider: 'freeCodeCamp',
             weeks: 6,
             lang: 'en',
-            url: 'https://www.freecodecamp.org',
+            url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/',
             level: 'advanced',
             certificate: true,
           },
@@ -601,11 +601,11 @@ export const laidOffPathways: PathwayOption[] = [
         courses: [
           {
             id: 305,
-            title: 'Cloud Infrastructure & Kubernetes',
+            title: 'Cloud Computing & Virtualization (IIT Kharagpur)',
             provider: 'NPTEL',
             weeks: 8,
             lang: 'en',
-            url: 'https://nptel.ac.in',
+            url: 'https://nptel.ac.in/courses/106105167',
             level: 'intermediate',
             certificate: true,
           },
@@ -630,11 +630,11 @@ export const laidOffPathways: PathwayOption[] = [
         courses: [
           {
             id: 306,
-            title: 'FinTech Architecture & API Security',
+            title: 'Cloud Computing & SaaS Architectures',
             provider: 'SWAYAM',
             weeks: 6,
             lang: 'en',
-            url: 'https://swayam.gov.in',
+            url: 'https://swayam.gov.in/nd1_noc20_cs68',
             level: 'intermediate',
             certificate: true,
           },
@@ -648,11 +648,11 @@ export const laidOffPathways: PathwayOption[] = [
         courses: [
           {
             id: 307,
-            title: 'Agile Leadership in Practice',
-            provider: 'Skill India',
+            title: 'Agile Software Development (IIT Roorkee)',
+            provider: 'SWAYAM',
             weeks: 4,
             lang: 'hi',
-            url: 'https://skillindia.gov.in',
+            url: 'https://swayam.gov.in/nd2_noc21_mg57',
             level: 'beginner',
             certificate: true,
           },
@@ -681,11 +681,11 @@ export const gigPathways: PathwayOption[] = [
         courses: [
           {
             id: 401,
-            title: 'Enterprise Software Engineering',
+            title: 'Software Testing & Automation (IIT Kharagpur)',
             provider: 'NPTEL',
             weeks: 8,
             lang: 'en',
-            url: 'https://nptel.ac.in',
+            url: 'https://nptel.ac.in/courses/106105150',
             level: 'intermediate',
             certificate: true,
           },
@@ -699,11 +699,11 @@ export const gigPathways: PathwayOption[] = [
         courses: [
           {
             id: 402,
-            title: 'DevOps & Agile Delivery',
+            title: 'Back End Development and APIs',
             provider: 'freeCodeCamp',
             weeks: 6,
             lang: 'en',
-            url: 'https://www.freecodecamp.org',
+            url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/',
             level: 'beginner',
             certificate: true,
           },
@@ -717,11 +717,11 @@ export const gigPathways: PathwayOption[] = [
         courses: [
           {
             id: 403,
-            title: 'Professional Communication for Techies',
-            provider: 'Skill India',
+            title: 'Effective Speaking & Technical Presentation (IIT Roorkee)',
+            provider: 'SWAYAM',
             weeks: 4,
             lang: 'hi',
-            url: 'https://skillindia.gov.in',
+            url: 'https://swayam.gov.in/nd2_noc20_hs22',
             level: 'beginner',
             certificate: true,
           },
@@ -746,11 +746,11 @@ export const gigPathways: PathwayOption[] = [
         courses: [
           {
             id: 404,
-            title: 'Applied GenAI Systems',
-            provider: 'DeepLearning.AI',
+            title: 'Natural Language Processing (IIT Bombay)',
+            provider: 'NPTEL',
             weeks: 6,
             lang: 'en',
-            url: 'https://deeplearning.ai',
+            url: 'https://nptel.ac.in/courses/106101247',
             level: 'intermediate',
             certificate: true,
           },
@@ -764,11 +764,11 @@ export const gigPathways: PathwayOption[] = [
         courses: [
           {
             id: 405,
-            title: 'Cloud SaaS Architecture',
+            title: 'Cloud Computing & SaaS Architectures',
             provider: 'SWAYAM',
             weeks: 8,
             lang: 'en',
-            url: 'https://swayam.gov.in',
+            url: 'https://swayam.gov.in/nd1_noc20_cs68',
             level: 'intermediate',
             certificate: true,
           },
@@ -793,11 +793,11 @@ export const gigPathways: PathwayOption[] = [
         courses: [
           {
             id: 406,
-            title: 'Open Source Development Practice',
+            title: 'JavaScript Algorithms and Data Structures',
             provider: 'freeCodeCamp',
             weeks: 6,
             lang: 'en',
-            url: 'https://www.freecodecamp.org',
+            url: 'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/',
             level: 'intermediate',
             certificate: true,
           },
@@ -811,11 +811,11 @@ export const gigPathways: PathwayOption[] = [
         courses: [
           {
             id: 407,
-            title: 'Global Remote Career Mastery',
+            title: 'IT-ITeS Associate Software Developer',
             provider: 'Skill India',
             weeks: 4,
             lang: 'en',
-            url: 'https://skillindia.gov.in',
+            url: 'https://www.skillindiadigital.gov.in/courses/detail/5ef58e99-4d82-4fcf-85d0-4bf69c2d1b7b',
             level: 'beginner',
             certificate: true,
           },
@@ -850,8 +850,8 @@ export const RETURNER_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'w1-4', text: 'Prepare response: "How does Spring Boot 3 simplify configuration compared to older XML/Java config?"', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Spring Boot 3 Fundamentals', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
-      { title: 'Modern Java In Practice', provider: 'NPTEL', url: 'https://nptel.ac.in', free: true },
+      { title: 'Spring Boot 3 Fundamentals', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/', free: true },
+      { title: 'Modern Java In Practice', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106105191', free: true },
     ],
     mockInterviewQ: 'Can you explain the inversion of control container lifecycle in modern Spring Boot?',
   },
@@ -867,8 +867,8 @@ export const RETURNER_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'w2-4', text: 'Review REST idempotency & error handling standard HTTP status codes', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Building RESTful Web Services', provider: 'SWAYAM', url: 'https://swayam.gov.in', free: true },
-      { title: 'Database Indexing & Optimization', provider: 'Skill India', url: 'https://www.skillindia.gov.in', free: true },
+      { title: 'Building RESTful Web Services', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd1_noc20_cs68', free: true },
+      { title: 'Database Indexing & Optimization', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106105175', free: true },
     ],
     mockInterviewQ: 'How do you handle distributed transactions across microservices?',
   },
@@ -884,8 +884,8 @@ export const RETURNER_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'w3-4', text: 'Prepare explanation of container lifecycle and networking in interviews', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Docker for Java Developers', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
-      { title: 'Cloud Computing Fundamentals', provider: 'NPTEL', url: 'https://nptel.ac.in', free: true },
+      { title: 'Docker for Java Developers', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/', free: true },
+      { title: 'Cloud Computing Fundamentals', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106105167', free: true },
     ],
     mockInterviewQ: 'What are multi-stage Docker builds and why are they critical for JVM images?',
   },
@@ -901,8 +901,8 @@ export const RETURNER_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'w4-4', text: 'Complete 3 mock technical interviews using the Resume Gap Rebuilder script', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'AI Engineering for Developers', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
-      { title: 'Technical Interview Mastery', provider: 'SWAYAM', url: 'https://swayam.gov.in', free: true },
+      { title: 'AI Engineering for Developers', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/scientific-computing-with-python/', free: true },
+      { title: 'Technical Interview Mastery', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd2_noc20_hs22', free: true },
     ],
     mockInterviewQ: 'Walk me through your recent project architecture and how you integrated GenAI features.',
   },
@@ -921,8 +921,8 @@ export const STUDENT_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'st-w1-4', text: 'Mock Q: "How would you optimize search over 10M records using indexing vs binary search?"', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Data Structures for Campus Drives', provider: 'NPTEL', url: 'https://nptel.ac.in', free: true },
-      { title: 'Git & GitHub Bootcamp', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
+      { title: 'Data Structures for Campus Drives', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106106145', free: true },
+      { title: 'Git & GitHub Bootcamp', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/', free: true },
     ],
     mockInterviewQ: 'Can you explain the time complexity trade-offs between QuickSort and MergeSort with large dataset memory constraints?',
   },
@@ -938,8 +938,8 @@ export const STUDENT_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'st-w2-4', text: 'Mock Q: "Explain the difference between authentication and authorization with JWT tokens."', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'RESTful API Design & Best Practices', provider: 'SWAYAM', url: 'https://swayam.gov.in', free: true },
-      { title: 'SQL Indexing & Database Tuning', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
+      { title: 'RESTful API Design & Best Practices', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd2_noc20_cs56', free: true },
+      { title: 'SQL Indexing & Database Tuning', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106105175', free: true },
     ],
     mockInterviewQ: 'Why should you never store plain JWT tokens in localStorage without CSRF/XSS mitigations?',
   },
@@ -955,8 +955,8 @@ export const STUDENT_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'st-w3-4', text: 'Mock Q: "Why do product companies insist on containerization over raw VM installations?"', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Docker for Beginners', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
-      { title: 'AWS Cloud Foundations', provider: 'Skill India', url: 'https://www.skillindia.gov.in', free: true },
+      { title: 'Docker for Beginners', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/', free: true },
+      { title: 'AWS Cloud Foundations', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106105167', free: true },
     ],
     mockInterviewQ: 'How do Docker bridge networks isolate container traffic and resolve service names locally?',
   },
@@ -972,8 +972,8 @@ export const STUDENT_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'st-w4-4', text: 'Complete 3 mock placement interviews using the STAR method for behavioral & technical rounds', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Cracking the Product Placement Interview', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
-      { title: 'Professional Communication for Engineers', provider: 'NPTEL', url: 'https://nptel.ac.in', free: true },
+      { title: 'Cracking the Product Placement Interview', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/', free: true },
+      { title: 'Professional Communication for Engineers', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd2_noc20_hs22', free: true },
     ],
     mockInterviewQ: 'Walk me through the hardest bug you faced in your project and how you profiled the root cause.',
   },
@@ -992,8 +992,8 @@ export const STAGNANT_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'sg-w1-4', text: 'Mock Q: "How do you identify automation opportunities in legacy technical operations?"', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Process Automation with Python', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
-      { title: 'FastAPI Backend Architecture', provider: 'SWAYAM', url: 'https://swayam.gov.in', free: true },
+      { title: 'Process Automation with Python', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/scientific-computing-with-python/', free: true },
+      { title: 'FastAPI Backend Architecture', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd2_noc20_cs56', free: true },
     ],
     mockInterviewQ: 'Can you give an example of an operational process you automated that directly saved engineering hours?',
   },
@@ -1009,8 +1009,8 @@ export const STAGNANT_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'sg-w2-4', text: 'Mock Q: "What are vector embeddings and how do they differ from simple keyword SQL search?"', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'LangChain & Vector DB Foundations', provider: 'DeepLearning.AI', url: 'https://deeplearning.ai', free: true },
-      { title: 'Semantic Search in Production', provider: 'NPTEL', url: 'https://nptel.ac.in', free: true },
+      { title: 'Natural Language Processing', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106101247', free: true },
+      { title: 'Deep Learning with PyTorch', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106106211', free: true },
     ],
     mockInterviewQ: 'How do you handle hallucination and ensure strict retrieval bounding in enterprise internal search?',
   },
@@ -1026,8 +1026,8 @@ export const STAGNANT_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'sg-w3-4', text: 'Mock Q: "How do you justify moving from maintenance into an architectural leadership band?"', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Docker for Engineers', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
-      { title: 'Executive Engineering Leadership', provider: 'Skill India', url: 'https://www.skillindia.gov.in', free: true },
+      { title: 'Docker for Engineers', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/', free: true },
+      { title: 'Agile Software Development', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd2_noc21_mg57', free: true },
     ],
     mockInterviewQ: 'Describe how you present technical debt and modern tooling ROI to non-technical business stakeholders.',
   },
@@ -1043,8 +1043,8 @@ export const STAGNANT_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'sg-w4-4', text: 'Execute salary negotiation script aiming for +45% market parity compensation', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Strategic Career Negotiation for Techies', provider: 'SWAYAM', url: 'https://swayam.gov.in', free: true },
-      { title: 'System Design for Senior Roles', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
+      { title: 'Strategic Career Negotiation for Techies', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd2_noc20_hs22', free: true },
+      { title: 'Cloud Computing & Distributed Systems', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106105167', free: true },
     ],
     mockInterviewQ: 'Why are you looking to switch after 3+ years in your current organization?',
   },
@@ -1063,8 +1063,8 @@ export const LAID_OFF_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'lo-w1-4', text: 'Mock Q: "Can you explain the context of your recent transition confidently and positively?"', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'High-Impact Resume Crafting for Senior Engineers', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
-      { title: 'Rapid Job Search & Referral Strategies', provider: 'Skill India', url: 'https://www.skillindia.gov.in', free: true },
+      { title: 'High-Impact Resume Crafting for Senior Engineers', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/', free: true },
+      { title: 'Associate Software Developer Certification', provider: 'Skill India', url: 'https://www.skillindiadigital.gov.in/courses/detail/5ef58e99-4d82-4fcf-85d0-4bf69c2d1b7b', free: true },
     ],
     mockInterviewQ: 'How do you handle sudden team restructuring and what lessons did you carry forward into your next role?',
   },
@@ -1080,8 +1080,8 @@ export const LAID_OFF_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'lo-w2-4', text: 'Mock Q: "Design an idempotency key mechanism for a payment service under high concurrency."', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'System Design for Tech Interviews', provider: 'SWAYAM', url: 'https://swayam.gov.in', free: true },
-      { title: 'Data Structures & Algorithms Grilling', provider: 'NPTEL', url: 'https://nptel.ac.in', free: true },
+      { title: 'Cloud Computing & SaaS Architectures', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd1_noc20_cs68', free: true },
+      { title: 'Data Structures & Algorithms in Python', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106106145', free: true },
     ],
     mockInterviewQ: 'How do you prevent cache stampede during sudden traffic spikes in distributed applications?',
   },
@@ -1097,8 +1097,8 @@ export const LAID_OFF_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'lo-w3-4', text: 'Mock Q: "Explain a trade-off where you chose eventual consistency over strict ACID transactions."', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Distributed Systems & Microservices', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
-      { title: 'Behavioral & Leadership Rounds Mastery', provider: 'NPTEL', url: 'https://nptel.ac.in', free: true },
+      { title: 'Distributed Systems & Microservices', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/', free: true },
+      { title: 'Effective Speaking & Technical Presentation', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd2_noc20_hs22', free: true },
     ],
     mockInterviewQ: 'Can you describe a production incident you resolved under tight time constraints and how you led post-mortem RCA?',
   },
@@ -1114,8 +1114,8 @@ export const LAID_OFF_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'lo-w4-4', text: 'Celebrate career recovery and post milestone on PunarSetu community', type: 'practice' },
     ],
     recommendedCourses: [
-      { title: 'Tech Salary Negotiation & Equity Evaluation', provider: 'SWAYAM', url: 'https://swayam.gov.in', free: true },
-      { title: 'First 90 Days in a High-Growth Tech Role', provider: 'Skill India', url: 'https://www.skillindia.gov.in', free: true },
+      { title: 'Executive Communication & Negotiation', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd2_noc20_hs22', free: true },
+      { title: 'Software Developer Career Foundations', provider: 'Skill India', url: 'https://www.skillindiadigital.gov.in/courses/detail/5ef58e99-4d82-4fcf-85d0-4bf69c2d1b7b', free: true },
     ],
     mockInterviewQ: 'What are your top priorities for your first 30 days once you join our engineering team?',
   },
@@ -1134,8 +1134,8 @@ export const GIG_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'gg-w1-4', text: 'Mock Q: "How do you transition from single-person freelance delivery to enterprise team standards?"', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Enterprise Software Standards & Testing', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
-      { title: 'Clean Architecture with TypeScript & Python', provider: 'NPTEL', url: 'https://nptel.ac.in', free: true },
+      { title: 'Enterprise Software Standards & Testing', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/', free: true },
+      { title: 'Programming in Java (IIT Kharagpur)', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106105191', free: true },
     ],
     mockInterviewQ: 'How do you ensure maintainability and testability when writing code intended for large engineering teams?',
   },
@@ -1151,8 +1151,8 @@ export const GIG_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'gg-w2-4', text: 'Mock Q: "Explain how CI/CD pipelines prevent regression in high-velocity agile sprints."', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'DevOps & Continuous Integration with GitHub Actions', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org', free: true },
-      { title: 'Cloud Infrastructure for SaaS Applications', provider: 'SWAYAM', url: 'https://swayam.gov.in', free: true },
+      { title: 'DevOps & Continuous Integration with GitHub Actions', provider: 'freeCodeCamp', url: 'https://www.freecodecamp.org/learn/back-end-development-and-apis/', free: true },
+      { title: 'Cloud Infrastructure for SaaS Applications', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd1_noc20_cs68', free: true },
     ],
     mockInterviewQ: 'How do you configure secrets management and environment isolation between Staging and Production?',
   },
@@ -1168,8 +1168,8 @@ export const GIG_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'gg-w3-4', text: 'Mock Q: "Walk me through how you handled difficult client requirements and scope creep."', type: 'interview' },
     ],
     recommendedCourses: [
-      { title: 'Agile Project Management for Developers', provider: 'Skill India', url: 'https://www.skillindia.gov.in', free: true },
-      { title: 'System Design for Enterprise Tech', provider: 'NPTEL', url: 'https://nptel.ac.in', free: true },
+      { title: 'Agile Software Development & Jira Workflows', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd2_noc21_mg57', free: true },
+      { title: 'Cloud Computing & Virtualization', provider: 'NPTEL', url: 'https://nptel.ac.in/courses/106105167', free: true },
     ],
     mockInterviewQ: 'How do you handle asynchronous communication and code review feedback when collaborating with global remote teams?',
   },
@@ -1185,8 +1185,8 @@ export const GIG_30_DAY_PLAN: SprintWeekPlan[] = [
       { id: 'gg-w4-4', text: 'Finalize full-time employment agreement and transition ongoing gig retainers smoothly', type: 'practice' },
     ],
     recommendedCourses: [
-      { title: 'Tech Career Negotiation for Freelancers', provider: 'SWAYAM', url: 'https://swayam.gov.in', free: true },
-      { title: 'Enterprise Leadership & Communication', provider: 'NPTEL', url: 'https://nptel.ac.in', free: true },
+      { title: 'Tech Career Negotiation for Freelancers', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd2_noc20_hs22', free: true },
+      { title: 'Enterprise Leadership & Communication', provider: 'SWAYAM', url: 'https://swayam.gov.in/nd2_noc20_hs22', free: true },
     ],
     mockInterviewQ: 'Why are you transitioning from freelancing to full-time enterprise engineering at this point in your career?',
   },

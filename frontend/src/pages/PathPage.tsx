@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useActiveProfile } from '@/hooks/useActiveProfile'
+import { useUserProfile } from '@/store/userProfileStore'
 import { pathwayApi } from '@/lib/api'
 import PathCardsGrid from '@/components/pathways/PathCardsGrid'
 import RoadmapTimeline from '@/components/pathways/RoadmapTimeline'
@@ -25,6 +26,7 @@ import type { PathwayOption } from '@/types'
 export default function PathPage() {
   const { t } = useTranslation()
   const { profile } = useActiveProfile()
+  const userProfile = useUserProfile()
   const userType = profile?.user_type || 'returner'
 
   const isStudent = userType === 'student'
@@ -113,6 +115,7 @@ export default function PathPage() {
               : isGig
               ? 'Transform informal client projects into verified enterprise codebases, setup CI/CD pipelines, and secure full-time roles with benefits.'
               : 'Bridge employment gaps with modernized Java/GenAI/Cloud stacks, verified Govt/NPTEL courses, and confident career gap framing.'}
+            {userProfile.targetRole ? ` • Focused sprint toward ${userProfile.targetRole}` : ''}
           </p>
         </div>
 

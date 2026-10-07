@@ -18,6 +18,10 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { useUserProfile } from '@/store/userProfileStore'
+
+import { REAL_SALARY_BENCHMARKS, SALARY_BENCHMARK_FOOTNOTE } from '@/data/realSalaryBenchmarks'
 
 interface CityData {
   city: string
@@ -31,73 +35,42 @@ interface CityData {
   savingsScore: number
 }
 
-const CITY_DATA: Record<string, CityData> = {
-  Noida: {
-    city: 'Noida / NCR',
-    legacySupportMedian: 8.5,
-    modernAutomationMedian: 12.5,
-    genAiLeadMedian: 15.5,
-    avgMonthlyRent: 16000,
-    monthlyCommute: 4000,
-    taxRatePct: 10,
-    savingsRating: 'High Net Savings',
-    savingsScore: 82,
-  },
-  Pune: {
-    city: 'Pune',
-    legacySupportMedian: 9.0,
-    modernAutomationMedian: 13.0,
-    genAiLeadMedian: 16.0,
-    avgMonthlyRent: 18500,
-    monthlyCommute: 4500,
-    taxRatePct: 10,
-    savingsRating: 'High Net Savings',
-    savingsScore: 78,
-  },
-  Hyderabad: {
-    city: 'Hyderabad',
-    legacySupportMedian: 9.8,
-    modernAutomationMedian: 14.0,
-    genAiLeadMedian: 17.0,
-    avgMonthlyRent: 20000,
-    monthlyCommute: 5000,
-    taxRatePct: 12,
-    savingsRating: 'Moderate Savings',
-    savingsScore: 72,
-  },
-  Bengaluru: {
-    city: 'Bengaluru',
-    legacySupportMedian: 11.0,
-    modernAutomationMedian: 15.5,
-    genAiLeadMedian: 18.5,
-    avgMonthlyRent: 28000,
-    monthlyCommute: 6500,
-    taxRatePct: 14,
-    savingsRating: 'High CTC / High Living Cost',
-    savingsScore: 58,
-  },
-  Remote: {
-    city: 'Remote (Tier-2/3)',
-    legacySupportMedian: 10.0,
-    modernAutomationMedian: 14.5,
-    genAiLeadMedian: 17.5,
-    avgMonthlyRent: 8000,
-    monthlyCommute: 1000,
-    taxRatePct: 10,
-    savingsRating: 'Maximum Net Surplus',
-    savingsScore: 96,
-  },
-}
+const CITY_DATA: Record<string, CityData> = Object.fromEntries(
+  Object.entries(REAL_SALARY_BENCHMARKS).map(([k, v]) => [
+    k,
+    {
+      city: v.cityName,
+      legacySupportMedian: v.legacySupportMedianLPA,
+      modernAutomationMedian: v.modernAutomationMedianLPA,
+      genAiLeadMedian: v.genAiLeadMedianLPA,
+      avgMonthlyRent: v.avgMonthlyRent1BHK,
+      monthlyCommute: v.avgMonthlyCommute,
+      taxRatePct: v.effectiveTaxRatePct,
+      savingsRating: v.savingsRating,
+      savingsScore: v.savingsScore,
+    },
+  ])
+)
 
 export default function SalaryBenchmarkCard({
-  currentSalary = 6.8,
-  city = 'Noida',
+  currentSalary: propCurrentSalary,
+  role: propRole,
+  city: propCity,
 }: {
   currentSalary?: number
   role?: string
   city?: string
 }) {
-  const [selectedCityKey, setSelectedCityKey] = useState<string>(city || 'Noida')
+  const { t } = useTranslation()
+  const { currentSalaryLPA, currentRole, currentCity, setCurrentCity } = useUserProfile()
+
+  const currentSalary = propCurrentSalary !== undefined ? propCurrentSalary : currentSalaryLPA
+  const role = propRole || currentRole
+  const initialCity = propCity || currentCity || 'Noida'
+
+  const [selectedCityKey, setSelectedCityKey] = useState<string>(
+    CITY_DATA[initialCity] ? initialCity : (Object.keys(CITY_DATA).find(c => initialCity.includes(c)) || 'Noida')
+  )
   const [selectedStack, setSelectedStack] = useState<'legacy' | 'automation' | 'genai'>('genai')
 
   const activeCity = CITY_DATA[selectedCityKey] || CITY_DATA.Noida
@@ -123,6 +96,36 @@ export default function SalaryBenchmarkCard({
   const currentGrossMonthly = Math.round((currentSalary * 100000) / 12)
   const currentInHandMonthly = Math.round(currentGrossMonthly * 0.92)
   const currentNetSavings = currentInHandMonthly - activeCity.avgMonthlyRent - activeCity.monthlyCommute
+
+  // Dynamic descriptive sentences derived from actual state
+  const currentSavingsText = useMemo(() => {
+    const savings = Math.max(0, currentNetSavings)
+    const formattedSavings = `₹${savings.toLocaleString('en-IN')}`
+    const nationalAvg = 25000
+
+    let comparison = ''
+    if (savings <= 0) {
+      comparison = 'essential rent and commute costs fully consume your in-hand salary'
+    } else if (savings < nationalAvg) {
+      const deficit = nationalAvg - savings
+      comparison = `₹${deficit.toLocaleString('en-IN')}/mo below the national urban tech baseline of ₹25,000/month`
+    } else if (savings === nationalAvg) {
+      comparison = 'matching the national urban tech baseline of ₹25,000/month'
+    } else {
+      const multiplier = (savings / nationalAvg).toFixed(1)
+      comparison = `${multiplier}x above the national urban tech baseline of ₹25,000/month`
+    }
+
+    return `After rent and daily expenses in ${activeCity.city}, you're saving ${formattedSavings}/month — ${comparison}.`
+  }, [currentNetSavings, activeCity.city])
+
+  const targetSavingsText = useMemo(() => {
+    const surplusGain = netSavingsMonthly - Math.max(0, currentNetSavings)
+    if (surplusGain > 0) {
+      return `Delivers +₹${surplusGain.toLocaleString('en-IN')}/mo in extra disposable bank surplus to accelerate personal wealth and investments in ${activeCity.city}.`
+    }
+    return `Provides ₹${netSavingsMonthly.toLocaleString('en-IN')}/month in disposable cash surplus to invest in personal wealth while executing modern high-impact engineering.`
+  }, [netSavingsMonthly, currentNetSavings, activeCity.city])
 
   // Chart Data across all cities
   const comparisonChartData = useMemo(() => {
@@ -155,22 +158,22 @@ export default function SalaryBenchmarkCard({
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/60 dark:to-blue-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-black mb-1.5 border border-emerald-200/50">
             <IndianRupee size={13} className="text-emerald-600" />
-            <span>Interactive Compensation & Purchasing Power Benchmark</span>
+            <span>{t('features.salary-benchmark.sidebar', 'Interactive Compensation & Purchasing Power Benchmark')}</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-            Market Salary & Net Savings Diagnostic
+            {t('features.salary-benchmark.heading', 'Market Salary & Net Savings Diagnostic')}
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl font-medium">
-            Compare gross CTC vs real in-hand savings across Indian tech hubs after adjusting for rent, commute, and modernization tech stacks.
+            {t('features.salary-benchmark.subtitle', 'Compare gross CTC vs real in-hand savings across Indian tech hubs after adjusting for rent, commute, and modernization tech stacks.')}
           </p>
         </div>
 
         <div className="text-right p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0">
-          <div className="text-[10px] font-bold text-slate-400 uppercase">Your Current Position</div>
+          <div className="text-[10px] font-bold text-slate-400 uppercase">{t('features.salary-benchmark.percentile_title', 'Your Current Position')}</div>
           <div className="text-xl font-black text-slate-900 dark:text-white">
             ₹{currentSalary} LPA <span className="text-xs font-semibold text-rose-500">(P{currentPercentile})</span>
           </div>
-          <div className="text-[10px] text-slate-400 mt-0.5">3.2 YoE Support Baseline</div>
+          <div className="text-[10px] text-slate-400 mt-0.5">{role || 'Current Role'} Baseline</div>
         </div>
       </div>
 
@@ -184,9 +187,9 @@ export default function SalaryBenchmarkCard({
           </label>
           <div className="flex flex-wrap gap-1.5">
             {[
-              { id: 'legacy', label: 'Legacy IT Support (₹8–9L)' },
-              { id: 'automation', label: 'Python & Automation (₹12–14L)' },
-              { id: 'genai', label: 'GenAI & Cloud Lead (₹15–18.5L)' },
+              { id: 'legacy', name: t('features.salary-benchmark.legacy_median', 'Legacy IT Support'), median: activeCity.legacySupportMedian },
+              { id: 'automation', name: t('features.salary-benchmark.modern_median', 'Python & Automation'), median: activeCity.modernAutomationMedian },
+              { id: 'genai', name: t('features.salary-benchmark.genai_median', 'GenAI & Cloud Lead'), median: activeCity.genAiLeadMedian },
             ].map((st) => (
               <button
                 key={st.id}
@@ -198,7 +201,7 @@ export default function SalaryBenchmarkCard({
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 border border-slate-200/70 dark:border-slate-700'
                 }`}
               >
-                {st.label}
+                {st.name} (₹{st.median}L)
               </button>
             ))}
           </div>
@@ -215,7 +218,10 @@ export default function SalaryBenchmarkCard({
               <button
                 key={cKey}
                 type="button"
-                onClick={() => setSelectedCityKey(cKey)}
+                onClick={() => {
+                  setSelectedCityKey(cKey)
+                  setCurrentCity(cKey)
+                }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
                   selectedCityKey === cKey
                     ? 'bg-emerald-600 text-white shadow-xs'
@@ -308,7 +314,7 @@ export default function SalaryBenchmarkCard({
               <span>Gross CTC vs Real In-Hand Savings Across Tech Hubs (₹ LPA)</span>
             </h4>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Notice how high rental costs in Bengaluru reduce actual bank savings compared to Noida, Pune, or Remote.
+              Notice how local living costs in {activeCity.city} (rent: ₹{activeCity.avgMonthlyRent.toLocaleString('en-IN')}/mo) impact actual bank savings compared to lower-cost hubs.
             </p>
           </div>
 
@@ -394,7 +400,7 @@ export default function SalaryBenchmarkCard({
               Monthly Bank Savings: ₹{Math.max(0, currentNetSavings).toLocaleString('en-IN')}
             </div>
             <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
-              After rent and daily expenses, savings remain capped under ₹15,000/month in Tier-1 cities.
+              {currentSavingsText}
             </p>
           </div>
 
@@ -404,10 +410,19 @@ export default function SalaryBenchmarkCard({
               <span>In-Hand: ₹{inHandMonthly.toLocaleString('en-IN')}/mo</span>
             </div>
             <div className="text-lg font-black text-emerald-400">
-              Monthly Bank Savings: ₹{netSavingsMonthly.toLocaleString('en-IN')} (+₹{(netSavingsMonthly - Math.max(0, currentNetSavings)).toLocaleString('en-IN')}/mo)
+              Monthly Bank Savings: ₹{netSavingsMonthly.toLocaleString('en-IN')}{' '}
+              {netSavingsMonthly - Math.max(0, currentNetSavings) >= 0 ? (
+                <span className="text-xs font-semibold text-emerald-300">
+                  (+₹{(netSavingsMonthly - Math.max(0, currentNetSavings)).toLocaleString('en-IN')}/mo)
+                </span>
+              ) : (
+                <span className="text-xs font-semibold text-amber-300">
+                  (-₹{Math.abs(netSavingsMonthly - Math.max(0, currentNetSavings)).toLocaleString('en-IN')}/mo)
+                </span>
+              )}
             </div>
             <p className="text-[11px] text-slate-300 leading-relaxed font-medium">
-              Delivers massive disposable cash surplus to invest in personal wealth while executing modern high-impact engineering.
+              {targetSavingsText}
             </p>
           </div>
         </div>
@@ -421,6 +436,9 @@ export default function SalaryBenchmarkCard({
             <span>Explore Matching Jobs</span>
             <ArrowRight size={13} />
           </Link>
+        </div>
+        <div className="pt-2 text-[10px] text-slate-400 border-t border-slate-800/80 flex items-center justify-between gap-2">
+          <span>📊 <strong className="text-slate-300">Data source:</strong> {SALARY_BENCHMARK_FOOTNOTE}</span>
         </div>
       </div>
     </div>
