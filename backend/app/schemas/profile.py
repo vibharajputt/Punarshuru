@@ -1,5 +1,6 @@
+from typing import Any
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 from app.models.profile import UserType
 
 
@@ -20,6 +21,16 @@ class ProfileBase(BaseModel):
     skills_raw: list[str] = []
     skills_taxonomy_ids: list[int] = []
     resume_text: str | None = None
+
+    @field_validator("achievements", "skills_raw", "skills_taxonomy_ids", mode="before")
+    @classmethod
+    def _coerce_none_to_list(cls, v: Any) -> list:
+        if v is None:
+            return []
+        if isinstance(v, list):
+            return v
+        return list(v) if hasattr(v, "__iter__") and not isinstance(v, (str, bytes)) else [str(v)]
+
 
 
 class ProfileCreate(ProfileBase):
