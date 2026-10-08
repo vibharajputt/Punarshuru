@@ -239,10 +239,24 @@ export default function PublicPassportPage() {
 
   const passport = data || (!isError ? fallbackPassport : null)
 
-  const copyPageLink = () => {
-    navigator.clipboard.writeText(publicUrl)
-    setCopiedLink(true)
-    setTimeout(() => setCopiedLink(false), 2000)
+  const copyPageLink = async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(publicUrl)
+      } else {
+        const textArea = document.createElement('textarea')
+        textArea.value = publicUrl
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+      }
+      setCopiedLink(true)
+      setTimeout(() => setCopiedLink(false), 2000)
+    } catch {
+      setCopiedLink(true)
+      setTimeout(() => setCopiedLink(false), 2000)
+    }
   }
 
   const handlePrintResume = () => {
