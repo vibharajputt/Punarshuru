@@ -28,20 +28,20 @@ class Settings(BaseSettings):
     GROQ_STT_MODEL: str = "whisper-large-v3"
 
     SECRET_KEY: str = "change-me-in-production"
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    ALLOWED_ORIGINS: Union[list[str], str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
     EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
     SIMILARITY_THRESHOLD: float = 0.75
 
-    @field_validator("ALLOWED_ORIGINS", mode="before")
+    @field_validator("ALLOWED_ORIGINS", mode="after")
     @classmethod
     def parse_allowed_origins(cls, v: Union[str, list[str]]) -> list[str]:
         if isinstance(v, str):
             origins = [origin.strip() for origin in v.split(",") if origin.strip()]
-            return origins if origins else ["http://localhost:5173", "http://127.0.0.1:5173"]
+            return origins if origins else ["*"]
         if isinstance(v, list):
             return [str(origin).strip() for origin in v if str(origin).strip()]
-        return ["http://localhost:5173", "http://127.0.0.1:5173"]
+        return ["*"]
 
 
 @lru_cache()
