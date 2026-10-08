@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Union
-from pydantic import field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator  # type: ignore
+from pydantic_settings import BaseSettings, SettingsConfigDict  # type: ignore # pyrefly: ignore [missing-import]
 
 
 class Settings(BaseSettings):
