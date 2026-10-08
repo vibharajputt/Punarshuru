@@ -41,7 +41,11 @@ export interface TrendsResponse {
   best_fit_roles?: string[]
 }
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+const RAW_URL = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/$/, '')
+let BASE_URL = RAW_URL
+if (BASE_URL && !BASE_URL.startsWith('http')) {
+  BASE_URL = BASE_URL.includes('.') ? `https://${BASE_URL}` : `https://${BASE_URL}.onrender.com`
+}
 
 async function request<T>(endpoint: string, options?: RequestInit, token?: string): Promise<T> {
   const activeToken = token ?? useAuthStore.getState().token
