@@ -1,8 +1,14 @@
 {
   "venvPath": ".",
   "venv": ".venv",
+  "extraPaths": [
+    ".",
+    ".venv/Lib/site-packages",
+    "../.venv/Lib/site-packages"
+  ],
   "pythonVersion": "3.12",
   "typeCheckingMode": "basic",
+  "reportMissingImports": "none",
   "reportMissingModuleSource": "none",
   "include": ["app"],
   "exclude": ["tests", ".venv"]
