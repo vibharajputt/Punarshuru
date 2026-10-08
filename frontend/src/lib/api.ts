@@ -41,7 +41,8 @@ export interface TrendsResponse {
   best_fit_roles?: string[]
 }
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+const RAW_URL = (import.meta.env.VITE_API_BASE_URL || '').trim().replace(/\/$/, '')
+const BASE_URL = RAW_URL && !RAW_URL.startsWith('http') ? `https://${RAW_URL}` : RAW_URL
 
 async function request<T>(endpoint: string, options?: RequestInit, token?: string): Promise<T> {
   const activeToken = token ?? useAuthStore.getState().token
