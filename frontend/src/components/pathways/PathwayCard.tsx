@@ -1,4 +1,4 @@
-import { Shield, Rocket, RefreshCw, Clock, IndianRupee, ArrowRight } from 'lucide-react'
+import { Shield, Rocket, RefreshCw, Clock, IndianRupee, ArrowRight, CheckCircle2, Circle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { PathwayOption } from '@/types'
 
@@ -23,7 +23,7 @@ export default function PathwayCard({
     if (isSafe) {
       return {
         badgeBg: 'bg-blue-100 text-[#0B4F9C] dark:bg-blue-950 dark:text-sky-300',
-        borderColor: 'border-blue-300 dark:border-blue-800 ring-2 ring-[#0B4F9C]/20',
+        borderColor: 'border-blue-400 dark:border-blue-600 ring-4 ring-[#0B4F9C]/15',
         icon: Shield,
         accentColor: 'text-[#0B4F9C]',
         label: isHi ? 'सुरक्षित मार्ग (Safe)' : 'Safe Pathway',
@@ -32,15 +32,15 @@ export default function PathwayCard({
     if (isStretch) {
       return {
         badgeBg: 'bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300',
-        borderColor: 'border-orange-300 dark:border-orange-800 ring-2 ring-[#F26B1D]/20',
+        borderColor: 'border-orange-400 dark:border-orange-600 ring-4 ring-[#F26B1D]/15',
         icon: Rocket,
         accentColor: 'text-[#F26B1D]',
-        label: isHi ? 'उच्च वृद्धि मार्ग (Stretch)' : 'Stretch Pathway',
+        label: isHi ? 'उच्च वृद्धि मार्ग (Stretch)' : 'Stretch Pathway (Recommended)',
       }
     }
     return {
       badgeBg: 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300',
-      borderColor: 'border-purple-300 dark:border-purple-800 ring-2 ring-purple-600/20',
+      borderColor: 'border-purple-400 dark:border-purple-600 ring-4 ring-purple-600/15',
       icon: RefreshCw,
       accentColor: 'text-purple-600',
       label: isHi ? 'स्विच मार्ग (Switch)' : 'Switch Pathway',
@@ -52,31 +52,44 @@ export default function PathwayCard({
   return (
     <div
       onClick={onSelect}
-      className={`p-6 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between space-y-4 ${
+      className={`p-6 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between space-y-4 relative ${
         isSelected
-          ? `bg-white dark:bg-slate-900 ${borderColor} shadow-lg scale-[1.01]`
+          ? `bg-white dark:bg-slate-900 ${borderColor} shadow-xl scale-[1.01]`
           : 'bg-slate-50/60 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-slate-300 hover:bg-white dark:hover:bg-slate-900 shadow-2xs'
       }`}
     >
       <div className="space-y-3">
-        {/* Top Tag & Difficulty */}
+        {/* Top Tag & Selection Indicator */}
         <div className="flex items-center justify-between">
           <span className={`px-3 py-1 text-xs font-bold rounded-full flex items-center gap-1.5 ${badgeBg}`}>
             <Icon size={13} />
             <span>{label}</span>
           </span>
-          <span className="text-xs font-bold text-slate-500">
-            {isHi ? 'कठिनाई:' : 'Difficulty:'}{' '}
-            <span className="font-semibold text-slate-800 dark:text-slate-200">
-              {isHi
-                ? pathway.difficulty === 'Medium'
-                  ? 'मध्यम'
-                  : pathway.difficulty === 'High'
-                  ? 'उच्च'
-                  : 'सरल'
-                : pathway.difficulty}
+
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold text-slate-400">
+              {isHi ? 'कठिनाई:' : 'Difficulty:'}{' '}
+              <span className="font-semibold text-slate-700 dark:text-slate-300">
+                {isHi
+                  ? pathway.difficulty === 'Medium'
+                    ? 'मध्यम'
+                    : pathway.difficulty === 'High'
+                    ? 'उच्च'
+                    : 'सरल'
+                  : pathway.difficulty}
+              </span>
             </span>
-          </span>
+
+            <div
+              className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                isSelected
+                  ? 'bg-emerald-500 text-white shadow-xs'
+                  : 'border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800'
+              }`}
+            >
+              {isSelected ? <CheckCircle2 size={18} /> : <Circle size={14} className="text-slate-300 dark:text-slate-600" />}
+            </div>
+          </div>
         </div>
 
         {/* Title & Target Role */}
@@ -115,17 +128,23 @@ export default function PathwayCard({
       </div>
 
       <div className={`pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold ${accentColor}`}>
-        <span>
-          {isSelected
-            ? isHi
-              ? 'सक्रिय रोडमैप देख रहे हैं'
-              : 'Viewing Active Roadmap'
-            : isHi
-            ? 'रोडमैप देखने के लिए चुनें'
-            : 'Select to View Roadmap'}
+        <span className="flex items-center gap-1.5">
+          {isSelected ? (
+            <>
+              <CheckCircle2 size={15} className="text-emerald-600" />
+              <span className="text-emerald-700 dark:text-emerald-400 font-black">
+                {isHi ? '✓ चुनी गई रणनीति' : '✓ Selected Strategy'}
+              </span>
+            </>
+          ) : (
+            <span>
+              {isHi ? 'यह रणनीति चुनें' : 'Click to Select Strategy'}
+            </span>
+          )}
         </span>
         <ArrowRight size={14} />
       </div>
     </div>
   )
 }
+
